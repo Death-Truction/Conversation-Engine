@@ -1,0 +1,57 @@
+<!DOCTYPE xml>
+<configuration>
+	<!--
+  	<property name="LOG_DIR" value="logs" />
+  	
+  	<appender name="Debug-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	    	<pattern>%d{HH:mm:ss} %highlight(%-5level) %logger{0} - %msg%n</pattern>
+	    </encoder>
+	</appender>
+	
+	<appender name="Conversation-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	    	<pattern>%d{HH:mm:ss} %highlight(%-5level) %logger{0} - %highlight(%msg%n)</pattern>
+	    </encoder>
+	</appender>
+  	
+	<appender name="Conversation-File" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/conversation.log</file>
+		<append>false</append>
+		<encoder>
+      		<pattern>%d{HH:mm:ss} - %msg%n</pattern>
+    	</encoder>
+  	</appender>
+  	
+  	<appender name="Debug-File" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/debug.log</file>
+		<append>false</append>
+		<encoder>
+      		<pattern>%d{HH:mm:ss} %-5level %logger{0} - %msg%n</pattern>
+    	</encoder>
+  	</appender>
+  	
+  	<appender name="All-File" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/general.log</file>
+		<append>false</append>
+		<encoder>
+      		<pattern>%d{HH:mm:ss} %-5level %logger{0} - %msg%n</pattern>
+    	</encoder>
+  	</appender>
+	
+	<logger name="ConversationLogger" level="ALL">
+		<appender-ref ref="Conversation-STDOUT"/>
+		<appender-ref ref="Conversation-File"/>
+		<appender-ref ref="All-File"/>
+	</logger>
+	
+	<logger name="DeveloperLogger" level="ALL">
+		<appender-ref ref="Debug-STDOUT"/>
+		<appender-ref ref="Debug-File"/>
+		<appender-ref ref="All-File"/>
+	</logger>
+	-->
+  	<root level="ALL">
+  	</root>
+  	
+</configuration>

@@ -1,0 +1,50 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "Mid"
+		},
+		{
+			"name": "End"
+		}
+	],	
+	"transitions": [
+		{
+			"source": "Start",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "FAILED"
+		},
+		{
+			"source": "Mid",
+			"target": "End",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "Mid",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Mid",
+			"target": "End",
+			"trigger": "FAILED"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "RecipeSelectSkill",
+	"usedEntities": [],
+	"usedIntents": []
+}

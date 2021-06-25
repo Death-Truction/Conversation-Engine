@@ -1,0 +1,24 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "End"
+		}
+	],	
+	"transitions": [
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "SUCCESS"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "GreetingSkill",
+	"usedEntities" : [],
+	"usedIntents": [
+		"greeting"
+	]
+}

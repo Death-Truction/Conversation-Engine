@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>de.dai-labor</groupId>
+		<artifactId>conversations-engine</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+  
+  
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.dai-labor</groupId>
+	<artifactId>conversations-engine-playground</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>de.dai-labor</groupId>
+			<artifactId>conversations-engine-statemachine</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+	  
+	<build>
+		<sourceDirectory>../</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+				  <release>14</release>
+				  <includes>
+					<include>conversations-engine-playground/src/main/java/**/*.java</include>
+					<include>conversations-engine-statemachine/src/test/java/data/*.java</include>
+					<include>conversations-engine-statemachine/src/test/java/skills/*.java</include>
+				</includes>
+				</configuration>
+			</plugin>
+		    <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+	      				<goals>
+	        				<goal>java</goal>
+	     				</goals>
+	    			</execution>
+				</executions>
+				<configuration>
+					<mainClass>Main</mainClass>
+				</configuration>	
+		    </plugin>
+		</plugins>    
+	</build>
+</project>
