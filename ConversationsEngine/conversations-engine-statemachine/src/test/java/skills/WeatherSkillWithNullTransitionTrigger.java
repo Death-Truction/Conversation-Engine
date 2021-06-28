@@ -8,6 +8,12 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} created only for test coverage
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class WeatherSkillWithNullTransitionTrigger implements ISkill {
 
 	@Override
@@ -25,7 +31,7 @@ public class WeatherSkillWithNullTransitionTrigger implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 

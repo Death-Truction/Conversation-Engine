@@ -10,6 +10,12 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} that generates a greeting message
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class GreetingSkill implements ISkill {
 
 	@Override
@@ -39,7 +45,7 @@ public class GreetingSkill implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 }

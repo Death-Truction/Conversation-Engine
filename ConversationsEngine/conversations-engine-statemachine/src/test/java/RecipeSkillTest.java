@@ -13,16 +13,16 @@ import interfaces.INLPComponent;
 import skills.RecipeCookingSkill;
 import skills.RecipeSearchSkill;
 import skills.RecipeSelectSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 class RecipeSkillTest {
 
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp);
 		RecipeSearchSkill recipeSkill = new RecipeSearchSkill();
 		String recipeSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("RecipeSearch.json");
 		this.myStateMachine.addSkill(recipeSkill, recipeSkillStateMachine);

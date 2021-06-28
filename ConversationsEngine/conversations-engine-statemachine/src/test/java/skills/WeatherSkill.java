@@ -16,6 +16,13 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} that provides a random generated weather information
+ * for a given city
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class WeatherSkill implements ISkill {
 
 	private String[] weatherDescriptions = new String[] { "bei klarem Himmel", "bei starkem Regen",
@@ -47,7 +54,7 @@ public class WeatherSkill implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 

@@ -13,6 +13,12 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} that selects a requested recipe by it's name
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class RecipeSelectSkill implements ISkill {
 
 	@Override
@@ -59,7 +65,7 @@ public class RecipeSelectSkill implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 }

@@ -13,18 +13,18 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import data.NLPComponent;
 import interfaces.INLPComponent;
 import skills.GreetingSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 @Execution(ExecutionMode.CONCURRENT)
 class TimeoutTest {
 
 	private final CountDownLatch waiter = new CountDownLatch(1);
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp, 1);
+		this.myStateMachine = new ConversationsEngine(nlp, 1);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greet, greetingSkillStateMachine);

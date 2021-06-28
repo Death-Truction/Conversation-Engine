@@ -12,6 +12,12 @@ import org.json.JSONObject;
 import interfaces.INLPAnswer;
 import interfaces.INLPComponent;
 
+/**
+ * A simple implementation of a {@link INLPComponent} for testing purposes
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class NLPComponent implements INLPComponent {
 
 	private String[] possibleCities = new String[] { "Berlin", "Dortmund", "München", "Hamburg" };
@@ -39,29 +45,26 @@ public class NLPComponent implements INLPComponent {
 		JSONObject newEntities = new JSONObject();
 		input = input.toLowerCase(Locale.GERMAN);
 
-		if (!entityName.isEmpty()) {
-			// TODO: use for cooking recipe, when asking if ingredient is available
-			if (entityName.contains("availableIngredients")) {
-				String[] entityPath = entityName.split("\\.");
-				if (input.contains("ja")) {
-					addAvailableIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, -1);
-				} else if (input.contains("nein")) {
-					addAvailableIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, 0);
-				}
+		if (entityName.contains("availableIngredients")) {
+			String[] entityPath = entityName.split("\\.");
+			if (input.contains("ja")) {
+				addAvailableIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, -1);
+			} else if (input.contains("nein")) {
+				addAvailableIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, 0);
+			}
 
-			} else if (entityName.contains("recipeSearchIngredients")) {
-				String[] entityPath = entityName.split("\\.");
-				if (input.contains("ja")) {
-					addSearchIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, -1);
-				} else if (input.contains("nein")) {
-					addSearchIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, 0);
-				}
-			} else if (entityName.equalsIgnoreCase("useLastSelectedRecipe")) {
-				if (input.contains("ja")) {
-					setUseLastSelectedRecipe(true, newEntities);
-				} else if (input.contains("nein")) {
-					setUseLastSelectedRecipe(false, newEntities);
-				}
+		} else if (entityName.contains("recipeSearchIngredients")) {
+			String[] entityPath = entityName.split("\\.");
+			if (input.contains("ja")) {
+				addSearchIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, -1);
+			} else if (input.contains("nein")) {
+				addSearchIngredients(entityPath[0], entityPath[1].toLowerCase(), newEntities, 0);
+			}
+		} else if (entityName.equalsIgnoreCase("useLastSelectedRecipe")) {
+			if (input.contains("ja")) {
+				setUseLastSelectedRecipe(true, newEntities);
+			} else if (input.contains("nein")) {
+				setUseLastSelectedRecipe(false, newEntities);
 			}
 		}
 
@@ -82,11 +85,52 @@ public class NLPComponent implements INLPComponent {
 		return new NLPAnswer(intents, newEntities, new Locale("de", "DE"));
 	}
 
+	@Override
+	public INLPAnswer understandInput(String input, JSONObject contextObject) {
+		List<String> intents = new ArrayList<>();
+		JSONObject newEntities = new JSONObject();
+		input = input.toLowerCase(Locale.GERMAN);
+
+		addIntents(input, intents, newEntities);
+
+		if (intents.isEmpty()) {
+			addLocations("locations", input, newEntities);
+			addAvailableIngredients("availableIngredients", input, newEntities, -1);
+		}
+
+		mergeJsonObjects(contextObject, newEntities);
+
+		return new NLPAnswer(intents, newEntities, new Locale("de", "DE"));
+	}
+
 	private void setUseLastSelectedRecipe(boolean b, JSONObject contextObject) {
 		contextObject.put("useLastSelectedRecipe", b);
 	}
 
 	private void addIntents(String input, List<String> intents, JSONObject contextObject) {
+		// if no entities were added -> try to match the trigger intents
+		if (contextObject.length() == 0) {
+			if (input.equalsIgnoreCase("abbruch")) {
+				intents.add("abort");
+				return;
+			}
+			if (input.equalsIgnoreCase("ja")) {
+				intents.add("yes");
+				return;
+			}
+			if (input.equalsIgnoreCase("nein")) {
+				intents.add("no");
+				return;
+			}
+			if (input.equalsIgnoreCase("letzten")) {
+				intents.add("last");
+				return;
+			}
+			if (input.equalsIgnoreCase("alle")) {
+				intents.add("all");
+				return;
+			}
+		}
 		if (Arrays.stream(greetingSynonyms).anyMatch(element -> input.contains(element.toLowerCase()))) {
 			intents.add("greeting");
 		}

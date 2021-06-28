@@ -12,6 +12,13 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} that checks if all the required ingredients are
+ * available and then provides the required instructions to cook the recipe
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class RecipeCookingSkill implements ISkill {
 
 	private int currentInstruction;
@@ -91,7 +98,7 @@ public class RecipeCookingSkill implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		this.lastCookedRecipe = "";
 		this.currentInstruction = 0;
 	}

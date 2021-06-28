@@ -21,9 +21,7 @@ class I18n {
 	static void setLanguage(Locale language) {
 		bundle = ResourceBundle.getBundle("localization.localization", language);
 		if (!bundle.getLocale().getDisplayName().equals(language.getDisplayName())) {
-			Logging.error(
-					"The language {} is not supported. You may want to create a new language file: localization_{}.properties",
-					language.toLanguageTag(), language.toLanguageTag().replace("-", "_"));
+			Logging.error("The language {} is not supported.", language.toLanguageTag());
 		}
 	}
 

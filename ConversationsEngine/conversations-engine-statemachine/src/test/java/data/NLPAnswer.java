@@ -7,6 +7,12 @@ import org.json.JSONObject;
 
 import interfaces.INLPAnswer;
 
+/**
+ * A simple {@link INLPAnswer} implementation for testing purposes
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class NLPAnswer implements INLPAnswer {
 
 	private List<String> intents;

@@ -55,7 +55,7 @@ class SkillStateMachine {
 	/**
 	 * Returns true if the state machine ended
 	 * 
-	 * @return true if the state machine ended, returns false otherwise
+	 * @return true if the state machine ended
 	 */
 	boolean hasEnded() {
 		return this.currentState.equals(endState);
@@ -67,14 +67,14 @@ class SkillStateMachine {
 	 */
 	void reset() {
 		this.currentState = this.startState;
-		this.skill.abort();
+		this.skill.reset();
 	}
 
 	/**
 	 * Checks if the corresponding skill can execute a given intent
 	 * 
 	 * @param intent the intent that's supposed to be executed
-	 * @return true if the skill can execute the intent, returns false otherwise
+	 * @return true if the skill can execute the intent
 	 */
 	boolean canExecute(String intent) {
 		return this.skill.canExecute(intent, currentState.getName());
@@ -113,7 +113,7 @@ class SkillStateMachine {
 	 * Enters the next state corresponding to the trigger for the transition
 	 * 
 	 * @param trigger the trigger for the next transition
-	 * @return true if the next state was entered correctly, returns false otherwise
+	 * @return true if the next state was entered correctly
 	 */
 	private boolean enteredNextStateSuccessfully(String trigger) {
 		State nextState = this.currentState.getNextState(trigger);

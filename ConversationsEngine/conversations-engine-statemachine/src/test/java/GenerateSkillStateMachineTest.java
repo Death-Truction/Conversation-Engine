@@ -14,11 +14,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 import ch.qos.logback.classic.Level;
 import data.NLPComponent;
 import skills.WeatherSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class GenerateSkillStateMachineTest {
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	private String resourceFolder;
 	private WeatherSkill weather;
 	private MemoryLogger logs;
@@ -35,7 +35,7 @@ class GenerateSkillStateMachineTest {
 	@BeforeEach
 	void init() {
 		this.logs.reset();
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp);
 	}
 
 	@Test

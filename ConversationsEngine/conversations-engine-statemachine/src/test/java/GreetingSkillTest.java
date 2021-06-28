@@ -10,16 +10,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import data.NLPComponent;
 import skills.GreetingSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 class GreetingSkillTest {
 
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	NLPComponent nlp = new NLPComponent();
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp);
 		GreetingSkill greeting = new GreetingSkill();
 		String greetingSkillSM = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greeting, greetingSkillSM);

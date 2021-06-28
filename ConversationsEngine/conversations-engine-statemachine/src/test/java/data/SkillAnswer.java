@@ -5,6 +5,12 @@ import java.util.Map;
 
 import interfaces.ISkillAnswer;
 
+/**
+ * A simple implementation of {@link ISkillAnswer} for testing purposes
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class SkillAnswer implements ISkillAnswer {
 
 	private String transitionTrigger;

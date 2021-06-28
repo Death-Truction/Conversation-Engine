@@ -17,11 +17,11 @@ import data.NLPComponentUndefinedLanguage;
 import interfaces.INLPComponent;
 import skills.GreetingSkill;
 import skills.WeatherSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 class ConversationsEngineTest {
 
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 	private String contextData;
 	private MemoryLogger logs;
@@ -77,17 +77,15 @@ class ConversationsEngineTest {
 		INLPComponent newNlp = new NLPComponentUndefinedLanguage();
 		createNewConversationsEngine(newNlp, "{}");
 		List<String> answers = this.myStateMachine.userInput("Hi");
-		assertEquals(TestHelperFunctions.getDayTime(), answers.get(0));
-		logs.contains(
-				"The language el is not supported. You may want to create a new language file: localization_el.properties",
-				Level.ERROR);
+		assertEquals("I'm sorry, but unfortunately I was unable to process your request.", answers.get(0));
+		logs.contains("The language el is not supported", Level.ERROR);
 	}
 
 	@Test
 	@DisplayName("Null parameters")
 	void nlpComponentIsNull() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngineStateMachine(null));
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngineStateMachine(this.nlp, -1));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(null));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, -1));
 	}
 
 	@Test
@@ -100,7 +98,7 @@ class ConversationsEngineTest {
 	}
 
 	private void createNewConversationsEngine(INLPComponent nlp, String contextObject) {
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp, contextObject);
+		this.myStateMachine = new ConversationsEngine(nlp, contextObject);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greet, greetingSkillStateMachine);

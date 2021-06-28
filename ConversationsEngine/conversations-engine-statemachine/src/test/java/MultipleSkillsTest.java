@@ -13,16 +13,16 @@ import interfaces.INLPComponent;
 import skills.GreetingSkill;
 import skills.RecipeSearchSkill;
 import skills.WeatherSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 class MultipleSkillsTest {
 
-	private ConversationsEngineStateMachine myStateMachine;
+	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngineStateMachine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp);
 		WeatherSkill weather = new WeatherSkill();
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		myStateMachine.addSkill(weather, weatherSkillStateMachine);
@@ -97,7 +97,7 @@ class MultipleSkillsTest {
 		answer = sendUserInput("Abbruch");
 		assertEquals("Möchten Sie den letzten Skill oder alle Skills abbrechen?", answer.get(0));
 		answer = sendUserInput("Wie ist das Wetter");
-		assertEquals("Von welchem Ort möchten Sie das Wetter wissen?", answer.get(0));
+		assertEquals("Möchten Sie den letzten Skill oder alle Skills abbrechen?", answer.get(0));
 	}
 
 	@Test

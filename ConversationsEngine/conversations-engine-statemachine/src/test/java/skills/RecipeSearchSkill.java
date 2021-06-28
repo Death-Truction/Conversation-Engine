@@ -14,6 +14,12 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} that searches for a recipe by requested ingredients
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class RecipeSearchSkill implements ISkill {
 
 	private RecipeBook recipes;
@@ -27,7 +33,7 @@ public class RecipeSearchSkill implements ISkill {
 		List<String> ingredients = getSearchIngredients(contextObject);
 		List<String> answers = new ArrayList<>();
 		if (!ingredients.isEmpty()) {
-			List<Recipe> foundRecipes = this.recipes.getRecipes(ingredients.toArray(new String[0]));
+			List<Recipe> foundRecipes = this.recipes.getRecipesWithIngredients(ingredients.toArray(new String[0]));
 			if (foundRecipes.isEmpty()) {
 				answers.add("Ich konnte leider keine passende Rezepte finden!");
 				return new SkillAnswer("FAILED", answers, false);
@@ -74,7 +80,7 @@ public class RecipeSearchSkill implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 }

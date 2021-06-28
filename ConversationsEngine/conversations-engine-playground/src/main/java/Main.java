@@ -11,12 +11,12 @@ import skills.RecipeCookingSkill;
 import skills.RecipeSearchSkill;
 import skills.RecipeSelectSkill;
 import skills.WeatherSkill;
-import statemachine.ConversationsEngineStateMachine;
+import statemachine.ConversationsEngine;
 
 public class Main {
 
 	public static void main(String[] args) {
-		ConversationsEngineStateMachine stateMachine = setUp();
+		ConversationsEngine stateMachine = setUp();
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("\u001B[36mWillkommen zum Playground der ConversationsEngine!");
 		System.out.println("Geben sie quit ein, um den Playground zu verlassen.");
@@ -34,9 +34,9 @@ public class Main {
 		System.exit(0);
 	}
 
-	private static ConversationsEngineStateMachine setUp() {
+	private static ConversationsEngine setUp() {
 		NLPComponent nlp = new NLPComponent();
-		ConversationsEngineStateMachine stateMachine = new ConversationsEngineStateMachine(nlp);
+		ConversationsEngine stateMachine = new ConversationsEngine(nlp);
 		GreetingSkill greeting = new GreetingSkill();
 		String greetingSkillSM = loadJsonFileAsString("Greeting.json");
 		stateMachine.addSkill(greeting, greetingSkillSM);

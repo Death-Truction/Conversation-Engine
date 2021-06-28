@@ -130,8 +130,7 @@ class GenerateSkillStateMachine {
 	 *                          machine
 	 * @param states            the list of {@link State States} found in the
 	 *                          skill's {@link JSONObject}
-	 * @return true if all transitions were added successfully, returns false
-	 *         otherwise
+	 * @return true if all transitions were added successfully
 	 */
 	private static boolean successfullyAddedTransitions(JSONObject skillStateMachine, List<State> states) {
 		int index = 0;
@@ -202,8 +201,7 @@ class GenerateSkillStateMachine {
 	 * 
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
-	 * @return true if the given {@link JSONObject} is valid, returns false
-	 *         otherwise
+	 * @return true if the given {@link JSONObject} is valid
 	 */
 	private static boolean validJsonSkillStateMachine(JSONObject skillStateMachine) {
 

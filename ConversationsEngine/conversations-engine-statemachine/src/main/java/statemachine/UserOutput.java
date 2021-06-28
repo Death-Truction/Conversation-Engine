@@ -1,5 +1,6 @@
 package statemachine;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,17 +23,37 @@ class UserOutput {
 	 * output
 	 */
 	static void addDefaultErrorMessage() {
-		String message = I18n.getMessage("CouldNotProcessRequest");
-		addOutputMessage(message);
+		addOutputMessageFromLocalizationKey("CouldNotProcessRequest");
 	}
 
 	/**
-	 * Adds a message to the user output
+	 * Adds a message to the user output from the localization bundle
 	 * 
-	 * @param message
+	 * @param localizationKey the localization key for the message
 	 */
-	static void addOutputMessage(String message) {
+	static void addOutputMessageFromLocalizationKey(String localizationKey) {
+		String message = I18n.getMessage(localizationKey);
 		nextOutput.add(message);
+	}
+
+	/**
+	 * Adds a message to the user output from the localization bundle with the given
+	 * arguments
+	 * 
+	 * @param localizationKey the localization key for the message
+	 */
+	static void addOutputMessageFromLocalizationKey(String localizationKey, Object... args) {
+		String message = I18n.getMessage(localizationKey);
+		nextOutput.add(MessageFormat.format(message, args));
+	}
+
+	/**
+	 * Adds a question to the user output
+	 * 
+	 * @param question the question to be asked of the user
+	 */
+	static void addOutputQuestion(String question) {
+		nextOutput.add(question);
 	}
 
 	/**

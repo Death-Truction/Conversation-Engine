@@ -10,6 +10,12 @@ import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
+/**
+ * A {@link ISkill skill} created only for test coverage
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 public class WeatherSkillWithEmptyResponseAndQuestions implements ISkill {
 
 	public WeatherSkillWithEmptyResponseAndQuestions() {
@@ -31,7 +37,7 @@ public class WeatherSkillWithEmptyResponseAndQuestions implements ISkill {
 	}
 
 	@Override
-	public void abort() {
+	public void reset() {
 		// nothing to do
 	}
 

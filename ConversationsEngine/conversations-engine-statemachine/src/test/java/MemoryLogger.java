@@ -2,6 +2,12 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 
+/**
+ * A simple logger, that stores all logging messages in a list
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 class MemoryLogger extends ListAppender<ILoggingEvent> {
 
 	void reset() {
