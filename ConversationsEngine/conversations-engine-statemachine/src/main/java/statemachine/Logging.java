@@ -60,41 +60,12 @@ class Logging {
 	}
 
 	/**
-	 * Log a message on INFO level with the DeveloperLogger
-	 * 
-	 * @param message the message to be logged
-	 */
-	static void info(String message) {
-		debugLogger.info(message);
-	}
-
-	/**
-	 * Log a message with arguments on INFO level with the DeveloperLogger
-	 * 
-	 * @param message the message to be logged
-	 * @param args    the arguments for the message
-	 */
-	static void info(String message, Object... args) {
-		debugLogger.info(message, args);
-	}
-
-	/**
 	 * Log a message on WARN level with the DeveloperLogger
 	 * 
 	 * @param message the message to be logged
 	 */
 	static void warn(String message) {
 		debugLogger.warn(message);
-	}
-
-	/**
-	 * Log a message with arguments on WARN level with the DeveloperLogger
-	 * 
-	 * @param message the message to be logged
-	 * @param args    the arguments for the message
-	 */
-	static void warn(String message, Object... args) {
-		debugLogger.warn(message, args);
 	}
 
 	/**

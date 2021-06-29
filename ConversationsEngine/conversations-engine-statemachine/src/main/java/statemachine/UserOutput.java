@@ -1,6 +1,5 @@
 package statemachine;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +42,8 @@ class UserOutput {
 	 * @param localizationKey the localization key for the message
 	 */
 	static void addOutputMessageFromLocalizationKey(String localizationKey, Object... args) {
-		String message = I18n.getMessage(localizationKey);
-		nextOutput.add(MessageFormat.format(message, args));
+		String message = I18n.getMessage(localizationKey, args);
+		nextOutput.add(message);
 	}
 
 	/**

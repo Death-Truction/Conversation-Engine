@@ -99,8 +99,8 @@ class SkillStateMachine {
 			return null;
 		}
 		if (answer.getTransitionTrigger() == null || answer.getTransitionTrigger().isBlank()) {
-			Logging.error("The trigger in the answer of the skill {}, for the intent {}, is null or empty", this.name,
-					intent);
+			Logging.error("The trigger in the answer of the skill {}, for the intent {}, is null or empty",
+					this.name, intent);
 			return null;
 		}
 		if (!this.enteredNextStateSuccessfully(answer.getTransitionTrigger())) {

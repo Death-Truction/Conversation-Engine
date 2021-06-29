@@ -68,9 +68,9 @@ public class ConversationsEngine {
 			throw new IllegalArgumentException("INLPComponent is null");
 		}
 
-		if (timeoutInSeconds < 0) {
-			Logging.error("Timeout value is negative");
-			throw new IllegalArgumentException("Timeout is negative");
+		if (timeoutInSeconds <= 0) {
+			Logging.error("Timeout value must be greater than 0");
+			throw new IllegalArgumentException("Timeout value must be greater than 0");
 		}
 		State defaultState = new State("defaultState");
 		State sleepState = new State("sleepState");
@@ -90,13 +90,23 @@ public class ConversationsEngine {
 		this.wasLastQuestionReturnToPreviousSkill = false;
 		this.closed = false;
 		this.timeoutInSeconds = timeoutInSeconds;
+		I18n.setLanguage(new Locale("de", "DE"));
+		// the list of intents the ConversationsEngine uses itself (as trigger words)
+		List<String> triggerIntents = new ArrayList<>();
+		triggerIntents.add("abort");
+		triggerIntents.add("last");
+		triggerIntents.add("all");
+		triggerIntents.add("yes");
+		triggerIntents.add("no");
+		this.nlpComponent.addUsedIntents(triggerIntents);
 		this.timer = new Timer();
 		scheduleNewTimeoutTask();
-		I18n.setLanguage(new Locale("de", "DE"));
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object
+	 * Creates a new {@link ConversationsEngine} object with a default timeout of
+	 * {@value ConversationsEngine#DEFAULTTIMEOUTVALUE} seconds and an empty context
+	 * object
 	 * 
 	 * @param nlpComponent the NLPComponent that handles the user input
 	 */
@@ -105,7 +115,7 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object
+	 * Creates a new {@link ConversationsEngine} object with an empty context object
 	 * 
 	 * @param nlpComponent     the NLPComponent that handles the user input
 	 * @param timeoutInSeconds the number of seconds after which the
@@ -118,7 +128,8 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object
+	 * Creates a new {@link ConversationsEngine} object with a default timeout of
+	 * {@value ConversationsEngine#DEFAULTTIMEOUTVALUE} seconds
 	 * 
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
@@ -157,6 +168,15 @@ public class ConversationsEngine {
 			logIllegalAccess();
 			return;
 		}
+		if (skill == null) {
+			Logging.error("The skill to add to the ConversationsEngine is null");
+			return;
+		}
+
+		if (jsonStateMachine.isBlank()) {
+			Logging.error("The JSON-String for the skill to add to the ConversationsEngine is blank", skill);
+			return;
+		}
 		SkillStateMachine newSkillStateMachine = GenerateSkillStateMachine.fromJson(skill, jsonStateMachine,
 				nlpComponent);
 		if (newSkillStateMachine == null) {
@@ -185,8 +205,14 @@ public class ConversationsEngine {
 			logIllegalAccess();
 			return;
 		}
+		Logging.debug("Shutting down the ConversationsEngine {}", this);
 		this.timer.cancel();
 		this.closed = true;
+		if (operation == null) {
+			// TODO: throw exception?
+			Logging.warn("The consumer passed to the shutdown function was null");
+			return;
+		}
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(this.contextObject);
 		this.contextObject = new JSONObject();
@@ -194,29 +220,96 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Processes a new input and returns a list of answers
+	 * Processes a new input and returns a {@link List} of answers
 	 * 
 	 * @param input the input to process
-	 * @return a list of answers
+	 * @return a {@link List} of answers
 	 */
 	public List<String> userInput(String input) {
 		if (this.closed) {
 			logIllegalAccess();
 			return new ArrayList<>();
 		}
+		if (input == null || input.isBlank()) {
+			Logging.warn("The user input was null or blank");
+			UserOutput.addDefaultErrorMessage();
+			return UserOutput.popNextOutput();
+		}
 		Logging.userInput(input);
 		leaveSleepState();
 		if (this.wasLastQuestionSkillQuestion) {
-			this.wasLastQuestionSkillQuestion = false;
 			processSkillQuestion(input);
 		} else if (this.wasLastQuestionChooseSkill) {
-			this.wasLastQuestionChooseSkill = false;
 			processChooseSkillQuestion(input);
 		} else {
 			processNormalRequest(input);
 		}
 
 		return UserOutput.popNextOutput();
+	}
+
+	/**
+	 * Processes the input normally as a new input not relating to a question asked
+	 * previously
+	 * 
+	 * @param input the user input
+	 */
+	private void processNormalRequest(String input) {
+		processINLPAnswer(this.nlpComponent.understandInput(input, this.contextObject));
+
+	}
+
+	/**
+	 * Processes the input normally as a new input not relating to a question asked
+	 * previously
+	 * 
+	 * @param processedInput the {@link INLPAnswer} of a {@link INLPComponent}
+	 */
+	private void processINLPAnswer(INLPAnswer processedInput) {
+		if (processedInput == null) {
+			Logging.error("NLP Component's returned INLPAnswer is null");
+			UserOutput.addDefaultErrorMessage();
+			return;
+		}
+		this.newEntities = processedInput.getNewEntities();
+		List<String> intents = processedInput.getIntents();
+		Locale foundLanguage = processedInput.getInputLanguage();
+		if (foundLanguage == null) {
+			Logging.error("NLPComponent did not return a language");
+		} else {
+			I18n.setLanguage(foundLanguage);
+		}
+		// If the NLPAnswer has no result -> treat it as bad input
+		if ((this.newEntities == null || this.newEntities.isEmpty()) && (intents == null || intents.isEmpty())) {
+			UserOutput.addDefaultErrorMessage();
+			return;
+		}
+		if (intents != null && !intents.isEmpty()) {
+			// keep the correct input order for the stack/dequeue
+			Collections.reverse(intents);
+			this.pendingIntents.addAll(intents);
+			if (this.wasLastQuestionAbortQuestion || this.wasLastQuestionReturnToPreviousSkill) {
+				processSpecialQuestion();
+				return;
+			}
+			if (intents.get(0).equalsIgnoreCase("abort")) {
+				this.pendingIntents.removeLast();
+				abortRequested();
+				return;
+			}
+		}
+		evaluateNextAction();
+	}
+
+	private void processSpecialQuestion() {
+		if (this.wasLastQuestionAbortQuestion) {
+			this.wasLastQuestionAbortQuestion = false;
+			processAbortQuestion();
+		} else if (wasLastQuestionReturnToPreviousSkill) {
+			this.wasLastQuestionReturnToPreviousSkill = false;
+			processReturnToPreviousSkillQuestion();
+		}
+
 	}
 
 	/**
@@ -286,92 +379,17 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Processes the input normally as a new input not relating to a question asked
-	 * previously
-	 * 
-	 * @param input the user input
-	 */
-	private void processNormalRequest(String input) {
-		processINLPAnswer(this.nlpComponent.understandInput(input, this.contextObject));
-
-	}
-
-	/**
-	 * Processes the input normally as a new input not relating to a question asked
-	 * previously
-	 * 
-	 * @param processedInput the {@link INLPAnswer} of a {@link INLPComponent}
-	 */
-	private void processINLPAnswer(INLPAnswer processedInput) {
-		if (processedInput == null) {
-			Logging.error("NLP Component's returned INLPAnswer is null");
-			UserOutput.addDefaultErrorMessage();
-			return;
-		}
-		this.newEntities = processedInput.getNewEntities();
-		List<String> intents = processedInput.getIntents();
-		Locale foundLanguage = processedInput.getInputLanguage();
-		if (foundLanguage == null) {
-			Logging.error("NLPComponent did not return a language");
-		} else {
-			I18n.setLanguage(foundLanguage);
-		}
-
-		// check whether the nlp component edited the contextObject wrong
-		if (this.contextObject == null) {
-			Logging.error("NLPComponent returned null as context object");
-			UserOutput.addDefaultErrorMessage();
-			return;
-		}
-		// If the NLPAnswer has no result -> treat it as bad input
-		if ((this.newEntities == null || this.newEntities.isEmpty()) && (intents == null || intents.isEmpty())) {
-			UserOutput.addDefaultErrorMessage();
-			return;
-		}
-		if (intents != null && !intents.isEmpty()) {
-			// keep the correct input order for the stack/dequeue
-			Collections.reverse(intents);
-			this.pendingIntents.addAll(intents);
-			if (this.wasLastQuestionAbortQuestion || this.wasLastQuestionReturnToPreviousSkill) {
-				processSpecialQuestion();
-				return;
-			}
-			if (intents.get(0).equalsIgnoreCase("abort")) {
-				this.pendingIntents.removeLast();
-				abortRequested();
-				return;
-			}
-		}
-		evaluateNextAction();
-	}
-
-	private void processSpecialQuestion() {
-		if (this.wasLastQuestionAbortQuestion) {
-			this.wasLastQuestionAbortQuestion = false;
-			processAbortQuestion();
-		} else if (wasLastQuestionReturnToPreviousSkill) {
-			this.wasLastQuestionReturnToPreviousSkill = false;
-			processReturnToPreviousSkillQuestion();
-		}
-
-	}
-
-	/**
 	 * Tries to process the input as an answer to a skill question. If the question
 	 * was not answered, the corresponding skill will have to ask the question again
 	 * 
 	 * @param input the input to process
 	 */
 	private void processSkillQuestion(String input) {
+		this.wasLastQuestionSkillQuestion = false;
 		String entityName = "";
 		INLPAnswer processedInput;
 		entityName = this.pendingSkillQuestions.getTopEntity(this.currentSkillStateMachine.getName());
 		processedInput = this.nlpComponent.understandInput(input, entityName, this.contextObject);
-		if (processedInput == null) {
-			Logging.error("NLP Component's returned INLPAnswer is null");
-			UserOutput.addDefaultErrorMessage();
-			return;
-		}
 		// Remove last asked question. If the question was not answered, then the
 		// corresponding skill will have to ask the same question again
 		this.pendingSkillQuestions.removeTopQuestionAndEntity(this.currentSkillStateMachine.getName());
@@ -389,8 +407,8 @@ public class ConversationsEngine {
 	 */
 	private void processChooseSkillQuestion(String input) {
 		// match input to possible skills to choose from
-		String nextSkill = this.possibleSkillsForChooseSkillQuestion.stream().filter(input::equals).findFirst()
-				.orElse("");
+		String nextSkill = this.possibleSkillsForChooseSkillQuestion.stream().filter(input::equalsIgnoreCase)
+				.findFirst().orElse("");
 
 		if (nextSkill.isEmpty()) {
 			Logging.debug(
@@ -398,6 +416,7 @@ public class ConversationsEngine {
 					this.possibleSkillsForChooseSkillQuestion, input);
 			askChooseSkillQuestion();
 		} else {
+			this.wasLastQuestionChooseSkill = false;
 			final String skillName = nextSkill;
 			leaveCurrentSkillStateMachine();
 			this.currentSkillStateMachine = this.allSkillStateMachines.stream()
@@ -407,37 +426,32 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Tries to process the next {@link #pendingIntents intent}
-	 * 
-	 * @return true if successfully
+	 * Processes the next {@link #pendingIntents intent}
+	 *
 	 */
-	private boolean processNextIntentSuccessfully() {
+	private void processNextIntent() {
 		String intent = pendingIntents.peekLast();
 		Logging.debug("Processing the intent '{}'", intent);
 		this.lastIntent = intent;
 		SkillStateMachine nextSkillStateMachine = getNextSkillStateMachine(intent);
 		if (nextSkillStateMachine == null) {
-			return false;
+			return;
 		}
 		this.currentSkillStateMachine = nextSkillStateMachine;
 
 		ISkillAnswer answer = this.currentSkillStateMachine.execute(intent, this.contextObject, this.newEntities);
 		if (answer == null) {
 			UserOutput.addDefaultErrorMessage();
-			return false;
-		}
-		// check whether the skill edited the contextObject wrong
-		if (this.contextObject == null) {
-			Logging.error("The skill {} returned null as context object", this.currentSkillStateMachine.getName());
+			return;
 		}
 
 		this.processSkillAnswer(answer);
 		if (hasSkillStateMachineEnded() && this.currentSkillStateMachine != null) {
 			wasLastQuestionReturnToPreviousSkill = true;
 			askContinueLastSkill();
-			return false;
+			return;
 		}
-		return true;
+		evaluateNextAction();
 	}
 
 	/**
@@ -478,28 +492,24 @@ public class ConversationsEngine {
 	 */
 	private void evaluateNextAction() {
 
-		// a skill returned question or a choose skill question is about to be asked
-		if (this.wasLastQuestionChooseSkill || this.wasLastQuestionSkillQuestion) {
-			return;
-		}
-		if (!this.pendingIntents.isEmpty() && !this.lastIntent.equals(this.pendingIntents.peekLast())
-				&& !processNextIntentSuccessfully()) {
-			return;
-		}
-		if (this.currentSkillStateMachine == null
-				|| this.pendingSkillQuestions.getNumberOfQuestions(this.currentSkillStateMachine.getName()) == 0) {
-			if (this.pendingIntents.isEmpty() || !processNextIntentSuccessfully()) {
-				return;
-			}
-		} else {
+		// if the intent is still the same and the skill for the intent has questions
+		// left to ask of the user
+		if (!this.pendingIntents.isEmpty() && this.lastIntent.equals(this.pendingIntents.peekLast())
+				&& this.currentSkillStateMachine != null
+				&& this.pendingSkillQuestions.getNumberOfQuestions(this.currentSkillStateMachine.getName()) > 0) {
 			askNextQuestion();
+			return;
+
 		}
-		evaluateNextAction();
+
+		if (!this.pendingIntents.isEmpty()) {
+			processNextIntent();
+		}
 	}
 
 	/**
-	 * If {@link #lastUsedSkillStateMachine} is null, then pipeline will be
-	 * {@link #clearPipeline cleared} <br>
+	 * If {@link #lastUsedSkillStateMachine} is null, then the {@link #clearPipeline
+	 * pipeline will be cleared} <br>
 	 * If not then an abort question will be asked
 	 */
 	private void abortRequested() {

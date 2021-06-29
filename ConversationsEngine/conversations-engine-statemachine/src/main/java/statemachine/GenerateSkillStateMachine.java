@@ -69,7 +69,8 @@ class GenerateSkillStateMachine {
 			hasErrors = true;
 		}
 		if (endState == null) {
-			Logging.error("Could not find the defined endAt state {} in the list of all defined states", endStateName);
+			Logging.error("Could not find the defined endAt state {} in the list of all defined states",
+					endStateName);
 			hasErrors = true;
 		}
 
@@ -139,13 +140,13 @@ class GenerateSkillStateMachine {
 			JSONObject transition = (JSONObject) t;
 			State source = getStateByName(transition.getString("source"), states);
 			if (source == null) {
-				Logging.error("Cannot find the source state \"{}\" in transition #{}", transition.getString("source"),
+				Logging.error("Cannot find the source state {} in transition #{}", transition.getString("source"),
 						index);
 				noErrors = false;
 			}
 			State target = getStateByName(transition.getString("target"), states);
 			if (target == null) {
-				Logging.error("Cannot find the target state \"{}\" in transition #{}", target, index);
+				Logging.error("Cannot find the target state {} in transition #{}", target, index);
 				noErrors = false;
 			}
 			String trigger = transition.getString("trigger");
