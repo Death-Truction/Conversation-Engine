@@ -1,0 +1,64 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "MissingIngredients"
+		},
+		{
+			"name": "Cooking"
+		}
+		,
+		{
+			"name": "End"
+		}
+	],	
+	"transitions": [
+		{
+			"source": "Start",
+			"target": "MissingIngredients",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "FAILED"
+		},
+		{
+			"source": "Start",
+			"target": "Cooking",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "MissingIngredients",
+			"target": "Cooking",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "MissingIngredients",
+			"target": "MissingIngredients",
+			"trigger": "STAY"
+		},		
+		{
+			"source": "MissingIngredients",
+			"target": "End",
+			"trigger": "FAILED"
+		},
+		{
+			"source": "Cooking",
+			"target": "Cooking",
+			"trigger": "STAY"
+		},
+		{
+			"source": "Cooking",
+			"target": "End",
+			"trigger": "SUCCESS"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "RecipeCookingSkill",
+	"usedEntities": [],
+	"usedIntents": []
+}

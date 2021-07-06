@@ -1,0 +1,37 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "Mid"
+		},
+		{
+		}
+	],	
+	"transitions": [
+		{
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "Mid",
+			"target": "End"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "RecipeSkill",
+	"usedEntities": [
+		"recipeSearchIngredients", 
+		"ingredients"
+	],
+	"usedIntents": [
+		"recipeSearch",
+		"recipeSelect"
+	]
+}

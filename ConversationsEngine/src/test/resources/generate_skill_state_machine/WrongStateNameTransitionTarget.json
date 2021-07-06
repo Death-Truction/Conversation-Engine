@@ -1,0 +1,46 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "Mid"
+		},
+		{
+			"name": "End"
+		}
+	],	
+	"transitions": [
+		{
+			"source": "Start",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "FAILED"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "Mid",
+			"target": "w",
+			"trigger": "SUCCESS"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "RecipeSkill",
+	"usedEntities": [
+		"recipeSearchIngredients", 
+		"ingredients"
+	],
+	"usedIntents": [
+		"recipeSearch",
+		"recipeSelect"
+	]
+}

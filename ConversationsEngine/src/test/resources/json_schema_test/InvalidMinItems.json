@@ -1,0 +1,19 @@
+{
+	"states": [
+		
+	],	
+	"transitions": [
+		
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "RecipeSkill",
+	"usedEntities": [
+		"recipeSearchIngredients", 
+		"ingredients"
+	],
+	"usedIntents": [
+		"recipeSearch",
+		"recipeSelect"
+	]
+}

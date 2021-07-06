@@ -1,0 +1,50 @@
+{
+	"states": [
+		{
+			"name": "Start"
+		},
+		{
+			"name": "Mid"
+		},
+		{
+			"name": "Mid"
+		}
+	],	
+	"transitions": [
+		{
+			"source": "Start",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Start",
+			"target": "End",
+			"trigger": "SUCCESS"
+		},
+		{
+			"source": "Mid",
+			"target": "Mid",
+			"trigger": "MISSING_ENTITIES"
+		},
+		{
+			"source": "Mid",
+			"target": "End",
+			"trigger": "SUCCESS"
+		}
+	],
+	"startAt": "Start",
+	"endAt": "End",
+	"name": "WeatherSkill",
+	"usedEntities" : [
+		"recipeSearch.ingredients",
+		"ingredients"
+	],
+	"usedIntents": [
+		"weather"
+	]
+}

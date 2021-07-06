@@ -1,0 +1,82 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "SkillStateMachine",
+	"description": "A Skill State Machine",
+	"$defs": {
+		"state": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": ["name"]
+		},
+		"transition": {
+			"type": "object",
+			"properties": {
+				"source": {
+					"type": "string"
+				},
+				"target": {
+					"type": "string"
+				},
+				"trigger": {
+					"type": "string"
+				}
+			},
+			"required": ["source", "target", "trigger"]
+		}
+	},
+	
+	"type": "object",
+	
+	"properties": {
+		"states": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/state"
+			},
+			"minItems": 2,
+			"uniqueItems": true
+		},
+		"transitions": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/transition"
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		},
+		"startAt": {
+			"description": "The name of the starting state",
+			"type": "string"
+		},
+		"endAt": {
+			"description": "The name of the ending state",
+			"type": "string"
+		},
+		"name": {
+			"description": "The name skill",
+			"type": "string"
+		},
+		"usedEntities": {
+			"description": "the entities, that the skill uses",
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"uniqueItems": true			
+		},
+		"usedIntents": {
+			"description": "the intents the skill can execute",
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"uniqueItems": true
+		}
+			
+	},
+	"required": ["states", "transitions", "startAt", "endAt", "name", "usedEntities", "usedIntents"]
+}
