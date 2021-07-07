@@ -121,4 +121,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 [issues-shield]: https://img.shields.io/github/issues/death-truction/ConversationsEngine.svg?style=for-the-badge
 [issues-url]: https://github.com/death-truction/ConversationsEngine/issues
 [license-shield]: https://img.shields.io/github/license/death-truction/ConversationsEngine.svg?style=for-the-badge
-[license-url]: https://github.com/death-truction/ConversationsEngine/blob/master/LICENSE
+[license-url]: https://github.com/death-truction/ConversationsEngine/blob/main/LICENSE
