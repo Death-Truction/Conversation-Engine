@@ -85,7 +85,6 @@ class SkillStateMachine {
 	 * 
 	 * @param intent        the intent to execute
 	 * @param contextObject the current context object of the conversations engine
-	 * @param newEntities   the new entities returned by the NLP-Component
 	 * @return a {@link ISkillAnswer} from the corresponding skill or null if an
 	 *         error occurred
 	 */

@@ -40,6 +40,7 @@ class UserOutput {
 	 * arguments
 	 * 
 	 * @param localizationKey the localization key for the message
+	 * @param args            the arguments for the message formatting
 	 */
 	static void addOutputMessageFromLocalizationKey(String localizationKey, Object... args) {
 		String message = I18n.getMessage(localizationKey, args);
@@ -58,7 +59,7 @@ class UserOutput {
 	/**
 	 * Adds a list of messages to the user output
 	 * 
-	 * @param messages
+	 * @param messages a {@link List} of messages to add to the user output
 	 */
 	static void addOutputMessages(List<String> messages) {
 		nextOutput.addAll(messages);

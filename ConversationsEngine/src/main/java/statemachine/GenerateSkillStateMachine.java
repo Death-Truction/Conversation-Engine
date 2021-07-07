@@ -47,7 +47,10 @@ class GenerateSkillStateMachine {
 			return null;
 		}
 
-		if (!validJsonSkillStateMachine(skillStateMachine)) {
+		try {
+			validJsonSkillStateMachine(skillStateMachine);
+		} catch (ValidationException ex) {
+			Logging.error("Invalid SkillStateMachine JSON format: {}", buildExceptionString(ex));
 			return null;
 		}
 
@@ -99,7 +102,7 @@ class GenerateSkillStateMachine {
 	 */
 	private static List<String> getUsedEntities(JSONObject skillStateMachine) {
 		JSONArray entitiesArray = skillStateMachine.getJSONArray("usedEntities");
-		List<String> usedEntities = new ArrayList<>();
+		List<String> usedEntities = new ArrayList<>(entitiesArray.length());
 		for (int i = 0; i < entitiesArray.length(); i++) {
 			usedEntities.add(entitiesArray.getString(i));
 		}
@@ -115,7 +118,7 @@ class GenerateSkillStateMachine {
 	 */
 	private static List<String> getUsedIntents(JSONObject skillStateMachine) {
 		JSONArray intentsArray = skillStateMachine.getJSONArray("usedIntents");
-		List<String> usedIntents = new ArrayList<>();
+		List<String> usedIntents = new ArrayList<>(intentsArray.length());
 		for (int i = 0; i < intentsArray.length(); i++) {
 			usedIntents.add(intentsArray.getString(i));
 		}
@@ -187,7 +190,7 @@ class GenerateSkillStateMachine {
 	 * @return the {@link State} corresponding to the given name or null if the
 	 *         {@link State} was not found
 	 */
-	private static State getStateByName(String name, List<State> states) {
+	private static State getStateByName(String name, Iterable<State> states) {
 		for (State state : states) {
 			if (state.getName().equals(name)) {
 				return state;
@@ -202,9 +205,9 @@ class GenerateSkillStateMachine {
 	 * 
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
-	 * @return true if the given {@link JSONObject} is valid
+	 * @throws ValidationException if the JSON-Object is invalid
 	 */
-	private static boolean validJsonSkillStateMachine(JSONObject skillStateMachine) {
+	private static void validJsonSkillStateMachine(JSONObject skillStateMachine) throws ValidationException {
 
 		// load JSON file to use as validation schema
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -212,14 +215,7 @@ class GenerateSkillStateMachine {
 				new JSONTokener(classLoader.getResourceAsStream("SkillStateMachine_Schema.json")));
 
 		Schema schema = SchemaLoader.load(jsonSchema);
-		try {
-			schema.validate(skillStateMachine);
-		} catch (ValidationException ex) {
-			Logging.error("Invalid SkillStateMachine JSON format: {}", buildExceptionString(ex));
-			return false;
-		}
-
-		return true;
+		schema.validate(skillStateMachine);
 
 	}
 
@@ -237,7 +233,7 @@ class GenerateSkillStateMachine {
 			errorMessage.append(buildExceptionString(ex));
 		}
 		if (validationException.getCausingExceptions().isEmpty()) {
-			errorMessage.append("\n");
+			errorMessage.append('\n');
 			errorMessage.append(validationException.getMessage());
 		}
 		return errorMessage.toString();

@@ -19,7 +19,7 @@ public interface ISkill {
 	 * @param currentState the current state of the skill
 	 * @return true if the skill can execute the given intent
 	 */
-	public boolean canExecute(String intent, String currentState);
+	boolean canExecute(String intent, String currentState);
 
 	/**
 	 * Executes the given intent
@@ -30,11 +30,11 @@ public interface ISkill {
 	 * @param currentState  the current state of the skill
 	 * @return a new {@link ISkillAnswer}
 	 */
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState);
+	ISkillAnswer execute(String intent, JSONObject contextObject, String currentState);
 
 	/**
 	 * Resets the skill. This is usually required when the user aborts a request
 	 */
-	public void reset();
+	void reset();
 
 }

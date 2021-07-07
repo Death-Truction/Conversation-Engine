@@ -4,6 +4,12 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Utility class for handling the localization
+ * 
+ * @author Marcel Engelmann
+ *
+ */
 class I18n {
 
 	private static ResourceBundle bundle;

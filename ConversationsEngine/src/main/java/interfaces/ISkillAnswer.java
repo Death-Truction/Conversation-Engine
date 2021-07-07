@@ -21,7 +21,7 @@ public interface ISkillAnswer {
 	 * @return the transition trigger that defines in which state the skill is
 	 *         supposed to transition to
 	 */
-	public String getTransitionTrigger();
+	String getTransitionTrigger();
 
 	/**
 	 * Returns a {@link Map} of questions that are supposed to be asked of the user.
@@ -32,14 +32,14 @@ public interface ISkillAnswer {
 	 *         This Map has the format: &lt;entityName, question&gt;, where the
 	 *         entityName defines the entity that is supposed to be filled
 	 */
-	public Map<String, String> requiredQuestionsToBeAnswered();
+	Map<String, String> requiredQuestionsToBeAnswered();
 
 	/**
 	 * Returns a {@link List list} of answers that are all returned back to the user
 	 * 
 	 * @return a {@link List list} of answers that are all returned back to the user
 	 */
-	public List<String> answers();
+	List<String> answers();
 
 	/**
 	 * If the skill's state machine is supposed to transition from one state to
@@ -48,6 +48,6 @@ public interface ISkillAnswer {
 	 * @return true to skip the response to the user and rerun the skill (after the
 	 *         transition to the next state)
 	 */
-	public boolean skipUserOutput();
+	boolean skipUserOutput();
 
 }

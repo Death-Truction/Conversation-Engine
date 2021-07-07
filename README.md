@@ -50,32 +50,29 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-Here's a blank template to get started:
+TODO:
 
 
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* Java
+#### <b>Java</b>
 
-  Choose one of the following options:
+<i>To install Java you can choose one of the following options</i>
 
-    * OpenJDK
-    
-      Please visit https://openjdk.java.net/install/ for installation instructions
+  * OpenJDK
+  
+    Please visit https://openjdk.java.net/install/ for installation instructions
 
-    * Oracle
+  * Oracle
 
-      Please visit https://docs.oracle.com/en/java/javase/13/install/overview-jdk-installation.html for installation instructions
-* Maven
+    Please visit https://docs.oracle.com/en/java/javase/13/install/overview-jdk-installation.html for installation instructions
+#### <b>Maven</b>
 
-  Please visit https://maven.apache.org/install.html for installation instructions
+  * Please visit https://maven.apache.org/install.html for installation instructions
 
 ### Installation
 
@@ -83,13 +80,35 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/death-truction/ConversationsEngine.git
    ```
-2. TODO:
+2. Create the Package
+   ```sh
+   mvn clean package
+   ```
+3. Install the package to your local maven repository <b>(replace the version number with the latest release)</b>
+   ```sh
+   mvn install:install-file -Dfile=target/conversations-engine-1.0.0.jar -DpomFile=pom.xml -Djavadoc=target/conversations-engine-1.0.0-javadoc.jar
+   ```
 
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
+1. To use the Conversations-Engine Framework simply include the installed dependency in your pom <b>(replace the version number with the latest release)</b>
+    ```xml
+    ...
+      <dependencies>
+        ...
+        <dependency>
+          <groupId>de.dai-labor</groupId>
+          <artifactId>conversations-engine</artifactId>
+          <version>1.0.0</version>
+        </dependency>
+        ...
+      </dependencies>
+      ...
+    ```
+## Documentation
+* [Overview](https://death-truction.github.io/ConversationsEngine/index.html)
+* [Javadoc](https://death-truction.github.io/ConversationsEngine/apidocs/index.html)
 
 ## Roadmap
 
@@ -98,13 +117,11 @@ See the [open issues](https://github.com/death-truction/ConversationsEngine/issu
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [`License`][license-url] for more information.
 
-## Used Dependencies
+## [Used Dependencies](https://death-truction.github.io/ConversationsEngine/dependencies.html)
 
-* [JSON-Java](https://github.com/stleary/JSON-java)
-* [JSON Schema Validator](https://github.com/everit-org/json-schema)
-* [SLF4J](https://github.com/qos-ch/slf4j)
+## [Used Plugins](https://death-truction.github.io/ConversationsEngine/plugins.html)
 
 ## Acknowledgements
 

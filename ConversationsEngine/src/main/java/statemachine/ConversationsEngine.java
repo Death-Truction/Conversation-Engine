@@ -61,6 +61,8 @@ public class ConversationsEngine {
 	 *                          interaction.
 	 * @param jsonContextObject the contextObject as JSON-String to start the
 	 *                          {@link ConversationsEngine} with
+	 * @throws IllegalArgumentException if the {@link INLPComponent} is null or the
+	 *                                  timeout value is less than 1
 	 */
 	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, String jsonContextObject)
 			throws IllegalArgumentException {
@@ -106,8 +108,7 @@ public class ConversationsEngine {
 
 	/**
 	 * Creates a new {@link ConversationsEngine} object with a default timeout of
-	 * {@value ConversationsEngine#DEFAULTTIMEOUTVALUE} seconds and an empty context
-	 * object
+	 * 300 seconds and an empty context object
 	 * 
 	 * @param nlpComponent the NLPComponent that handles the user input
 	 */
@@ -130,7 +131,7 @@ public class ConversationsEngine {
 
 	/**
 	 * Creates a new {@link ConversationsEngine} object with a default timeout of
-	 * {@value ConversationsEngine#DEFAULTTIMEOUTVALUE} seconds
+	 * 300 seconds
 	 * 
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
@@ -292,7 +293,7 @@ public class ConversationsEngine {
 				processSpecialQuestion();
 				return;
 			}
-			if (intents.get(0).equalsIgnoreCase("abort")) {
+			if ("abort".equalsIgnoreCase(intents.get(0))) {
 				this.pendingIntents.removeLast();
 				abortRequested();
 				return;
@@ -323,20 +324,20 @@ public class ConversationsEngine {
 	 * If the answer was to abort all skills, then the pipeline will be
 	 * {@link #clearPipeline cleared} <br>
 	 * If the abort question was not answered, the input will be processed
-	 * {@link #checkNormalRequest}
+	 * {@link #processNormalRequest(String)}
 	 * 
 	 * @param intent the intent to process
 	 */
 	private void processAbortQuestion() {
 		String intent = this.pendingIntents.peekLast();
-		if (intent.equalsIgnoreCase("last")) {
+		if ("last".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
 			resetCurrentSkillStateMachine(false);
 			UserOutput.addOutputMessageFromLocalizationKey("BackToSkill", this.currentSkillStateMachine.getName());
 			evaluateNextAction();
 			return;
 		}
-		if (intent.equalsIgnoreCase("all")) {
+		if ("all".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
 			this.clearPipeline();
 			return;
@@ -364,13 +365,13 @@ public class ConversationsEngine {
 	 */
 	private void processReturnToPreviousSkillQuestion() {
 		String intent = this.pendingIntents.peekLast();
-		if (intent.equalsIgnoreCase("Yes")) {
+		if ("Yes".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
 			UserOutput.addOutputMessageFromLocalizationKey("BackToSkill", this.currentSkillStateMachine.getName());
 			evaluateNextAction();
 			return;
 		}
-		if (intent.equalsIgnoreCase("No")) {
+		if ("No".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
 			resetCurrentSkillStateMachine(true);
 			return;
@@ -446,7 +447,8 @@ public class ConversationsEngine {
 		}
 
 		this.processSkillAnswer(answer);
-		if (hasSkillStateMachineEnded() && this.currentSkillStateMachine != null) {
+		boolean skillMachineEnded = this.hasSkillStateMachineEnded();
+		if (skillMachineEnded && this.currentSkillStateMachine != null) {
 			wasLastQuestionReturnToPreviousSkill = true;
 			askContinueLastSkill();
 			return;
@@ -470,7 +472,7 @@ public class ConversationsEngine {
 			return;
 		}
 		if (skillAnswer.requiredQuestionsToBeAnswered() == null
-				|| skillAnswer.requiredQuestionsToBeAnswered().size() == 0) {
+				|| skillAnswer.requiredQuestionsToBeAnswered().isEmpty()) {
 			// remove last processed intent
 			this.pendingIntents.removeLast();
 			// no skill answer and no skill question
@@ -494,8 +496,8 @@ public class ConversationsEngine {
 
 		// if the intent is still the same and the skill for the intent has questions
 		// left to ask of the user
-		if (!this.pendingIntents.isEmpty() && this.lastIntent.equals(this.pendingIntents.peekLast())
-				&& this.currentSkillStateMachine != null
+		if (this.currentSkillStateMachine != null && !this.pendingIntents.isEmpty()
+				&& this.lastIntent.equals(this.pendingIntents.peekLast())
 				&& this.pendingSkillQuestions.getNumberOfQuestions(this.currentSkillStateMachine.getName()) > 0) {
 			askNextQuestion();
 			return;
@@ -549,7 +551,7 @@ public class ConversationsEngine {
 		TimerTask timerTask = new TimerTask() {
 			@Override
 			public void run() {
-				if (currentState.getName().equals("defaultState")) {
+				if ("defaultState".equals(currentState.getName())) {
 					Logging.debug("Entering Sleep State");
 					currentState = currentState.getNextState("SLEEP");
 				}
@@ -566,7 +568,7 @@ public class ConversationsEngine {
 	 * will transition to the defaultState
 	 */
 	private void leaveSleepState() {
-		if (this.currentState.getName().equals("sleepState")) {
+		if ("sleepState".equals(this.currentState.getName())) {
 			Logging.debug("Leaving Sleep State");
 			this.currentState = this.currentState.getNextState("WAKEUP");
 			UserOutput.addOutputMessageFromLocalizationKey("WelcomeBack");

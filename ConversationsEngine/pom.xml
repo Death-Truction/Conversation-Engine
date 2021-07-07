@@ -128,22 +128,8 @@
 				<version>3.9.0</version>
 				<executions>
 					<execution>
-						<id>site creation after package</id>
-						<phase>package</phase>
-						<goals>
-							<goal>site</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>site creation</id>
 						<phase>site</phase>
-						<goals>
-							<goal>site</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>site deploy</id>
-						<phase>deploy-site</phase>
 						<goals>
 							<goal>site</goal>
 						</goals>
