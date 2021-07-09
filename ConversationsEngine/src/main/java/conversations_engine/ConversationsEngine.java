@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -22,8 +22,13 @@ import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
 /**
- * The ConversationsEngineStateMachine is a ChatBot-Framework to TODO: finish
- * this
+ * ConversationsEngine is a framework that is supposed to be used as a dialog
+ * management system. It is designed to simplify the creation of chatbots by
+ * combining {@link ISkill skills} and a single {@link INLPComponent
+ * NLP-Component} into an all in one system.<br>
+ * <br>
+ * The system is based on a finite state machine to create an accessible testing
+ * environment.
  * 
  * @author Marcel Engelmann
  *
@@ -151,7 +156,7 @@ public class ConversationsEngine {
 			logIllegalAccess();
 			return "";
 		}
-		if (this.currentSkillStateMachine != null)
+		if (this.currentSkillStateMachine != null && !"sleepState".equalsIgnoreCase(this.currentState.getName()))
 			return this.currentSkillStateMachine.getCurrentState().getName();
 		return this.currentState.getName();
 	}

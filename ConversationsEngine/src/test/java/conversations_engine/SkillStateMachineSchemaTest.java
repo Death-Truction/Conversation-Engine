@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

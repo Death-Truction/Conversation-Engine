@@ -17,7 +17,7 @@
   <h3 align="center">ConversationsEngine</h3>
 
   <p align="center">
-    project_description
+    A dialog management system framework
     <br />
     <br />
     <a href="https://github.com/death-truction/ConversationsEngine/issues">Report Bug</a>
@@ -55,7 +55,9 @@
 
 ## About The Project
 
-TODO:
+ConversationsEngine is a framework that is supposed to be used as a dialog management system. It is designed to simplify the creation of chatbots by combining skills and a single NLP-Component} into an all in one system.<br>
+The system is based on a finite state machine to create an accessible testing
+environment.
 
 
 ## Getting Started
@@ -90,16 +92,16 @@ To get a local copy up and running follow these steps.
    mvn clean package
    ```
 3. Install the package to your local maven repository <b>(replace the version number with the latest release)</b>
-   ```sh
-   mvn install:install-file -Dfile=target/conversations-engine-1.0.0.jar -DpomFile=pom.xml -Djavadoc=target/conversations-engine-1.0.0-javadoc.jar
-   ```
+    ```sh
+    mvn install:install-file -Dfile=target/conversations-engine-1.0.0.jar -DpomFile=pom.xml -Djavadoc=target/conversations-engine-1.0.0-javadoc.jar
+    ```
 
 ## Testing
 I created a <i>playground</i> to try the ConversationsEngine with some example skills. 
 1. To start the playground simple run the following command in your cloned github repository:
-  ```sh
-  mvn exec:java
-  ```
+    ```sh
+    mvn exec:java
+    ```
 2. These languages are currently supported for the playground:
     * German
     * English (<b><i>Coming soon</i></b>)
@@ -124,7 +126,7 @@ I created a <i>playground</i> to try the ConversationsEngine with some example s
 2. Implement the interfaces found in the interfaces package at one of the following locations:
     * [github](https://github.com/Death-Truction/ConversationsEngine/tree/main/ConversationsEngine/src/main/java/interfaces)
     * [javadocs](https://death-truction.github.io/ConversationsEngine/apidocs/interfaces/package-summary.html)
-    * <i>For an implementation example checkout the test classes</i>
+    * <i>For an implementation example checkout these test classes</i>
       * [NLPComponent](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPComponent.java)
       * [NLPAnswer](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPAnswer.java)
       * [Skill](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/skills/WeatherSkill.java)
@@ -135,12 +137,12 @@ I created a <i>playground</i> to try the ConversationsEngine with some example s
 4. Create a new ConversationsEngine object and add your NLPComponent and your skills
     ```java
     NLPComponent nlp = new NLPComponent();
-		ConversationsEngine conversationsEngine = new ConversationsEngine(nlp);
-		MySkill mySkill = new MySkill();
-		String mySkillStateMachineJsonFile = loadJsonFileAsString("MySkill.json");
-		stateMachine.addSkill(mySkill, mySkillStateMachineJsonFile);
+    ConversationsEngine conversationsEngine = new ConversationsEngine(nlp);
+    MySkill mySkill = new MySkill();
+    String mySkillStateMachineJsonFile = loadJsonFileAsString("MySkill.json");
+    stateMachine.addSkill(mySkill, mySkillStateMachineJsonFile);
     ```
-5. Now you can simply send your inputs to the ConversationsEngine
+5. Now you can simply send your inputs to the ConversationsEngine and get the answers in a List
     ```java
     List<String> answers = conversationsEngine.userInput("Hello world!");
     ```

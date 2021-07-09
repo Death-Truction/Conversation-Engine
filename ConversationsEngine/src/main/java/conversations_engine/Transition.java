@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 /**
  * Represents the transition between two {@link State States}

@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import java.text.MessageFormat;
 import java.util.Locale;

@@ -10,9 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
+import interfaces_implementation.SkillAnswer;
 
 /**
  * A {@link ISkill skill} that searches for a recipe by requested ingredients

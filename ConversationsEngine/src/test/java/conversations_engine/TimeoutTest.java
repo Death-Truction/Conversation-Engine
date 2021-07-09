@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
+import interfaces_implementation.NLPComponent;
 import skills.GreetingSkill;
 
 @Execution(ExecutionMode.CONCURRENT)

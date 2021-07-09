@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,8 +13,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import ch.qos.logback.classic.Level;
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
+import interfaces_implementation.NLPComponent;
 import skills.WeatherSkill;
 import skills.WeatherSkillWithEmptyResponseAndQuestions;
 import skills.WeatherSkillWithNullTransitionTrigger;

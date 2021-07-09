@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import java.util.ArrayList;
 import java.util.List;

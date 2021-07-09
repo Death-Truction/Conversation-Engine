@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,7 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
+import interfaces_implementation.NLPComponent;
 import skills.GreetingSkill;
 
 class GreetingSkillTest {

@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,7 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import ch.qos.logback.classic.Level;
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
+import interfaces_implementation.NLPComponent;
 import skills.WeatherSkill;
 
 @TestInstance(Lifecycle.PER_CLASS)

@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,11 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import ch.qos.logback.classic.Level;
-import data.NLPComponent;
-import data.NLPComponentEnglish;
-import data.NLPComponentUndefinedLanguage;
-import data.NLPComponentWithInvalidReturnedData;
+import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
+import interfaces_implementation.NLPComponent;
+import interfaces_implementation.NLPComponentEnglish;
+import interfaces_implementation.NLPComponentUndefinedLanguage;
+import interfaces_implementation.NLPComponentWithInvalidReturnedData;
 import skills.GreetingSkill;
 import skills.WeatherSkill;
 

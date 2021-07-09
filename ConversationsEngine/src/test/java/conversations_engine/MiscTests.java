@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import ch.qos.logback.classic.Level;
+import conversations_engine.GenerateSkillStateMachine;
+import conversations_engine.I18n;
+import conversations_engine.Logging;
+import conversations_engine.UserOutput;
 
 @DisplayName("Multiple Tests for code coverage")
 class MiscTests {

@@ -3,7 +3,7 @@ package interfaces;
 import java.util.List;
 import java.util.Map;
 
-import statemachine.ConversationsEngine;
+import conversations_engine.ConversationsEngine;
 
 /**
  * This is an interface for the ISkillAnswer that is required for the

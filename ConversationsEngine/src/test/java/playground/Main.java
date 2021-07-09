@@ -7,13 +7,13 @@ import java.util.Scanner;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
+import interfaces_implementation.NLPComponent;
 import skills.GreetingSkill;
 import skills.RecipeCookingSkill;
 import skills.RecipeSearchSkill;
 import skills.RecipeSelectSkill;
 import skills.WeatherSkill;
-import statemachine.ConversationsEngine;
 
 public class Main {
 

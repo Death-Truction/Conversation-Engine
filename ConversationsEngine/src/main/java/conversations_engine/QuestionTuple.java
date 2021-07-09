@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 /**
  * Represents a question and the corresponding entity name

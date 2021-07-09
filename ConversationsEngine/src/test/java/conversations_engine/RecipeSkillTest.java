@@ -1,4 +1,4 @@
-package statemachine;
+package conversations_engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,8 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import data.NLPComponent;
+import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
+import interfaces_implementation.NLPComponent;
 import skills.RecipeCookingSkill;
 import skills.RecipeSearchSkill;
 import skills.RecipeSelectSkill;

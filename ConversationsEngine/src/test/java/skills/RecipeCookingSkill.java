@@ -8,9 +8,9 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import data.SkillAnswer;
 import interfaces.ISkill;
 import interfaces.ISkillAnswer;
+import interfaces_implementation.SkillAnswer;
 
 /**
  * A {@link ISkill skill} that checks if all the required ingredients are
