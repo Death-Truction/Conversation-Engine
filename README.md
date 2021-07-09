@@ -41,7 +41,12 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#testing">Testing</a></li>
+    <li><a href="#documentation">Documentation</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
+    <li><a href="#used-dependencies">Used Dependencies</a></li>
+    <li><a href="#used-plugins">Used Plugins</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
@@ -89,10 +94,20 @@ To get a local copy up and running follow these steps.
    mvn install:install-file -Dfile=target/conversations-engine-1.0.0.jar -DpomFile=pom.xml -Djavadoc=target/conversations-engine-1.0.0-javadoc.jar
    ```
 
+## Testing
+I created a <i>playground</i> to try the ConversationsEngine with some example skills. 
+1. To start the playground simple run the following command in your cloned github repository:
+  ```sh
+  mvn exec:java
+  ```
+2. These languages are currently supported for the playground:
+    * German
+    * English (<b><i>Coming soon</i></b>)
+3. For a list of supported request checkout [Dokumentation der NLPKomponente und der Skills.docx](https://github.com/Death-Truction/ConversationsEngine/blob/main/Dokumentation%20der%20NLPKomponente%20und%20der%20Skills.docx)
 
 ## Usage
 
-1. To use the Conversations-Engine Framework simply include the installed dependency in your pom <b>(replace the version number with the latest release)</b>
+1. To use the ConversationsEngine Framework simply include the installed dependency in your pom <b>(replace the version number with the latest release)</b>
     ```xml
     ...
       <dependencies>
@@ -105,6 +120,29 @@ To get a local copy up and running follow these steps.
         ...
       </dependencies>
       ...
+    ```
+2. Implement the interfaces found in the interfaces package at one of the following locations:
+    * [github](https://github.com/Death-Truction/ConversationsEngine/tree/main/ConversationsEngine/src/main/java/interfaces)
+    * [javadocs](https://death-truction.github.io/ConversationsEngine/apidocs/interfaces/package-summary.html)
+    * <i>For an implementation example checkout the test classes</i>
+      * [NLPComponent](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPComponent.java)
+      * [NLPAnswer](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPAnswer.java)
+      * [Skill](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/skills/WeatherSkill.java)
+      * [SkillAnswer](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/SkillAnswer.java)
+3. Create a valid state machine JSON-File 
+    * by using my GUI (<b><i>Coming soon</i></b>)
+    * Create your own JSON-File by following [this JSON-Schema](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/main/resources/SkillStateMachine_Schema.json)
+4. Create a new ConversationsEngine object and add your NLPComponent and your skills
+    ```java
+    NLPComponent nlp = new NLPComponent();
+		ConversationsEngine conversationsEngine = new ConversationsEngine(nlp);
+		MySkill mySkill = new MySkill();
+		String mySkillStateMachineJsonFile = loadJsonFileAsString("MySkill.json");
+		stateMachine.addSkill(mySkill, mySkillStateMachineJsonFile);
+    ```
+5. Now you can simply send your inputs to the ConversationsEngine
+    ```java
+    List<String> answers = conversationsEngine.userInput("Hello world!");
     ```
 ## Documentation
 * [Overview](https://death-truction.github.io/ConversationsEngine/index.html)
