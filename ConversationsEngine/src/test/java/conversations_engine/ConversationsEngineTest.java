@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import ch.qos.logback.classic.Level;
-import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
 import interfaces_implementation.NLPComponentEnglish;
@@ -79,7 +78,7 @@ class ConversationsEngineTest {
 		INLPComponent newNlp = new NLPComponentUndefinedLanguage();
 		createNewConversationsEngine(newNlp, "{}");
 		List<String> answers = this.myStateMachine.userInput("Hi");
-		assertEquals("I'm sorry, but unfortunately I was unable to process your request.", answers.get(0));
+		assertEquals("Es tut mir leid, aber ich konnte Ihre Anfrage leider nicht bearbeiten.", answers.get(0));
 		logs.contains("The language el is not supported", Level.ERROR);
 	}
 

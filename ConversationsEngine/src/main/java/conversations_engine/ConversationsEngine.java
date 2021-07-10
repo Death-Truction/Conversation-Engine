@@ -98,7 +98,7 @@ public class ConversationsEngine {
 		this.wasLastQuestionReturnToPreviousSkill = false;
 		this.closed = false;
 		this.timeoutInSeconds = timeoutInSeconds;
-		I18n.setLanguage(new Locale("de", "DE"));
+		I18n.setDefaultLanguage(new Locale("de", "DE"));
 		// the list of intents the ConversationsEngine uses itself (as trigger words)
 		List<String> triggerIntents = new ArrayList<>();
 		triggerIntents.add("abort");

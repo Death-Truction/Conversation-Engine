@@ -63,6 +63,16 @@ class Logging {
 	 * Log a message on WARN level with the DeveloperLogger
 	 * 
 	 * @param message the message to be logged
+	 * @param args    the arguments for the message
+	 */
+	static void warn(String message, Object... args) {
+		debugLogger.warn(message, args);
+	}
+
+	/**
+	 * Log a message on WARN level with the DeveloperLogger
+	 * 
+	 * @param message the message to be logged
 	 */
 	static void warn(String message) {
 		debugLogger.warn(message);

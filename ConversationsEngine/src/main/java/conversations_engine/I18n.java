@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 class I18n {
 
 	private static ResourceBundle bundle;
+	private static Locale defaultLocale;
 
 	private I18n() throws IllegalStateException {
 		throw new IllegalStateException("Utility class");
@@ -28,7 +29,27 @@ class I18n {
 		bundle = ResourceBundle.getBundle("localization.localization", language);
 		if (!bundle.getLocale().getDisplayName().equals(language.getDisplayName())) {
 			Logging.error("The language {} is not supported.", language.toLanguageTag());
+			bundle = ResourceBundle.getBundle("localization.localization", defaultLocale);
 		}
+	}
+
+	/**
+	 * Sets the default language for the {@link ConversationsEngine}.
+	 * 
+	 * @param language the language locale to use as default
+	 */
+	static void setDefaultLanguage(Locale language) {
+		// Check weather the locale exists or not
+		if (ResourceBundle.getBundle("localization.localization", language).getLocale().getLanguage()
+				.equals(language.getLanguage())) {
+			defaultLocale = language;
+			setLanguage(defaultLocale);
+			return;
+		}
+		Logging.warn(
+				"Default language was not set! The language {} could not be found. Please make surre that the correct localization file exists.",
+				language.getLanguage());
+
 	}
 
 	/**
@@ -38,6 +59,9 @@ class I18n {
 	 * @return the message corresponding to the key
 	 */
 	static String getMessage(String key) {
+		if (bundle == null) {
+			setLanguage(defaultLocale);
+		}
 		return bundle.getString(key);
 	}
 
