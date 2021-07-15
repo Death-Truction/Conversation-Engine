@@ -1,0 +1,4 @@
+<!DOCTYPE xml>
+<?import javafx.scene.control.ScrollPane?>
+<ScrollPane fx:id="scrollPane" fx:controller="de.dai_labor.conversations_engine_gui.controllers.StateMachineDialogController" xmlns:fx="http://javafx.com/fxml">
+</ScrollPane>

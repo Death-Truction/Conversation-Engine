@@ -1,0 +1,11 @@
+#mainBorderPane_VBox {
+	-fx-background-color: green;
+}
+
+#mainBorderPane_VBox .button {
+	-fx-background-color: yellow;
+}
+
+#mainBorderPane_VBox .button:hover {
+	-fx-background-color: blue;
+}

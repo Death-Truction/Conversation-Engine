@@ -37,7 +37,7 @@ class ConversationsEngineTest {
 	@Test
 	@DisplayName("Get correct contextData after shutdown")
 	void getCorrectContextDataOnShutdown() {
-		Consumer<StringBuffer> shutdownConsumer = data -> {
+		Consumer<StringBuilder> shutdownConsumer = data -> {
 			this.contextData = data.toString();
 		};
 		this.myStateMachine.userInput("Ich habe Kartoffeln");
@@ -48,7 +48,7 @@ class ConversationsEngineTest {
 	@Test
 	@DisplayName("Get contextData and start new ConversationsEngine with the same data")
 	void restartConversationsEngineWithOldContextObject() {
-		Consumer<StringBuffer> shutdownConsumer = data -> {
+		Consumer<StringBuilder> shutdownConsumer = data -> {
 			this.contextData = data.toString();
 		};
 		List<String> answers = this.myStateMachine.userInput("Wie ist das Wetter in Berlin?");

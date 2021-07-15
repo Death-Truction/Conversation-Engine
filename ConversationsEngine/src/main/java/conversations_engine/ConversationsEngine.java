@@ -201,13 +201,13 @@ public class ConversationsEngine {
 	}
 
 	/**
-	 * Shuts this ConversationsEngine object down and returns the current context
-	 * object to the given operation
+	 * Shuts this ConversationsEngine object down and invokes the given Consumer
+	 * operation with the current context object as a StringBuilder
 	 * 
 	 * @param operation the operation to call, with the context object passed as
 	 *                  parameter, after shutting down.
 	 */
-	public void shutdown(Consumer<StringBuffer> operation) {
+	public void shutdown(Consumer<StringBuilder> operation) {
 		if (this.closed) {
 			logIllegalAccess();
 			return;
@@ -219,10 +219,10 @@ public class ConversationsEngine {
 			Logging.warn("The consumer passed to the shutdown function was null");
 			return;
 		}
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(this.contextObject);
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.contextObject);
 		this.contextObject = new JSONObject();
-		operation.accept(buffer);
+		operation.accept(sb);
 	}
 
 	/**

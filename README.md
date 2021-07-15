@@ -40,8 +40,9 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#testing">Testing</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#logging">Logging</a></li>
     <li><a href="#documentation">Documentation</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
@@ -87,17 +88,18 @@ To get a local copy up and running follow these steps.
    ```sh
    git clone https://github.com/death-truction/ConversationsEngine.git
    ```
-2. Create the Package
-   ```sh
-   mvn clean package
-   ```
+2. Change the directory to the project folder
+    ```sh
+    cd ConversationsEngine
+    ```
 3. Install the package to your local maven repository <b>(replace the version number with the latest release)</b>
     ```sh
-    mvn install:install-file -Dfile=target/conversations-engine-1.0.0.jar -DpomFile=pom.xml -Djavadoc=target/conversations-engine-1.0.0-javadoc.jar
+    mvn clean install
     ```
 
 ## Testing
-I created a <i>playground</i> to try the ConversationsEngine with some example skills. 
+
+The project includes a <i>playground</i> to try the ConversationsEngine with some example skills. 
 1. To start the playground simple run the following command in your cloned github repository:
     ```sh
     mvn exec:java
@@ -146,6 +148,11 @@ I created a <i>playground</i> to try the ConversationsEngine with some example s
     ```java
     List<String> answers = conversationsEngine.userInput("Hello world!");
     ```
+## Logging
+
+The project includes two Logging-Facades named <i>"DeveloperLogger"</i> and <i>"ConversationLogger"</i><br>
+To use the output of the loggers you have to add your own logging framework to the project and configure the loggers.<br>
+Checkout the tests of the project, which are using the logging dependency [logback](https://death-truction.github.io/ConversationsEngine/dependencies.html) with a [simple configuration](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/resources/logback.xml).
 ## Documentation
 * [Overview](https://death-truction.github.io/ConversationsEngine/index.html)
 * [Javadoc](https://death-truction.github.io/ConversationsEngine/apidocs/index.html)
