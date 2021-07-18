@@ -13,34 +13,33 @@ import java.util.Map.Entry;
  * @author Marcel Engelmann
  *
  */
-public class RecipeBook {
+public class RecipeBookEnglish {
 	private Map<String, Recipe> recipes;
 
-	private static RecipeBook instance;
+	private static RecipeBookEnglish instance;
 
 	/**
-	 * Constructor that creates a new {@link RecipeBook} object with 3 default
-	 * recipes
+	 * Constructor that creates a new {@link RecipeBookEnglish} object with 3
+	 * default recipes
 	 */
-	private RecipeBook() {
+	private RecipeBookEnglish() {
 		this.recipes = new HashMap<>();
-		this.addRecipe("Paprika mit Kartoffeln und Erbsen", new String[] { "Paprika", "Kartoffeln", "Erbsen" },
-				new String[] { "Kartoffeln schälen und kochen", "Paprika waschen und klein schneiden",
-						"Alles kochen" });
-		this.addRecipe("Brot mit Salami", new String[] { "Brot", "Salami" }, new String[] {
-				"Brot aufschneiden und Salamischeiben abschneiden", "Salami auf das Brot legen", "Essen" });
-		this.addRecipe("Paprika-Kartoffelsuppe", new String[] { "Paprika", "Kartoffeln" },
-				new String[] { "Kartoffeln schälen und kochen", "Paprika hinzugeben", "Essen" });
+		this.addRecipe("Pepper with Potatoes and Peas", new String[] { "Pepper", "Potatoes", "Peas" },
+				new String[] { "Peel and cook potatoes", "Wash and chop peppers", "Cook everything" });
+		this.addRecipe("Bread with salami", new String[] { "Bread", "Salami" },
+				new String[] { "Cut bread and slices of salami", "Put salami on the bread", "Eat" });
+		this.addRecipe("Pepper-Potatoe-Soup", new String[] { "Pepper", "Potatoes" },
+				new String[] { "Peel and cook potatoes", "add peppers", "eat" });
 	}
 
 	/**
-	 * Returns the current instance of the {@link RecipeBook}
+	 * Returns the current instance of the {@link RecipeBookEnglish}
 	 * 
-	 * @return the current instance of the {@link RecipeBook}
+	 * @return the current instance of the {@link RecipeBookEnglish}
 	 */
-	public static RecipeBook getInstance() {
+	public static RecipeBookEnglish getInstance() {
 		if (instance == null) {
-			return new RecipeBook();
+			return new RecipeBookEnglish();
 		}
 		return instance;
 	}
