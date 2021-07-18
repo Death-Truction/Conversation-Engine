@@ -109,7 +109,7 @@ public class NLPComponent implements INLPComponent {
 
 	private void addIntentsAndEntities(String input, List<String> intents, JSONObject contextObject) {
 		// if no entities were added -> try to match the trigger intents
-		if (contextObject.length() == 0) {
+		if (!this.addedNewEntities) {
 			if (input.equalsIgnoreCase("abbruch")) {
 				intents.add("abort");
 				return;

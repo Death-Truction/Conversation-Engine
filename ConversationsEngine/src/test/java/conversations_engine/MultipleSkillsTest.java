@@ -9,11 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
 import skills.GreetingSkill;
+import skills.RecipeCookingSkill;
 import skills.RecipeSearchSkill;
+import skills.RecipeSelectSkill;
 import skills.WeatherSkill;
 
 class MultipleSkillsTest {
@@ -30,6 +31,12 @@ class MultipleSkillsTest {
 		RecipeSearchSkill recipe = new RecipeSearchSkill();
 		String recipeSkillSM = TestHelperFunctions.loadJsonFileAsString("RecipeSearch.json");
 		this.myStateMachine.addSkill(recipe, recipeSkillSM);
+		RecipeSelectSkill recipeSelect = new RecipeSelectSkill();
+		String recipeSelectSM = TestHelperFunctions.loadJsonFileAsString("RecipeSelect.json");
+		this.myStateMachine.addSkill(recipeSelect, recipeSelectSM);
+		RecipeCookingSkill recipeCooking = new RecipeCookingSkill();
+		String recipeCookingSM = TestHelperFunctions.loadJsonFileAsString("RecipeCooking.json");
+		this.myStateMachine.addSkill(recipeCooking, recipeCookingSM);
 		GreetingSkill greeting = new GreetingSkill();
 		String greetingSkillSM = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greeting, greetingSkillSM);
@@ -150,6 +157,16 @@ class MultipleSkillsTest {
 		assertEquals(TestHelperFunctions.getDayTime(), answer);
 		answer = sendUserInput("Hi").get(0);
 		assertEquals("Wollen Sie mit dem Skill WeatherSkill fortfahren?", answer);
+	}
+
+	@Test
+	@DisplayName("test")
+	void test() {
+		List<String> answer = sendUserInput("Koche das Rezept Paprika-Kartoffelsuppe");
+		assertEquals("Das Rezept \"paprika-kartoffelsuppe\" wurde erfolgreich ausgewählt.", answer.get(0));
+		assertEquals("Haben Sie die Zutat Kartoffeln zu Hause?", answer.get(1));
+		answer = sendUserInput("abbruch");
+		assertEquals("Was möchten Sie als nächstes machen?", answer.get(0));
 	}
 
 	private List<String> sendUserInput(String message) {

@@ -392,9 +392,8 @@ public class ConversationsEngine {
 	 */
 	private void processSkillQuestion(String input) {
 		this.wasLastQuestionSkillQuestion = false;
-		String entityName = "";
 		INLPAnswer processedInput;
-		entityName = this.pendingSkillQuestions.getTopEntity(this.currentSkillStateMachine.getName());
+		String entityName = this.pendingSkillQuestions.getTopEntity(this.currentSkillStateMachine.getName());
 		processedInput = this.nlpComponent.understandInput(input, entityName, this.contextObject);
 		// Remove last asked question. If the question was not answered, then the
 		// corresponding skill will have to ask the same question again
@@ -428,6 +427,7 @@ public class ConversationsEngine {
 			this.currentSkillStateMachine = this.allSkillStateMachines.stream()
 					.filter(skill -> skill.getName().equals(skillName)).findFirst().orElse(null);
 			evaluateNextAction();
+			this.possibleSkillsForChooseSkillQuestion.clear();
 		}
 	}
 

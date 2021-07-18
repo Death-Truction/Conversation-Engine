@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import ch.qos.logback.classic.Level;
-import conversations_engine.ConversationsEngine;
 import interfaces_implementation.NLPComponent;
 import skills.WeatherSkill;
 
@@ -86,7 +85,7 @@ class GenerateSkillStateMachineTest {
 	@Test
 	@DisplayName("Including a 'FAILED'-Trigger")
 	void includingFailedTrigger() {
-		String jsonInput = loadJsonObject("Failedtrigger.json");
+		String jsonInput = loadJsonObject("FailedTrigger.json");
 		myStateMachine.addSkill(weather, jsonInput);
 		assertFalse(logs.contains(Level.ERROR));
 	}
