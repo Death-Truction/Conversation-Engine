@@ -7,7 +7,10 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
@@ -29,11 +32,17 @@ public class Main {
 			+ "\u001B[36m\033[3mType the corresponding number to select an action from the menu\033[0m\u001B[0m\n\n"
 			+ "\u001B[36m---- Menu ----\u001B[0m\n"
 			+ "\t\u001B[36m[1] Select language  || currently selected language: {0}\u001B[0m\n"
-			+ "\t\u001B[36m[2] Enter the playground\u001B[0m\n" + "\t\u001B[36m[3] quit\u001B[0m";
+			+ "\t\u001B[36m[2] Change the logging level  || currently selected logging level: {1}\u001B[0m\n"
+			+ "\t\u001B[36m[3] Enter the playground\u001B[0m\n" + "\t\u001B[36m[4] quit\u001B[0m";
 	private static final String languageMenuString = "\u001B[36m---- Language-Menu ----\u001B[0m\n"
 			+ "\u001B[36mCurrently selected language: {0}\u001B[0m\n" + "\t\u001B[36m[1] German | Deutsch\n"
 			+ "\t\u001B[36m[2] English | Englisch\n" + "\t\u001B[36m[3] quit\u001B[0m";
+	private static final String loggingMenuString = "\u001B[36m---- Logging-Menu ----\u001B[0m\n"
+			+ "\u001B[36mCurrently selected logging level: {0}\u001B[0m\n" + "\t\u001B[36m[1] Debug\n"
+			+ "\t\u001B[36m[2] Info\n" + "\t\u001B[36m[3] Warn\u001B[0m\n" + "\t\u001B[36m[4] Error\u001B[0m\n"
+			+ "\t\u001B[36m[5] quit\u001B[0m";
 	private static String selectedLanguage = "German";
+	private static String loggingLevel = "Debug";
 	private static Scanner scanner;
 
 	public static void main(String[] args) {
@@ -45,22 +54,55 @@ public class Main {
 
 	private static void startMenu() {
 		while (true) {
-			System.out.println(MessageFormat.format(menuString, selectedLanguage));
+			System.out.println(MessageFormat.format(menuString, selectedLanguage, loggingLevel));
 			String userInput = getNextUserInput();
 			switch (userInput) {
 			case "1":
 				languageMenu();
 				break;
 			case "2":
+				changeLoggingLevelMenu();
+				break;
+			case "3":
+				setLoggingLevel();
 				if ("German".equalsIgnoreCase(selectedLanguage)) {
 					playgroundGerman();
 				} else {
 					playgroundEnglish();
 				}
 				return;
-			case "3":
+			case "4":
 				return;
 			}
+		}
+	}
+
+	private static void setLoggingLevel() {
+		((Logger) LoggerFactory.getLogger("DeveloperLogger")).setLevel(Level.valueOf(loggingLevel));
+		((Logger) LoggerFactory.getLogger("ConversationLogger")).setLevel(Level.valueOf(loggingLevel));
+	}
+
+	private static void changeLoggingLevelMenu() {
+		while (true) {
+			System.out.println(MessageFormat.format(loggingMenuString, loggingLevel));
+			String userInput = getNextUserInput();
+			switch (userInput) {
+			case "1":
+				loggingLevel = "Debug";
+				return;
+			case "2":
+				loggingLevel = "Info";
+				return;
+			case "3":
+				loggingLevel = "Warn";
+				return;
+			case "4":
+				loggingLevel = "Error";
+				return;
+			case "5":
+				return;
+			}
+
 		}
 	}
 
@@ -121,7 +163,7 @@ public class Main {
 	}
 
 	private static ConversationsEngine setUp() {
-		if ("deutsch".equalsIgnoreCase(selectedLanguage)) {
+		if ("German".equalsIgnoreCase(selectedLanguage)) {
 			INLPComponent nlp = new NLPComponent();
 			ConversationsEngine germanConversationsEngine = new ConversationsEngine(nlp);
 			GreetingSkill greeting = new GreetingSkill();

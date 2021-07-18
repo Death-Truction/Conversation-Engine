@@ -238,7 +238,7 @@ public class ConversationsEngine {
 		}
 		if (input == null || input.isBlank()) {
 			Logging.warn("The user input was null or blank");
-			UserOutput.addDefaultErrorMessage();
+			this.defaultErrorUserOuput();
 			return UserOutput.popNextOutput();
 		}
 		Logging.userInput(input);
@@ -250,7 +250,11 @@ public class ConversationsEngine {
 		} else {
 			processNormalRequest(input);
 		}
-
+		String currentSkillName = "";
+		if (this.currentSkillStateMachine != null) {
+			currentSkillName = " within the skill " + this.currentSkillStateMachine.getName();
+		}
+		Logging.debug("The ConversationsEngine is currently in the state: {}{}", this.getState(), currentSkillName);
 		return UserOutput.popNextOutput();
 	}
 
@@ -274,7 +278,7 @@ public class ConversationsEngine {
 	private void processINLPAnswer(INLPAnswer processedInput) {
 		if (processedInput == null) {
 			Logging.error("NLP Component's returned INLPAnswer is null");
-			UserOutput.addDefaultErrorMessage();
+			this.defaultErrorUserOuput();
 			return;
 		}
 		List<String> intents = processedInput.getIntents();
@@ -287,7 +291,7 @@ public class ConversationsEngine {
 		}
 		// If the NLPAnswer has no result -> treat it as bad input
 		if (!addedEntities && (intents == null || intents.isEmpty())) {
-			UserOutput.addDefaultErrorMessage();
+			this.defaultErrorUserOuput();
 			return;
 		}
 		if (intents != null && !intents.isEmpty()) {
@@ -447,7 +451,7 @@ public class ConversationsEngine {
 
 		ISkillAnswer answer = this.currentSkillStateMachine.execute(intent, this.contextObject);
 		if (answer == null) {
-			UserOutput.addDefaultErrorMessage();
+			this.defaultErrorUserOuput();
 			return;
 		}
 
@@ -731,6 +735,14 @@ public class ConversationsEngine {
 	 */
 	private void logIllegalAccess() {
 		Logging.error("The ConversationsEngine was invoked after it has been shut down");
+	}
+
+	/**
+	 * TODO: add example request from the skills or the current running skill (if
+	 * one is running)
+	 */
+	private void defaultErrorUserOuput() {
+		UserOutput.addDefaultErrorMessage();
 	}
 
 }

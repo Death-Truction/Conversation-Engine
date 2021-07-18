@@ -1,0 +1,5 @@
+ConversationsEngine
+
+  ConversationsEngine is a framework that is supposed to be used as a dialog management system.\
+  It is designed to simplify the creation of chatbots by combining skills and a single NLP-Component into an all in one system.\
+  The system is based on a finite state machine to create an accessible testing environment.\

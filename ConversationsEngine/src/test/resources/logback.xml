@@ -4,13 +4,17 @@
   	<property name="LOG_DIR" value="logs" />
   	
   	<appender name="Debug-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-	    <encoder>
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		    <charset>UTF-8</charset>
+		    <outputPatternAsHeader>true</outputPatternAsHeader> 
 	    	<pattern>%d{HH:mm:ss} %highlight(%-5level) %logger{0} - %msg%n</pattern>
 	    </encoder>
 	</appender>
 	
 	<appender name="Conversation-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-	    <encoder>
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		    <charset>UTF-8</charset>
+		    <outputPatternAsHeader>true</outputPatternAsHeader> 
 	    	<pattern>%d{HH:mm:ss} %highlight(%-5level) %logger{0} - %highlight(%msg%n)</pattern>
 	    </encoder>
 	</appender>
@@ -18,7 +22,9 @@
 	<appender name="Conversation-File" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/conversation.log</file>
 		<append>false</append>
-		<encoder>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		    <charset>UTF-8</charset>
+		    <outputPatternAsHeader>true</outputPatternAsHeader> 
       		<pattern>%d{HH:mm:ss} - %msg%n</pattern>
     	</encoder>
   	</appender>
@@ -26,7 +32,9 @@
   	<appender name="Debug-File" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/debug.log</file>
 		<append>false</append>
-		<encoder>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		    <charset>UTF-8</charset>
+		    <outputPatternAsHeader>true</outputPatternAsHeader> 
       		<pattern>%d{HH:mm:ss} %-5level %logger{0} - %msg%n</pattern>
     	</encoder>
   	</appender>
@@ -34,7 +42,9 @@
   	<appender name="All-File" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/general.log</file>
 		<append>false</append>
-		<encoder>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		    <charset>UTF-8</charset>
+		    <outputPatternAsHeader>true</outputPatternAsHeader> 
       		<pattern>%d{HH:mm:ss} %-5level %logger{0} - %msg%n</pattern>
     	</encoder>
   	</appender>

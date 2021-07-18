@@ -5,6 +5,7 @@
 	<artifactId>conversations-engine</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
+	<url>https://github.com/Death-Truction/ConversationsEngine</url>
 	
 	<developers>
 		<developer>
@@ -138,7 +139,7 @@
 				<configuration>
 					<locales>en,de</locales>
 					<skipDeploy>true</skipDeploy>
-				</configuration>			
+				</configuration>		
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
