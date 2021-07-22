@@ -25,7 +25,8 @@ public class NLPComponentEnglish implements INLPComponent {
 
 	private String[] greetingSynonyms = new String[] { "Hi", "Hello", "Good Evening" };
 	private String[] weatherSynonyms = new String[] { "Weather", "Degree", "Temperature" };
-	private String[] recipeSearchSynonyms = new String[] { "Recipes with", "Recipe with", "Which recipe", "Food" };
+	private String[] recipeSearchSynonyms = new String[] { "Recipes with", "Recipe with", "Which recipe", "What recipe",
+			"Food" };
 	private String[] cookingSynonyms = new String[] { "cook" };
 
 	private boolean addedNewEntities;

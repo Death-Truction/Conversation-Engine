@@ -106,8 +106,10 @@ The project includes a <i>playground</i> to try the ConversationsEngine with som
     ```
 2. These languages are currently supported for the playground:
     * German
-    * English (<b><i>Coming soon</i></b>)
-3. For a list of supported request checkout [Dokumentation der NLPKomponente und der Skills.docx](https://github.com/Death-Truction/ConversationsEngine/blob/main/Dokumentation%20der%20NLPKomponente%20und%20der%20Skills.docx)
+    * English
+3. For a list of supported request checkout
+    * [Current Skills German](https://github.com/Death-Truction/ConversationsEngine/blob/main/Current%20Skills%20German.md)
+    * [Current Skills English](https://github.com/Death-Truction/ConversationsEngine/blob/main/Current%20Skills%20English.md)
 
 ## Usage
 
