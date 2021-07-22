@@ -2,6 +2,8 @@ package skills;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -22,7 +24,7 @@ public class WeatherSkillWithEmptyResponseAndQuestions implements ISkill {
 	}
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		if (intent.equals("weather")) {
 			return new SkillAnswer("SUCCESS", new ArrayList<String>(), false);
 		}
@@ -39,6 +41,12 @@ public class WeatherSkillWithEmptyResponseAndQuestions implements ISkill {
 	@Override
 	public void reset() {
 		// nothing to do
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale language) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

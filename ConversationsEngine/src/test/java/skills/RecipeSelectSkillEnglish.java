@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -22,7 +23,7 @@ import interfaces_implementation.SkillAnswer;
 public class RecipeSelectSkillEnglish implements ISkill {
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		List<String> answers = new ArrayList<>();
 		if (!contextObject.has("recipeSelect")) {
 			answers.add("I could not find the chosen recipe!");
@@ -37,7 +38,7 @@ public class RecipeSelectSkillEnglish implements ISkill {
 				contextObject.remove("useLastSelectedRecipe");
 				if (useLastRecipe) {
 					recipeSelect.remove(recipeSelect.length() - 1);
-					return execute(intent, contextObject, currentState);
+					return execute(intent, contextObject, currentState, language);
 				}
 				answers.add("The last used recipe was NOT selected!");
 				return new SkillAnswer("FAILED", answers, false);
@@ -67,5 +68,14 @@ public class RecipeSelectSkillEnglish implements ISkill {
 	@Override
 	public void reset() {
 		// nothing to do
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		if ("Mid".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Please answer with yes or no.");
+		}
+		return possibleRequests;
 	}
 }

@@ -66,11 +66,12 @@ public class ConversationsEngine {
 	 *                          interaction.
 	 * @param jsonContextObject the contextObject as JSON-String to start the
 	 *                          {@link ConversationsEngine} with
+	 * @param defaultLanguage   the default language to use as backup
 	 * @throws IllegalArgumentException if the {@link INLPComponent} is null or the
 	 *                                  timeout value is less than 1
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, String jsonContextObject)
-			throws IllegalArgumentException {
+	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, String jsonContextObject,
+			Locale defaultLanguage) throws IllegalArgumentException {
 		if (nlpComponent == null) {
 			Logging.error("INLPComponent is null");
 			throw new IllegalArgumentException("INLPComponent is null");
@@ -79,6 +80,11 @@ public class ConversationsEngine {
 		if (timeoutInSeconds <= 0) {
 			Logging.error("Timeout value must be greater than 0");
 			throw new IllegalArgumentException("Timeout value must be greater than 0");
+		}
+
+		if (defaultLanguage == null) {
+			Logging.error("The default language locale is null");
+			throw new IllegalArgumentException("The default language locale is null");
 		}
 		State defaultState = new State("defaultState");
 		State sleepState = new State("sleepState");
@@ -98,7 +104,7 @@ public class ConversationsEngine {
 		this.wasLastQuestionReturnToPreviousSkill = false;
 		this.closed = false;
 		this.timeoutInSeconds = timeoutInSeconds;
-		I18n.setDefaultLanguage(new Locale("de", "DE"));
+		I18n.setDefaultLanguage(defaultLanguage);
 		// the list of intents the ConversationsEngine uses itself (as trigger words)
 		List<String> triggerIntents = new ArrayList<>();
 		triggerIntents.add("abort");
@@ -115,10 +121,11 @@ public class ConversationsEngine {
 	 * Creates a new {@link ConversationsEngine} object with a default timeout of
 	 * 300 seconds and an empty context object
 	 * 
-	 * @param nlpComponent the NLPComponent that handles the user input
+	 * @param nlpComponent    the NLPComponent that handles the user input
+	 * @param defaultLanguage the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent) {
-		this(nlpComponent, DEFAULTTIMEOUTVALUE, EMPTYCONTEXTOBJECT);
+	public ConversationsEngine(INLPComponent nlpComponent, Locale defaultLanguage) {
+		this(nlpComponent, DEFAULTTIMEOUTVALUE, EMPTYCONTEXTOBJECT, defaultLanguage);
 	}
 
 	/**
@@ -129,9 +136,10 @@ public class ConversationsEngine {
 	 *                         {@link ConversationsEngine} will transition into the
 	 *                         sleepState. The timer refreshes after each
 	 *                         interaction.
+	 * @param defaultLanguage  the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds) {
-		this(nlpComponent, timeoutInSeconds, EMPTYCONTEXTOBJECT);
+	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, Locale defaultLanguage) {
+		this(nlpComponent, timeoutInSeconds, EMPTYCONTEXTOBJECT, defaultLanguage);
 	}
 
 	/**
@@ -141,9 +149,10 @@ public class ConversationsEngine {
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
 	 *                          {@link ConversationsEngine} with
+	 * @param defaultLanguage   the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, String jsonContextObject) {
-		this(nlpComponent, DEFAULTTIMEOUTVALUE, jsonContextObject);
+	public ConversationsEngine(INLPComponent nlpComponent, String jsonContextObject, Locale defaultLanguage) {
+		this(nlpComponent, DEFAULTTIMEOUTVALUE, jsonContextObject, defaultLanguage);
 	}
 
 	/**
@@ -395,13 +404,15 @@ public class ConversationsEngine {
 	 * @param input the input to process
 	 */
 	private void processSkillQuestion(String input) {
-		this.wasLastQuestionSkillQuestion = false;
 		INLPAnswer processedInput;
 		String entityName = this.pendingSkillQuestions.getTopEntity(this.currentSkillStateMachine.getName());
 		processedInput = this.nlpComponent.understandInput(input, entityName, this.contextObject);
-		// Remove last asked question. If the question was not answered, then the
-		// corresponding skill will have to ask the same question again
-		this.pendingSkillQuestions.removeTopQuestionAndEntity(this.currentSkillStateMachine.getName());
+		if (processedInput.hasAddedEntities()) {
+			// Remove last asked question. If the question was not answered, then the
+			// corresponding skill will have to ask the same question again
+			this.wasLastQuestionSkillQuestion = false;
+			this.pendingSkillQuestions.removeTopQuestionAndEntity(this.currentSkillStateMachine.getName());
+		}
 		processINLPAnswer(processedInput);
 	}
 
@@ -449,7 +460,7 @@ public class ConversationsEngine {
 		}
 		this.currentSkillStateMachine = nextSkillStateMachine;
 
-		ISkillAnswer answer = this.currentSkillStateMachine.execute(intent, this.contextObject);
+		ISkillAnswer answer = this.currentSkillStateMachine.execute(intent, this.contextObject, I18n.getLanguage());
 		if (answer == null) {
 			this.defaultErrorUserOuput();
 			return;
@@ -737,12 +748,20 @@ public class ConversationsEngine {
 		Logging.error("The ConversationsEngine was invoked after it has been shut down");
 	}
 
-	/**
-	 * TODO: add example request from the skills or the current running skill (if
-	 * one is running)
-	 */
 	private void defaultErrorUserOuput() {
 		UserOutput.addDefaultErrorMessage();
+		if (this.currentSkillStateMachine != null) {
+			List<String> possibleRequest = this.currentSkillStateMachine.getExampleRequests(I18n.getLanguage());
+			if (possibleRequest != null && !possibleRequest.isEmpty()) {
+				UserOutput.addOutputMessages(possibleRequest);
+			}
+		} else {
+			// TODO: what happens when no skill is running? Ask all skills for an example
+			// request?
+		}
+		if (this.wasLastQuestionSkillQuestion) {
+			this.askNextQuestion();
+		}
 	}
 
 }

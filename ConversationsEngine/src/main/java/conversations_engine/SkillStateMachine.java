@@ -1,5 +1,8 @@
 package conversations_engine;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.json.JSONObject;
 
 import interfaces.ISkill;
@@ -88,11 +91,11 @@ class SkillStateMachine {
 	 * @return a {@link ISkillAnswer} from the corresponding skill or null if an
 	 *         error occurred
 	 */
-	ISkillAnswer execute(String intent, JSONObject contextObject) {
+	ISkillAnswer execute(String intent, JSONObject contextObject, Locale language) {
 		if (this.currentState.equals(this.startState)) {
 			Logging.debug("Starting the Skill {}", this.getName());
 		}
-		ISkillAnswer answer = this.skill.execute(intent, contextObject, this.currentState.getName());
+		ISkillAnswer answer = this.skill.execute(intent, contextObject, this.currentState.getName(), language);
 		if (answer == null) {
 			Logging.error("Returned answer of the skill {} for the intent {} is null", this.name, intent);
 			return null;
@@ -106,6 +109,17 @@ class SkillStateMachine {
 			return null;
 		}
 		return answer;
+	}
+
+	/**
+	 * Returns a list of possible request for the skill
+	 * 
+	 * @param language the user's language
+	 * 
+	 * @return a list of possible request for the skill
+	 */
+	List<String> getExampleRequests(Locale language) {
+		return this.skill.getExampleRequests(this.currentState.getName(), language);
 	}
 
 	/**

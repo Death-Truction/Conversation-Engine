@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,7 +33,7 @@ public class WeatherSkillEnglish implements ISkill {
 	}
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		List<String> locationNames = getLocationNames(contextObject);
 		List<String> answers = new ArrayList<>();
 		if (!locationNames.isEmpty()) {
@@ -70,6 +71,15 @@ public class WeatherSkillEnglish implements ISkill {
 		} catch (JSONException e) {
 			return locationNames;
 		}
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		if ("Mid".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Please enter a location like Berlin, Hamburg, Munich or Dortmund.");
+		}
+		return possibleRequests;
 	}
 
 }

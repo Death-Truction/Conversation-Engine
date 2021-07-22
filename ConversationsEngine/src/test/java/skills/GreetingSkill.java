@@ -3,6 +3,7 @@ package skills;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONObject;
 
@@ -19,7 +20,7 @@ import interfaces_implementation.SkillAnswer;
 public class GreetingSkill implements ISkill {
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		if (intent.equals("greeting")) {
 			int currentHour = Calendar.HOUR_OF_DAY;
 			List<String> dayTime = new ArrayList<>();
@@ -47,5 +48,12 @@ public class GreetingSkill implements ISkill {
 	@Override
 	public void reset() {
 		// nothing to do
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		possibleRequests.add("Hallo");
+		return possibleRequests;
 	}
 }

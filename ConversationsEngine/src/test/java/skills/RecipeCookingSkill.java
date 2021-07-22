@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -25,11 +26,11 @@ public class RecipeCookingSkill implements ISkill {
 	private String lastCookedRecipe = "";
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		String selectedRecipe = contextObject.optString("selectedRecipe");
 		List<String> answers = new ArrayList<>();
 		if (selectedRecipe == null || selectedRecipe.isEmpty()) {
-			answers.add("Bitte wähle zuerst ein Rezept aus");
+			answers.add("Bitte wähle zuerst ein Rezept aus.");
 			return new SkillAnswer("FAILED", answers, false);
 		}
 		Recipe recipe = RecipeBook.getInstance().getRecipe(selectedRecipe);
@@ -101,6 +102,18 @@ public class RecipeCookingSkill implements ISkill {
 	public void reset() {
 		this.lastCookedRecipe = "";
 		this.currentInstruction = 0;
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		if ("MissingIngredients".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Bitte beantworte die Frage mit ja oder nein.");
+		}
+		if ("Cooking".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Nächster Schritt");
+		}
+		return possibleRequests;
 	}
 
 }

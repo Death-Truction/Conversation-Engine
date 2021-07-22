@@ -3,6 +3,8 @@ package conversations_engine;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,20 +24,20 @@ class GenerateSkillStateMachineTest {
 	private String resourceFolder;
 	private WeatherSkill weather;
 	private MemoryLogger logs;
-	private NLPComponent nlp;
+	private NLPComponent nlp = new NLPComponent();
+	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeAll
 	void setUp() {
 		weather = new WeatherSkill();
 		this.resourceFolder = "generate_skill_state_machine";
 		this.logs = TestHelperFunctions.getNewLogAppender();
-		this.nlp = new NLPComponent();
 	}
 
 	@BeforeEach
 	void init() {
 		this.logs.reset();
-		this.myStateMachine = new ConversationsEngine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
 	}
 
 	@Test

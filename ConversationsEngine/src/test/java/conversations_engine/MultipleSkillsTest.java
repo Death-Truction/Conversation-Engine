@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +22,11 @@ class MultipleSkillsTest {
 
 	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
+	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
 		WeatherSkill weather = new WeatherSkill();
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		myStateMachine.addSkill(weather, weatherSkillStateMachine);

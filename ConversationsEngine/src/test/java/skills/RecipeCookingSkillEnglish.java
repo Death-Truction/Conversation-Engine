@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ public class RecipeCookingSkillEnglish implements ISkill {
 	private String lastCookedRecipe = "";
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		String selectedRecipe = contextObject.optString("selectedRecipe");
 		List<String> answers = new ArrayList<>();
 		if (selectedRecipe == null || selectedRecipe.isEmpty()) {
@@ -101,6 +102,18 @@ public class RecipeCookingSkillEnglish implements ISkill {
 	public void reset() {
 		this.lastCookedRecipe = "";
 		this.currentInstruction = 0;
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		if ("MissingIngredients".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Please answer the question with yes or no.");
+		}
+		if ("Cooking".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("next step");
+		}
+		return possibleRequests;
 	}
 
 }

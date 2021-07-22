@@ -3,6 +3,7 @@ package playground;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 import org.json.JSONObject;
@@ -165,7 +166,7 @@ public class Main {
 	private static ConversationsEngine setUp() {
 		if ("German".equalsIgnoreCase(selectedLanguage)) {
 			INLPComponent nlp = new NLPComponent();
-			ConversationsEngine germanConversationsEngine = new ConversationsEngine(nlp);
+			ConversationsEngine germanConversationsEngine = new ConversationsEngine(nlp, new Locale("de", "DE"));
 			GreetingSkill greeting = new GreetingSkill();
 			String greetingSkillSM = loadJsonFileAsString("Greeting.json");
 			germanConversationsEngine.addSkill(greeting, greetingSkillSM);
@@ -187,7 +188,7 @@ public class Main {
 			return germanConversationsEngine;
 		}
 		INLPComponent nlp = new NLPComponentEnglish();
-		ConversationsEngine englishConversationsEngine = new ConversationsEngine(nlp);
+		ConversationsEngine englishConversationsEngine = new ConversationsEngine(nlp, new Locale("en", "US"));
 		GreetingSkillEnglish greeting = new GreetingSkillEnglish();
 		String greetingSkillSM = loadJsonFileAsString("Greeting.json");
 		englishConversationsEngine.addSkill(greeting, greetingSkillSM);

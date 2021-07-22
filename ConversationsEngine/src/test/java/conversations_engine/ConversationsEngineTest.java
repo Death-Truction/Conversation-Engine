@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ class ConversationsEngineTest {
 	private INLPComponent nlp = new NLPComponent();
 	private String contextData;
 	private MemoryLogger logs;
+	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
@@ -78,20 +80,35 @@ class ConversationsEngineTest {
 		INLPComponent newNlp = new NLPComponentUndefinedLanguage();
 		createNewConversationsEngine(newNlp, "{}");
 		List<String> answers = this.myStateMachine.userInput("Hi");
-		assertEquals("Es tut mir leid, aber ich konnte Ihre Anfrage leider nicht bearbeiten.", answers.get(0));
+		assertEquals(TestHelperFunctions.getDayTime(), answers.get(0));
 		logs.contains("The language el is not supported", Level.ERROR);
 	}
 
 	@Test
 	@DisplayName("NLPComponent parameter is null")
 	void nlpComponentIsNull() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(null));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(null, defaultLanguage));
 	}
 
 	@Test
 	@DisplayName("timeoutInSeconds parameter is negative")
 	void timeoutIsNegative() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, -1));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, -1, defaultLanguage));
+	}
+
+	@Test
+	@DisplayName("defaultLanguage parameter is negative")
+	void defaultLanguageIsNegative() {
+		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, 200, null));
+	}
+
+	@Test
+	@DisplayName("defaultLanguage parameter is not supported")
+	void defaultLanguageIsNotSupported() {
+		ConversationsEngine CE = new ConversationsEngine(nlp, new Locale("el"));
+		assertTrue(this.logs.contains(
+				"Default language was not set! The language el could not be found. Please make sure that the correct localization file exists.",
+				Level.WARN));
 	}
 
 	@Test
@@ -131,7 +148,7 @@ class ConversationsEngineTest {
 	@Test
 	@DisplayName("Accessing addSkill() after shutdown")
 	void accessingAddSkillAfterShutdown() {
-		myStateMachine = new ConversationsEngine(nlp);
+		myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
 		myStateMachine.shutdown(null);
 		assertTrue(this.logs.contains("The consumer passed to the shutdown function was null", Level.WARN));
 		GreetingSkill greet = new GreetingSkill();
@@ -167,7 +184,7 @@ class ConversationsEngineTest {
 	@DisplayName("Invalid NLPAnswers")
 	void invalidNLPAnswers() {
 		INLPComponent nlp = new NLPComponentWithInvalidReturnedData();
-		ConversationsEngine statemachine = new ConversationsEngine(nlp);
+		ConversationsEngine statemachine = new ConversationsEngine(nlp, new Locale("de", "DE"));
 		statemachine.userInput("nullLanguage");
 		assertTrue(logs.contains("NLPComponent did not return a language", Level.ERROR));
 		statemachine.userInput("null");
@@ -179,7 +196,7 @@ class ConversationsEngineTest {
 	void addNullSkill() {
 		this.myStateMachine.addSkill(null, "");
 		assertTrue(logs.contains("The skill to add to the ConversationsEngine is null", Level.ERROR));
-		this.myStateMachine = new ConversationsEngine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		this.myStateMachine.addSkill(greet, "");
 		assertTrue(
@@ -187,7 +204,7 @@ class ConversationsEngineTest {
 	}
 
 	private void createNewConversationsEngine(INLPComponent nlp, String contextObject) {
-		this.myStateMachine = new ConversationsEngine(nlp, contextObject);
+		this.myStateMachine = new ConversationsEngine(nlp, contextObject, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greet, greetingSkillStateMachine);

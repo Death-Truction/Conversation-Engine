@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import conversations_engine.ConversationsEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
 import skills.RecipeCookingSkill;
@@ -20,10 +20,11 @@ class RecipeSkillTest {
 
 	private ConversationsEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
+	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp);
+		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
 		RecipeSearchSkill recipeSkill = new RecipeSearchSkill();
 		String recipeSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("RecipeSearch.json");
 		this.myStateMachine.addSkill(recipeSkill, recipeSkillStateMachine);
@@ -159,7 +160,7 @@ class RecipeSkillTest {
 	void invalidRecipeCookingRequest() {
 		List<String> answers = sendUserInput("Ich möchte das Rezept hsfd kochen");
 		assertEquals("Ich konnte das Rezept leider nicht finden!", answers.get(0));
-		assertEquals("Bitte wähle zuerst ein Rezept aus", answers.get(1));
+		assertEquals("Bitte wähle zuerst ein Rezept aus.", answers.get(1));
 	}
 
 	@Test

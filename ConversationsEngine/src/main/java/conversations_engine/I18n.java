@@ -34,6 +34,15 @@ class I18n {
 	}
 
 	/**
+	 * Returns the currently used language locale
+	 * 
+	 * @return the currently used language locale
+	 */
+	static Locale getLanguage() {
+		return bundle.getLocale();
+	}
+
+	/**
 	 * Sets the default language for the {@link ConversationsEngine}.
 	 * 
 	 * @param language the language locale to use as default
@@ -47,7 +56,7 @@ class I18n {
 			return;
 		}
 		Logging.warn(
-				"Default language was not set! The language {} could not be found. Please make surre that the correct localization file exists.",
+				"Default language was not set! The language {} could not be found. Please make sure that the correct localization file exists.",
 				language.getLanguage());
 
 	}
@@ -59,9 +68,6 @@ class I18n {
 	 * @return the message corresponding to the key
 	 */
 	static String getMessage(String key) {
-		if (bundle == null) {
-			setLanguage(defaultLocale);
-		}
 		return bundle.getString(key);
 	}
 

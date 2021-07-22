@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -29,7 +30,7 @@ public class RecipeSearchSkill implements ISkill {
 	}
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		List<String> ingredients = getSearchIngredients(contextObject);
 		List<String> answers = new ArrayList<>();
 		if (!ingredients.isEmpty()) {
@@ -82,5 +83,14 @@ public class RecipeSearchSkill implements ISkill {
 	@Override
 	public void reset() {
 		// nothing to do
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale locale) {
+		ArrayList<String> possibleRequests = new ArrayList<>();
+		if ("Mid".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Bitte liste eine Zutat auf, wie z.B. Paprika, Brot, Salami, Erbsen oder Kartoffeln.");
+		}
+		return possibleRequests;
 	}
 }

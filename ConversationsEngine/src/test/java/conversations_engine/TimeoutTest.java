@@ -3,6 +3,7 @@ package conversations_engine;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,7 @@ class TimeoutTest {
 
 	private final CountDownLatch waiter = new CountDownLatch(1);
 	private INLPComponent nlp = new NLPComponent();
+	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@Test
 	@DisplayName("TimeoutState correctly reached")
@@ -40,7 +42,7 @@ class TimeoutTest {
 	}
 
 	private ConversationsEngine createNewConversationsEngine() {
-		ConversationsEngine conversationsEngine = new ConversationsEngine(nlp, 1);
+		ConversationsEngine conversationsEngine = new ConversationsEngine(nlp, 1, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		conversationsEngine.addSkill(greet, greetingSkillStateMachine);

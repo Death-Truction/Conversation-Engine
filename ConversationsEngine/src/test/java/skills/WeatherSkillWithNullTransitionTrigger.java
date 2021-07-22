@@ -1,6 +1,8 @@
 package skills;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONObject;
 
@@ -17,7 +19,7 @@ import interfaces_implementation.SkillAnswer;
 public class WeatherSkillWithNullTransitionTrigger implements ISkill {
 
 	@Override
-	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState) {
+	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
 		if (intent.equals("weather")) {
 
 			return new SkillAnswer(null, new ArrayList<>(), false);
@@ -33,6 +35,12 @@ public class WeatherSkillWithNullTransitionTrigger implements ISkill {
 	@Override
 	public void reset() {
 		// nothing to do
+	}
+
+	@Override
+	public List<String> getExampleRequests(String currentState, Locale language) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

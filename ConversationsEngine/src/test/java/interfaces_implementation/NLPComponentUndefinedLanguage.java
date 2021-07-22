@@ -38,7 +38,7 @@ public class NLPComponentUndefinedLanguage implements INLPComponent {
 	@Override
 	public INLPAnswer understandInput(String input, JSONObject contextObject) {
 		List<String> intents = new ArrayList<>();
-
+		intents.add("greeting");
 		return new NLPAnswer(intents, new Locale("el"), false);
 	}
 
