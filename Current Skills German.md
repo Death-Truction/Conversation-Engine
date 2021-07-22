@@ -1,7 +1,6 @@
 # Dokumentation der derzeitigen Fähigkeiten
 
-<details open="open">
-  <summary><h2 style="display: inline-block">Inhaltsverzeichnis</h2></summary>
+<details open="open"><summary><h2 style="display: inline-block">Inhaltsverzeichnis</h2></summary>
   <ol>
     <li><a href="#nlp-komponente">NLP-Komponente</a></li>
     <li><a href="#trigger-wörter">Trigger-Wörter</a></li>

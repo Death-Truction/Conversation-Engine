@@ -1,7 +1,6 @@
 # Documentation of current skills
 
-<details open = "open">
-    <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
+<details open = "open"><summary><h2 style="display: inline-block">Table of Contents</h2></summary>
     <ol>
         <li><a href="#nlp-component">NLP component</a></li>
         <li><a href="#trigger-words">trigger words</a></li>
