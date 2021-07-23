@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 /**
  * A simple recipe book singleton to store {@link Recipe recipes}
@@ -122,5 +123,17 @@ public class RecipeBookEnglish {
 		}
 
 		return recipe;
+	}
+
+	/**
+	 * Returns the name of a randomly selected {@link Recipe}
+	 * 
+	 * @return the name of a randomly selected {@link Recipe}
+	 */
+	public String getRandomRecipeName() {
+		if (this.recipes.isEmpty()) {
+			return null;
+		}
+		return (String) this.recipes.keySet().toArray()[new Random().nextInt(this.recipes.size())];
 	}
 }

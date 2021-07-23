@@ -75,6 +75,8 @@ public class RecipeSelectSkillEnglish implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Please answer with yes or no.");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Please select the recipe " + RecipeBookEnglish.getInstance().getRandomRecipeName());
 		}
 		return possibleRequests;
 	}

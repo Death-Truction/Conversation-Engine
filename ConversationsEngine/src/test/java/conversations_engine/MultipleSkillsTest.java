@@ -162,13 +162,21 @@ class MultipleSkillsTest {
 	}
 
 	@Test
-	@DisplayName("test")
-	void test() {
+	@DisplayName("Abort cooking request")
+	void abortCookingRequest() {
 		List<String> answer = sendUserInput("Koche das Rezept Paprika-Kartoffelsuppe");
 		assertEquals("Das Rezept \"paprika-kartoffelsuppe\" wurde erfolgreich ausgewählt.", answer.get(0));
 		assertEquals("Haben Sie die Zutat Kartoffeln zu Hause?", answer.get(1));
 		answer = sendUserInput("abbruch");
 		assertEquals("Was möchten Sie als nächstes machen?", answer.get(0));
+	}
+
+	@Test
+	@DisplayName("Invalid input")
+	void invalidInput() {
+		List<String> answers = sendUserInput("asasas");
+		assertEquals(5, answers.size());
+
 	}
 
 	private List<String> sendUserInput(String message) {

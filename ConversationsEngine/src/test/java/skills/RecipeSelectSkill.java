@@ -75,6 +75,8 @@ public class RecipeSelectSkill implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Bitte antworten Sie mit ja oder nein.");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Bitte wähle das Rezept " + RecipeBook.getInstance().getRandomRecipeName() + " aus.");
 		}
 		return possibleRequests;
 	}

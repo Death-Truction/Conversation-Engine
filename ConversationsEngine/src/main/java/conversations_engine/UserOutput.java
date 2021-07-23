@@ -1,6 +1,7 @@
 package conversations_engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -77,6 +78,8 @@ class UserOutput {
 		Logging.conversationMessages(nextOutput);
 		final List<String> returnedList = nextOutput;
 		nextOutput = new ArrayList<>();
+		// remove empty elements
+		returnedList.removeAll(Arrays.asList("", null));
 		return returnedList;
 	}
 }

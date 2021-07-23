@@ -108,10 +108,12 @@ public class RecipeCookingSkill implements ISkill {
 	public List<String> getExampleRequests(String currentState, Locale locale) {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("MissingIngredients".equalsIgnoreCase(currentState)) {
-			possibleRequests.add("Bitte beantworte die Frage mit ja oder nein.");
-		}
-		if ("Cooking".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Bitte beantworten Sie die Frage mit ja oder nein.");
+		} else if ("Cooking".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Nächster Schritt");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests
+					.add("Ich möchte das Rezept " + RecipeBook.getInstance().getRandomRecipeName() + " kochen.");
 		}
 		return possibleRequests;
 	}

@@ -78,6 +78,8 @@ public class WeatherSkillEnglish implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Please enter a location like Berlin, Hamburg, Munich or Dortmund.");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("How is the weather in Berlin?");
 		}
 		return possibleRequests;
 	}

@@ -53,7 +53,7 @@ public class GreetingSkillEnglish implements ISkill {
 	@Override
 	public List<String> getExampleRequests(String currentState, Locale locale) {
 		ArrayList<String> possibleRequests = new ArrayList<>();
-		possibleRequests.add("Hello");
+		possibleRequests.add("Hello Mr. Chatbot");
 		return possibleRequests;
 	}
 }

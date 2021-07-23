@@ -90,6 +90,8 @@ public class RecipeSearchSkill implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Bitte liste eine Zutat auf, wie z.B. Paprika, Brot, Salami, Erbsen oder Kartoffeln.");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Welche Rezepte mit Paprika gibt es?");
 		}
 		return possibleRequests;
 	}

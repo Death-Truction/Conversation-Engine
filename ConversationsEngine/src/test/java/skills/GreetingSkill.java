@@ -53,7 +53,9 @@ public class GreetingSkill implements ISkill {
 	@Override
 	public List<String> getExampleRequests(String currentState, Locale locale) {
 		ArrayList<String> possibleRequests = new ArrayList<>();
-		possibleRequests.add("Hallo");
+		if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Ein schönen guten Tag wünsche ich!");
+		}
 		return possibleRequests;
 	}
 }

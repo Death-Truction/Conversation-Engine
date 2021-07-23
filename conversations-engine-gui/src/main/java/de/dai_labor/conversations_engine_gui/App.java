@@ -17,7 +17,7 @@ public class App extends Application {
 	@Override
 	public void start(Stage stage) throws IOException {
 		stage.setTitle("ConversationsEngine - Dialog Modeling Tool");
-		Image icon = new Image(getClass().getResource("images/icon.png").toExternalForm());
+		Image icon = new Image(getClass().getResource("images/Icon.png").toExternalForm());
 		stage.getIcons().add(icon);
 		Scene mainScene = new Scene(loadFXML("views/mainView"), 1280, 720);
 		mainScene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());

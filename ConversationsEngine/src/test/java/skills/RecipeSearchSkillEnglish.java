@@ -91,6 +91,8 @@ public class RecipeSearchSkillEnglish implements ISkill {
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests
 					.add("Please add an ingredient to search for. E.g. pepper, bread, salami, peas or potatoes.");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("What recipe includes pepper?");
 		}
 		return possibleRequests;
 	}

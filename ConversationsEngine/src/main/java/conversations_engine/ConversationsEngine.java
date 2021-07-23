@@ -756,8 +756,23 @@ public class ConversationsEngine {
 				UserOutput.addOutputMessages(possibleRequest);
 			}
 		} else {
-			// TODO: what happens when no skill is running? Ask all skills for an example
-			// request?
+			// Get all possible requests from all skills
+			List<String> allPossibleRequests = new ArrayList<>();
+			List<String> selectedPossibleRequests = new ArrayList<>();
+			for (SkillStateMachine skill : this.allSkillStateMachines) {
+				allPossibleRequests.addAll(skill.getExampleRequests(I18n.getLanguage()));
+			}
+			// Select 3 possible requests
+			Collections.shuffle(allPossibleRequests);
+			for (String possibleRequest : allPossibleRequests) {
+				selectedPossibleRequests.add(possibleRequest);
+				if (selectedPossibleRequests.size() == 3) {
+					break;
+				}
+			}
+			UserOutput.addOutputMessageFromLocalizationKey("PossibleInputs");
+			UserOutput.addOutputMessages(selectedPossibleRequests);
+
 		}
 		if (this.wasLastQuestionSkillQuestion) {
 			this.askNextQuestion();

@@ -109,9 +109,11 @@ public class RecipeCookingSkillEnglish implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("MissingIngredients".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Please answer the question with yes or no.");
-		}
-		if ("Cooking".equalsIgnoreCase(currentState)) {
+		} else if ("Cooking".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("next step");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests
+					.add("I want to cook the recipe " + RecipeBookEnglish.getInstance().getRandomRecipeName() + ".");
 		}
 		return possibleRequests;
 	}

@@ -78,6 +78,8 @@ public class WeatherSkill implements ISkill {
 		ArrayList<String> possibleRequests = new ArrayList<>();
 		if ("Mid".equalsIgnoreCase(currentState)) {
 			possibleRequests.add("Bitte gib einen Ort an, wie Berlin, Dortmund, Hamburg oder München");
+		} else if ("Start".equalsIgnoreCase(currentState)) {
+			possibleRequests.add("Wie ist das Wetter in Berlin?");
 		}
 		return possibleRequests;
 	}
