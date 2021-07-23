@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -15,8 +16,11 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
-		Scene mainScene = new Scene(loadFXML("views/main"), 1280, 720);
-		mainScene.getStylesheets().add(getClass().getResource("styles/test.css").toExternalForm());
+		stage.setTitle("ConversationsEngine - Dialog Modeling Tool");
+		Image icon = new Image(getClass().getResource("images/icon.png").toExternalForm());
+		stage.getIcons().add(icon);
+		Scene mainScene = new Scene(loadFXML("views/mainView"), 1280, 720);
+		mainScene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());
 		stage.setScene(mainScene);
 		stage.show();
 	}
