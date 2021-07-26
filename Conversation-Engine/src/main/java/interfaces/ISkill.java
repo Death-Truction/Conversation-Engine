@@ -5,10 +5,10 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
-import conversation_engine.ConversationsEngine;
+import conversation_engine.ConversationEngine;
 
 /**
- * This is an Interface for the skills used by the {@link ConversationsEngine}
+ * This is an Interface for the skills used by the {@link ConversationEngine}
  * 
  * @author Marcel Engelmann
  *
@@ -29,7 +29,7 @@ public interface ISkill {
 	 * 
 	 * @param intent        the intent to be executed
 	 * @param contextObject the reference to the context object used by the
-	 *                      {@link ConversationsEngine}
+	 *                      {@link ConversationEngine}
 	 * @param currentState  the current state of the skill
 	 * @param language      the user's language
 	 * @return a new {@link ISkillAnswer}

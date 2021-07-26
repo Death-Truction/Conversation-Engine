@@ -22,7 +22,7 @@ import interfaces.ISkill;
 import interfaces.ISkillAnswer;
 
 /**
- * ConversationsEngine is a framework that is supposed to be used as a dialog
+ * ConversationEngine is a framework that is supposed to be used as a dialog
  * management system. It is designed to simplify the creation of chatbots by
  * combining {@link ISkill skills} and a single {@link INLPComponent
  * NLP-Component} into an all in one system.<br>
@@ -57,20 +57,20 @@ public class ConversationEngine {
 	private int timeoutInSeconds;
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object
+	 * Creates a new {@link ConversationEngine} object
 	 * 
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param timeoutInSeconds  the number of seconds after which the
-	 *                          {@link ConversationsEngine} will transition into the
+	 *                          {@link ConversationEngine} will transition into the
 	 *                          sleepState. The timer refreshes after each
 	 *                          interaction.
 	 * @param jsonContextObject the contextObject as JSON-String to start the
-	 *                          {@link ConversationsEngine} with
+	 *                          {@link ConversationEngine} with
 	 * @param defaultLanguage   the default language to use as backup
 	 * @throws IllegalArgumentException if the {@link INLPComponent} is null or the
 	 *                                  timeout value is less than 1
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, String jsonContextObject,
+	public ConversationEngine(INLPComponent nlpComponent, int timeoutInSeconds, String jsonContextObject,
 			Locale defaultLanguage) throws IllegalArgumentException {
 		if (nlpComponent == null) {
 			Logging.error("INLPComponent is null");
@@ -105,7 +105,7 @@ public class ConversationEngine {
 		this.closed = false;
 		this.timeoutInSeconds = timeoutInSeconds;
 		I18n.setDefaultLanguage(defaultLanguage);
-		// the list of intents the ConversationsEngine uses itself (as trigger words)
+		// the list of intents the ConversationEngine uses itself (as trigger words)
 		List<String> triggerIntents = new ArrayList<>();
 		triggerIntents.add("abort");
 		triggerIntents.add("last");
@@ -118,40 +118,40 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object with a default timeout of
+	 * Creates a new {@link ConversationEngine} object with a default timeout of
 	 * 300 seconds and an empty context object
 	 * 
 	 * @param nlpComponent    the NLPComponent that handles the user input
 	 * @param defaultLanguage the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, Locale defaultLanguage) {
+	public ConversationEngine(INLPComponent nlpComponent, Locale defaultLanguage) {
 		this(nlpComponent, DEFAULTTIMEOUTVALUE, EMPTYCONTEXTOBJECT, defaultLanguage);
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object with an empty context object
+	 * Creates a new {@link ConversationEngine} object with an empty context object
 	 * 
 	 * @param nlpComponent     the NLPComponent that handles the user input
 	 * @param timeoutInSeconds the number of seconds after which the
-	 *                         {@link ConversationsEngine} will transition into the
+	 *                         {@link ConversationEngine} will transition into the
 	 *                         sleepState. The timer refreshes after each
 	 *                         interaction.
 	 * @param defaultLanguage  the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, int timeoutInSeconds, Locale defaultLanguage) {
+	public ConversationEngine(INLPComponent nlpComponent, int timeoutInSeconds, Locale defaultLanguage) {
 		this(nlpComponent, timeoutInSeconds, EMPTYCONTEXTOBJECT, defaultLanguage);
 	}
 
 	/**
-	 * Creates a new {@link ConversationsEngine} object with a default timeout of
+	 * Creates a new {@link ConversationEngine} object with a default timeout of
 	 * 300 seconds
 	 * 
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
-	 *                          {@link ConversationsEngine} with
+	 *                          {@link ConversationEngine} with
 	 * @param defaultLanguage   the default language to use as backup
 	 */
-	public ConversationsEngine(INLPComponent nlpComponent, String jsonContextObject, Locale defaultLanguage) {
+	public ConversationEngine(INLPComponent nlpComponent, String jsonContextObject, Locale defaultLanguage) {
 		this(nlpComponent, DEFAULTTIMEOUTVALUE, jsonContextObject, defaultLanguage);
 	}
 
@@ -171,9 +171,9 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Add a new Skill to the {@link ConversationsEngine}
+	 * Add a new Skill to the {@link ConversationEngine}
 	 * 
-	 * @param skill            the skill to add to the {@link ConversationsEngine}
+	 * @param skill            the skill to add to the {@link ConversationEngine}
 	 * @param jsonStateMachine the skill's state machine in JSON-Format. For the
 	 *                         JSON-Schema please check out the <a href=
 	 *                         "file:../../resources/SkillStateMachine_Schema.json">Schema.json</a>
@@ -185,12 +185,12 @@ public class ConversationEngine {
 			return;
 		}
 		if (skill == null) {
-			Logging.error("The skill to add to the ConversationsEngine is null");
+			Logging.error("The skill to add to the ConversationEngine is null");
 			return;
 		}
 
 		if (jsonStateMachine.isBlank()) {
-			Logging.error("The JSON-String for the skill to add to the ConversationsEngine is blank", skill);
+			Logging.error("The JSON-String for the skill to add to the ConversationEngine is blank", skill);
 			return;
 		}
 		SkillStateMachine newSkillStateMachine = GenerateSkillStateMachine.fromJson(skill, jsonStateMachine,
@@ -210,7 +210,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Shuts this ConversationsEngine object down and invokes the given Consumer
+	 * Shuts this ConversationEngine object down and invokes the given Consumer
 	 * operation with the current context object as a StringBuilder
 	 * 
 	 * @param operation the operation to call, with the context object passed as
@@ -221,7 +221,7 @@ public class ConversationEngine {
 			logIllegalAccess();
 			return;
 		}
-		Logging.debug("Shutting down the ConversationsEngine {}", this);
+		Logging.debug("Shutting down the ConversationEngine {}", this);
 		this.timer.cancel();
 		this.closed = true;
 		if (operation == null) {
@@ -263,7 +263,7 @@ public class ConversationEngine {
 		if (this.currentSkillStateMachine != null) {
 			currentSkillName = " within the skill " + this.currentSkillStateMachine.getName();
 		}
-		Logging.debug("The ConversationsEngine is currently in the state: {}{}", this.getState(), currentSkillName);
+		Logging.debug("The ConversationEngine is currently in the state: {}{}", this.getState(), currentSkillName);
 		return UserOutput.popNextOutput();
 	}
 
@@ -545,7 +545,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Resets the {@link ConversationsEngine} to the initial state, except for the
+	 * Resets the {@link ConversationEngine} to the initial state, except for the
 	 * {@link #contextObject}
 	 */
 	private void clearPipeline() {
@@ -562,7 +562,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Creates a new {@link Timer} that transitions the {@link ConversationsEngine}
+	 * Creates a new {@link Timer} that transitions the {@link ConversationEngine}
 	 * into the sleepState after {@link #timeoutInSeconds } seconds and if an old
 	 * timer exists, cancels it
 	 */
@@ -584,7 +584,7 @@ public class ConversationEngine {
 
 	/**
 	 * Resets the {@link #timer}.<br>
-	 * If the {@link ConversationsEngine} is currently in the sleepState, then it
+	 * If the {@link ConversationEngine} is currently in the sleepState, then it
 	 * will transition to the defaultState
 	 */
 	private void leaveSleepState() {
@@ -745,7 +745,7 @@ public class ConversationEngine {
 	 * Logs that a method on this object was called after it has been shut down
 	 */
 	private void logIllegalAccess() {
-		Logging.error("The ConversationsEngine was invoked after it has been shut down");
+		Logging.error("The ConversationEngine was invoked after it has been shut down");
 	}
 
 	private void defaultErrorUserOuput() {

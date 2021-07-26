@@ -20,13 +20,13 @@ import skills.WeatherSkill;
 
 class MultipleSkillsTest {
 
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		WeatherSkill weather = new WeatherSkill();
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		myStateMachine.addSkill(weather, weatherSkillStateMachine);

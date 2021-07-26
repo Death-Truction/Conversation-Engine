@@ -43,7 +43,7 @@ class I18n {
 	}
 
 	/**
-	 * Sets the default language for the {@link ConversationsEngine}.
+	 * Sets the default language for the {@link ConversationEngine}.
 	 * 
 	 * @param language the language locale to use as default
 	 */

@@ -23,29 +23,29 @@ class TimeoutTest {
 	@Test
 	@DisplayName("TimeoutState correctly reached")
 	void correctTimeoutState() throws InterruptedException {
-		ConversationsEngine conversationsEngine = createNewConversationsEngine();
-		assertEquals("defaultState", conversationsEngine.getState());
+		ConversationEngine ConversationEngine = createNewConversationEngine();
+		assertEquals("defaultState", ConversationEngine.getState());
 		waiter.await(1200, TimeUnit.MILLISECONDS);
-		assertEquals("sleepState", conversationsEngine.getState());
+		assertEquals("sleepState", ConversationEngine.getState());
 	}
 
 	@Test
 	@DisplayName("TimeoutState correctly left")
 	void backToDefaultState() throws InterruptedException {
-		ConversationsEngine conversationsEngine = createNewConversationsEngine();
-		assertEquals("defaultState", conversationsEngine.getState());
+		ConversationEngine ConversationEngine = createNewConversationEngine();
+		assertEquals("defaultState", ConversationEngine.getState());
 		waiter.await(1200, TimeUnit.MILLISECONDS);
-		assertEquals("sleepState", conversationsEngine.getState());
-		List<String> answer = conversationsEngine.userInput("Rezept");
-		assertEquals("defaultState", conversationsEngine.getState());
+		assertEquals("sleepState", ConversationEngine.getState());
+		List<String> answer = ConversationEngine.userInput("Rezept");
+		assertEquals("defaultState", ConversationEngine.getState());
 		assertEquals("Willkommen zurück!", answer.get(0));
 	}
 
-	private ConversationsEngine createNewConversationsEngine() {
-		ConversationsEngine conversationsEngine = new ConversationsEngine(nlp, 1, defaultLanguage);
+	private ConversationEngine createNewConversationEngine() {
+		ConversationEngine ConversationEngine = new ConversationEngine(nlp, 1, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
-		conversationsEngine.addSkill(greet, greetingSkillStateMachine);
-		return conversationsEngine;
+		ConversationEngine.addSkill(greet, greetingSkillStateMachine);
+		return ConversationEngine;
 	}
 }

@@ -15,13 +15,13 @@ import skills.GreetingSkill;
 
 class GreetingSkillTest {
 
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	NLPComponent nlp = new NLPComponent();
 	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		GreetingSkill greeting = new GreetingSkill();
 		String greetingSkillSM = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greeting, greetingSkillSM);

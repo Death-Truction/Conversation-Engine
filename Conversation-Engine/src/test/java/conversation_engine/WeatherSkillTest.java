@@ -24,7 +24,7 @@ import skills.WeatherSkillWithWrongTransitionTrigger;
 @TestInstance(Lifecycle.PER_CLASS)
 class WeatherSkillTest {
 
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 	private MemoryLogger logs;
 	private Locale defaultLanguage = new Locale("de", "DE");
@@ -36,7 +36,7 @@ class WeatherSkillTest {
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		WeatherSkill weather = new WeatherSkill();
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		myStateMachine.addSkill(weather, weatherSkillStateMachine);
@@ -146,7 +146,7 @@ class WeatherSkillTest {
 	@DisplayName("return wrong trigger")
 	void wrongTrigger() {
 		WeatherSkillWithWrongTransitionTrigger wt = new WeatherSkillWithWrongTransitionTrigger();
-		this.myStateMachine = new ConversationsEngine(this.nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(this.nlp, defaultLanguage);
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		this.myStateMachine.addSkill(wt, weatherSkillStateMachine);
 		String answer = sendUserInput("Wetter").get(0);
@@ -158,7 +158,7 @@ class WeatherSkillTest {
 	@DisplayName("return null as ISkillAnswer")
 	void returnNull() {
 		WeatherSkillWithWrongTransitionTrigger wt = new WeatherSkillWithWrongTransitionTrigger();
-		this.myStateMachine = new ConversationsEngine(this.nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(this.nlp, defaultLanguage);
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		this.myStateMachine.addSkill(wt, weatherSkillStateMachine);
 		sendUserInput("Welche Rezepte");
@@ -170,7 +170,7 @@ class WeatherSkillTest {
 	@DisplayName("return null trigger in ISkillAnswer")
 	void nullTrigger() {
 		WeatherSkillWithNullTransitionTrigger wt = new WeatherSkillWithNullTransitionTrigger();
-		this.myStateMachine = new ConversationsEngine(this.nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(this.nlp, defaultLanguage);
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		this.myStateMachine.addSkill(wt, weatherSkillStateMachine);
 		sendUserInput("Wetter");
@@ -183,7 +183,7 @@ class WeatherSkillTest {
 	@DisplayName("return wrong json syntax")
 	void wrongJsonSyntax() {
 		WeatherSkillWithNullTransitionTrigger wt = new WeatherSkillWithNullTransitionTrigger();
-		this.myStateMachine = new ConversationsEngine(this.nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(this.nlp, defaultLanguage);
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		this.myStateMachine.addSkill(wt, weatherSkillStateMachine);
 		String answer = sendUserInput("welche Rezepte").get(0);
@@ -194,7 +194,7 @@ class WeatherSkillTest {
 	@DisplayName("return empty answer and questions")
 	void emptyAnswerAndQuestions() {
 		WeatherSkillWithEmptyResponseAndQuestions wt = new WeatherSkillWithEmptyResponseAndQuestions();
-		this.myStateMachine = new ConversationsEngine(this.nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(this.nlp, defaultLanguage);
 		String weatherSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Weather.json");
 		this.myStateMachine.addSkill(wt, weatherSkillStateMachine);
 		String answer = sendUserInput("Wetter").get(0);

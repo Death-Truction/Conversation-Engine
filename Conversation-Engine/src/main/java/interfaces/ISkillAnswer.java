@@ -3,11 +3,11 @@ package interfaces;
 import java.util.List;
 import java.util.Map;
 
-import conversation_engine.ConversationsEngine;
+import conversation_engine.ConversationEngine;
 
 /**
  * This is an interface for the ISkillAnswer that is required for the
- * {@link ISkill skills} used by the {@link ConversationsEngine}
+ * {@link ISkill skills} used by the {@link ConversationEngine}
  * 
  * @author Marcel Engelmann
  *

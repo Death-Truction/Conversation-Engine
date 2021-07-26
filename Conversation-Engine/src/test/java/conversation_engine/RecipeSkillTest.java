@@ -18,13 +18,13 @@ import skills.RecipeSelectSkill;
 
 class RecipeSkillTest {
 
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 	private Locale defaultLanguage = new Locale("de", "DE");
 
 	@BeforeEach
 	void init() {
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		RecipeSearchSkill recipeSkill = new RecipeSearchSkill();
 		String recipeSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("RecipeSearch.json");
 		this.myStateMachine.addSkill(recipeSkill, recipeSkillStateMachine);

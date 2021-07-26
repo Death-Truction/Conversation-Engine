@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import conversation_engine.ConversationsEngine;
+import conversation_engine.ConversationEngine;
 
 /**
  * This is an interface for the INLPComponent, that is required for the
- * {@link ConversationsEngine}
+ * {@link ConversationEngine}
  * 
  * @author Marcel Engelmann
  *
@@ -17,19 +17,19 @@ public interface INLPComponent {
 
 	/**
 	 * Add entities that are used by the {@link ISkill skills} of the
-	 * {@link ConversationsEngine}
+	 * {@link ConversationEngine}
 	 * 
 	 * @param entities the entities that are used by the {@link ISkill skills} of
-	 *                 the {@link ConversationsEngine}
+	 *                 the {@link ConversationEngine}
 	 */
 	void addUsedEntities(List<String> entities);
 
 	/**
 	 * Add intents the intents that are used by the {@link ISkill skills} or the
-	 * {@link ConversationsEngine}
+	 * {@link ConversationEngine}
 	 * 
 	 * @param intents the intents that are used by the {@link ISkill skills} or the
-	 *                {@link ConversationsEngine}
+	 *                {@link ConversationEngine}
 	 */
 	void addUsedIntents(List<String> intents);
 
@@ -40,7 +40,7 @@ public interface INLPComponent {
 	 * @param input         the input to be processed
 	 * @param entityName    the entity name to be filled
 	 * @param contextObject a reference to the context object used by the
-	 *                      {@link ConversationsEngine}
+	 *                      {@link ConversationEngine}
 	 * @return a new {@link INLPAnswer}
 	 */
 	INLPAnswer understandInput(String input, String entityName, JSONObject contextObject);
@@ -51,7 +51,7 @@ public interface INLPComponent {
 	 * 
 	 * @param input         the input to be processed
 	 * @param contextObject a reference to the context object used by the
-	 *                      {@link ConversationsEngine}
+	 *                      {@link ConversationEngine}
 	 * @return a new {@link INLPAnswer}
 	 */
 	INLPAnswer understandInput(String input, JSONObject contextObject);

@@ -20,7 +20,7 @@ import skills.WeatherSkill;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class GenerateSkillStateMachineTest {
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	private String resourceFolder;
 	private WeatherSkill weather;
 	private MemoryLogger logs;
@@ -37,7 +37,7 @@ class GenerateSkillStateMachineTest {
 	@BeforeEach
 	void init() {
 		this.logs.reset();
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 	}
 
 	@Test

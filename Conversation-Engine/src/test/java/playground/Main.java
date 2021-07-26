@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import conversation_engine.ConversationsEngine;
+import conversation_engine.ConversationEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
 import interfaces_implementation.NLPComponentEnglish;
@@ -29,7 +29,7 @@ import skills.WeatherSkillEnglish;
 
 public class Main {
 
-	private static final String menuString = "\u001B[36mWelcome to the ConversationsEngine''s playground!\u001B[0m\n"
+	private static final String menuString = "\u001B[36mWelcome to the ConversationEngine''s playground!\u001B[0m\n"
 			+ "\u001B[36m\033[3mType the corresponding number to select an action from the menu\033[0m\u001B[0m\n\n"
 			+ "\u001B[36m---- Menu ----\u001B[0m\n"
 			+ "\t\u001B[36m[1] Select language  || currently selected language: {0}\u001B[0m\n"
@@ -126,7 +126,7 @@ public class Main {
 	}
 
 	private static void playgroundGerman() {
-		ConversationsEngine CE = setUp();
+		ConversationEngine CE = setUp();
 		System.out.println("\u001B[36mGeben Sie quit ein, um den Playground zu verlassen.\u001B[0m");
 		System.out.println("\u001B[36mSie können jetzt Ihre Anfragen stellen.\u001B[0m");
 		while (true) {
@@ -140,7 +140,7 @@ public class Main {
 	}
 
 	private static void playgroundEnglish() {
-		ConversationsEngine CE = setUp();
+		ConversationEngine CE = setUp();
 		System.out.println("\u001B[36mEnter quit to leave the playground.\u001B[0m");
 		System.out.println("\u001B[36mYou can now enter your request.\u001B[0m");
 		while (true) {
@@ -163,51 +163,51 @@ public class Main {
 		}
 	}
 
-	private static ConversationsEngine setUp() {
+	private static ConversationEngine setUp() {
 		if ("German".equalsIgnoreCase(selectedLanguage)) {
 			INLPComponent nlp = new NLPComponent();
-			ConversationsEngine germanConversationsEngine = new ConversationsEngine(nlp, new Locale("de", "DE"));
+			ConversationEngine germanConversationEngine = new ConversationEngine(nlp, new Locale("de", "DE"));
 			GreetingSkill greeting = new GreetingSkill();
 			String greetingSkillSM = loadJsonFileAsString("Greeting.json");
-			germanConversationsEngine.addSkill(greeting, greetingSkillSM);
+			germanConversationEngine.addSkill(greeting, greetingSkillSM);
 			RecipeCookingSkill recipeCooking = new RecipeCookingSkill();
 			String recipeCookingSkillSM = loadJsonFileAsString("RecipeCooking.json");
-			germanConversationsEngine.addSkill(recipeCooking, recipeCookingSkillSM);
+			germanConversationEngine.addSkill(recipeCooking, recipeCookingSkillSM);
 			RecipeSearchSkill recipeSearch = new RecipeSearchSkill();
 			String recipeSearchSkillSM = loadJsonFileAsString("RecipeSearch.json");
-			germanConversationsEngine.addSkill(recipeSearch, recipeSearchSkillSM);
+			germanConversationEngine.addSkill(recipeSearch, recipeSearchSkillSM);
 			RecipeSelectSkill recipeSelect = new RecipeSelectSkill();
 			String recipeSelectSkillSM = loadJsonFileAsString("RecipeSelect.json");
-			germanConversationsEngine.addSkill(recipeSelect, recipeSelectSkillSM);
+			germanConversationEngine.addSkill(recipeSelect, recipeSelectSkillSM);
 			WeatherSkill weather = new WeatherSkill();
 			String weatherSkillSM = loadJsonFileAsString("Weather.json");
-			germanConversationsEngine.addSkill(weather, weatherSkillSM);
+			germanConversationEngine.addSkill(weather, weatherSkillSM);
 			WeatherSkill weather2 = new WeatherSkill();
 			String weatherSkillSM2 = loadJsonFileAsString("Weather2.json");
-			germanConversationsEngine.addSkill(weather2, weatherSkillSM2);
-			return germanConversationsEngine;
+			germanConversationEngine.addSkill(weather2, weatherSkillSM2);
+			return germanConversationEngine;
 		}
 		INLPComponent nlp = new NLPComponentEnglish();
-		ConversationsEngine englishConversationsEngine = new ConversationsEngine(nlp, new Locale("en", "US"));
+		ConversationEngine englishConversationEngine = new ConversationEngine(nlp, new Locale("en", "US"));
 		GreetingSkillEnglish greeting = new GreetingSkillEnglish();
 		String greetingSkillSM = loadJsonFileAsString("Greeting.json");
-		englishConversationsEngine.addSkill(greeting, greetingSkillSM);
+		englishConversationEngine.addSkill(greeting, greetingSkillSM);
 		RecipeCookingSkillEnglish recipeCooking = new RecipeCookingSkillEnglish();
 		String recipeCookingSkillSM = loadJsonFileAsString("RecipeCooking.json");
-		englishConversationsEngine.addSkill(recipeCooking, recipeCookingSkillSM);
+		englishConversationEngine.addSkill(recipeCooking, recipeCookingSkillSM);
 		RecipeSearchSkillEnglish recipeSearch = new RecipeSearchSkillEnglish();
 		String recipeSearchSkillSM = loadJsonFileAsString("RecipeSearch.json");
-		englishConversationsEngine.addSkill(recipeSearch, recipeSearchSkillSM);
+		englishConversationEngine.addSkill(recipeSearch, recipeSearchSkillSM);
 		RecipeSelectSkillEnglish recipeSelect = new RecipeSelectSkillEnglish();
 		String recipeSelectSkillSM = loadJsonFileAsString("RecipeSelect.json");
-		englishConversationsEngine.addSkill(recipeSelect, recipeSelectSkillSM);
+		englishConversationEngine.addSkill(recipeSelect, recipeSelectSkillSM);
 		WeatherSkillEnglish weather = new WeatherSkillEnglish();
 		String weatherSkillSM = loadJsonFileAsString("Weather.json");
-		englishConversationsEngine.addSkill(weather, weatherSkillSM);
+		englishConversationEngine.addSkill(weather, weatherSkillSM);
 		WeatherSkillEnglish weather2 = new WeatherSkillEnglish();
 		String weatherSkillSM2 = loadJsonFileAsString("Weather2.json");
-		englishConversationsEngine.addSkill(weather2, weatherSkillSM2);
-		return englishConversationsEngine;
+		englishConversationEngine.addSkill(weather2, weatherSkillSM2);
+		return englishConversationEngine;
 
 	}
 

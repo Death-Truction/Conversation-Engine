@@ -21,9 +21,9 @@ import interfaces_implementation.NLPComponentWithInvalidReturnedData;
 import skills.GreetingSkill;
 import skills.WeatherSkill;
 
-class ConversationsEngineTest {
+class ConversationEngineTest {
 
-	private ConversationsEngine myStateMachine;
+	private ConversationEngine myStateMachine;
 	private INLPComponent nlp = new NLPComponent();
 	private String contextData;
 	private MemoryLogger logs;
@@ -32,7 +32,7 @@ class ConversationsEngineTest {
 	@BeforeEach
 	void init() {
 		this.contextData = "";
-		createNewConversationsEngine(this.nlp, "{}");
+		createNewConversationEngine(this.nlp, "{}");
 		logs = TestHelperFunctions.getNewLogAppender();
 	}
 
@@ -48,8 +48,8 @@ class ConversationsEngineTest {
 	}
 
 	@Test
-	@DisplayName("Get contextData and start new ConversationsEngine with the same data")
-	void restartConversationsEngineWithOldContextObject() {
+	@DisplayName("Get contextData and start new ConversationEngine with the same data")
+	void restartConversationEngineWithOldContextObject() {
 		Consumer<StringBuilder> shutdownConsumer = data -> {
 			this.contextData = data.toString();
 		};
@@ -58,7 +58,7 @@ class ConversationsEngineTest {
 		assertTrue(answers.get(0).contains("In Berlin sind es"));
 		this.myStateMachine.shutdown(shutdownConsumer);
 		assertEquals("{\"weatherLocations\":[{\"Berlin\":{\"country\":\"Germany\"}}]}", this.contextData);
-		createNewConversationsEngine(this.nlp, this.contextData);
+		createNewConversationEngine(this.nlp, this.contextData);
 		answers = this.myStateMachine.userInput("Wie ist das Wetter?");
 		assertTrue(answers.get(0).contains("In Berlin sind es"));
 	}
@@ -67,7 +67,7 @@ class ConversationsEngineTest {
 	@DisplayName("English NLPComponent")
 	void englishNLPComponent() {
 		INLPComponent newNlp = new NLPComponentEnglish();
-		createNewConversationsEngine(newNlp, "{}");
+		createNewConversationEngine(newNlp, "{}");
 		String answer = this.myStateMachine.userInput("ggf").get(0);
 		assertEquals("I'm sorry, but unfortunately I was unable to process your request.", answer);
 	}
@@ -78,7 +78,7 @@ class ConversationsEngineTest {
 	@DisplayName("Undefined user language")
 	void undefinedUserLanguage() {
 		INLPComponent newNlp = new NLPComponentUndefinedLanguage();
-		createNewConversationsEngine(newNlp, "{}");
+		createNewConversationEngine(newNlp, "{}");
 		List<String> answers = this.myStateMachine.userInput("Hi");
 		assertEquals(TestHelperFunctions.getDayTime(), answers.get(0));
 		logs.contains("The language el is not supported", Level.ERROR);
@@ -87,25 +87,25 @@ class ConversationsEngineTest {
 	@Test
 	@DisplayName("NLPComponent parameter is null")
 	void nlpComponentIsNull() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(null, defaultLanguage));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationEngine(null, defaultLanguage));
 	}
 
 	@Test
 	@DisplayName("timeoutInSeconds parameter is negative")
 	void timeoutIsNegative() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, -1, defaultLanguage));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationEngine(this.nlp, -1, defaultLanguage));
 	}
 
 	@Test
 	@DisplayName("defaultLanguage parameter is negative")
 	void defaultLanguageIsNegative() {
-		assertThrows(IllegalArgumentException.class, () -> new ConversationsEngine(this.nlp, 200, null));
+		assertThrows(IllegalArgumentException.class, () -> new ConversationEngine(this.nlp, 200, null));
 	}
 
 	@Test
 	@DisplayName("defaultLanguage parameter is not supported")
 	void defaultLanguageIsNotSupported() {
-		new ConversationsEngine(nlp, new Locale("el"));
+		new ConversationEngine(nlp, new Locale("el"));
 		assertTrue(this.logs.contains(
 				"Default language was not set! The language el could not be found. Please make sure that the correct localization file exists.",
 				Level.WARN));
@@ -133,7 +133,7 @@ class ConversationsEngineTest {
 		this.myStateMachine.shutdown(null);
 		assertTrue(this.logs.contains("The consumer passed to the shutdown function was null", Level.WARN));
 		this.myStateMachine.shutdown(null);
-		assertTrue(this.logs.contains("The ConversationsEngine was invoked after it has been shut down", Level.ERROR));
+		assertTrue(this.logs.contains("The ConversationEngine was invoked after it has been shut down", Level.ERROR));
 	}
 
 	@Test
@@ -142,19 +142,19 @@ class ConversationsEngineTest {
 		this.myStateMachine.shutdown(null);
 		assertTrue(this.logs.contains("The consumer passed to the shutdown function was null", Level.WARN));
 		this.myStateMachine.getState();
-		assertTrue(this.logs.contains("The ConversationsEngine was invoked after it has been shut down", Level.ERROR));
+		assertTrue(this.logs.contains("The ConversationEngine was invoked after it has been shut down", Level.ERROR));
 	}
 
 	@Test
 	@DisplayName("Accessing addSkill() after shutdown")
 	void accessingAddSkillAfterShutdown() {
-		myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		myStateMachine.shutdown(null);
 		assertTrue(this.logs.contains("The consumer passed to the shutdown function was null", Level.WARN));
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		myStateMachine.addSkill(greet, greetingSkillStateMachine);
-		assertTrue(this.logs.contains("The ConversationsEngine was invoked after it has been shut down", Level.ERROR));
+		assertTrue(this.logs.contains("The ConversationEngine was invoked after it has been shut down", Level.ERROR));
 	}
 
 	@Test
@@ -163,7 +163,7 @@ class ConversationsEngineTest {
 		this.myStateMachine.shutdown(null);
 		assertTrue(this.logs.contains("The consumer passed to the shutdown function was null", Level.WARN));
 		this.myStateMachine.userInput("hi");
-		assertTrue(this.logs.contains("The ConversationsEngine was invoked after it has been shut down", Level.ERROR));
+		assertTrue(this.logs.contains("The ConversationEngine was invoked after it has been shut down", Level.ERROR));
 	}
 
 	@Test
@@ -184,7 +184,7 @@ class ConversationsEngineTest {
 	@DisplayName("Invalid NLPAnswers")
 	void invalidNLPAnswers() {
 		INLPComponent nlp = new NLPComponentWithInvalidReturnedData();
-		ConversationsEngine statemachine = new ConversationsEngine(nlp, new Locale("de", "DE"));
+		ConversationEngine statemachine = new ConversationEngine(nlp, new Locale("de", "DE"));
 		statemachine.userInput("nullLanguage");
 		assertTrue(logs.contains("NLPComponent did not return a language", Level.ERROR));
 		statemachine.userInput("null");
@@ -195,16 +195,16 @@ class ConversationsEngineTest {
 	@DisplayName("add null skill")
 	void addNullSkill() {
 		this.myStateMachine.addSkill(null, "");
-		assertTrue(logs.contains("The skill to add to the ConversationsEngine is null", Level.ERROR));
-		this.myStateMachine = new ConversationsEngine(nlp, defaultLanguage);
+		assertTrue(logs.contains("The skill to add to the ConversationEngine is null", Level.ERROR));
+		this.myStateMachine = new ConversationEngine(nlp, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		this.myStateMachine.addSkill(greet, "");
 		assertTrue(
-				logs.contains("The JSON-String for the skill to add to the ConversationsEngine is blank", Level.ERROR));
+				logs.contains("The JSON-String for the skill to add to the ConversationEngine is blank", Level.ERROR));
 	}
 
-	private void createNewConversationsEngine(INLPComponent nlp, String contextObject) {
-		this.myStateMachine = new ConversationsEngine(nlp, contextObject, defaultLanguage);
+	private void createNewConversationEngine(INLPComponent nlp, String contextObject) {
+		this.myStateMachine = new ConversationEngine(nlp, contextObject, defaultLanguage);
 		GreetingSkill greet = new GreetingSkill();
 		String greetingSkillStateMachine = TestHelperFunctions.loadJsonFileAsString("Greeting.json");
 		this.myStateMachine.addSkill(greet, greetingSkillStateMachine);
