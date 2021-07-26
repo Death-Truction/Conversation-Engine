@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
-import conversations_engine.ConversationsEngine;
+import conversation_engine.ConversationsEngine;
 
 /**
  * This is an Interface for the skills used by the {@link ConversationsEngine}

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import conversations_engine.ConversationsEngine;
+import conversation_engine.ConversationsEngine;
 import interfaces.INLPComponent;
 import interfaces_implementation.NLPComponent;
 import interfaces_implementation.NLPComponentEnglish;

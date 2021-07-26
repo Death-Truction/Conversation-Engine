@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.Button?>
-
-<AnchorPane fx:id="mainPane" fx:controller="de.dai_labor.conversations_engine_gui.controllers.DialogModelController" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
-	<Button onAction="#addCircle" text="Add Circle"/>
-</AnchorPane>
