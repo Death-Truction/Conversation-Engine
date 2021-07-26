@@ -10,19 +10,19 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/death-truction/ConversationsEngine">
+  <a href="https://github.com/death-truction/Conversation-Engine">
     <img src="Images/Icon.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">ConversationsEngine</h3>
+  <h3 align="center">Conversation-Engine</h3>
 
   <p align="center">
     A dialog management system framework
     <br />
     <br />
-    <a href="https://github.com/death-truction/ConversationsEngine/issues">Report Bug</a>
+    <a href="https://github.com/death-truction/Conversation-Engine/issues">Report Bug</a>
     ·
-    <a href="https://github.com/death-truction/ConversationsEngine/issues">Request Feature</a>
+    <a href="https://github.com/death-truction/Conversation-Engine/issues">Request Feature</a>
   </p>
 </p>
 
@@ -55,7 +55,7 @@
 
 ## About The Project
 
-ConversationsEngine is a framework that is supposed to be used as a dialog management system. It is designed to simplify the creation of chatbots by combining skills and a single NLP-Component} into an all in one system.<br>
+Conversation-Engine is a framework that is supposed to be used as a dialog management system. It is designed to simplify the creation of chatbots by combining skills and a single NLP-Component} into an all in one system.<br>
 The system is based on a finite state machine to create an accessible testing
 environment.
 
@@ -83,13 +83,13 @@ To get a local copy up and running follow these steps.
 
 ### Installation
 
-1. Clone the ConversationsEngine Project
+1. Clone the Conversation-Engine Project
    ```sh
-   git clone https://github.com/death-truction/ConversationsEngine.git
+   git clone https://github.com/death-truction/Conversation-Engine.git
    ```
 2. Change the directory to the project folder
     ```sh
-    cd ConversationsEngine
+    cd Conversation-Engine
     ```
 3. Install the package to your local maven repository <b>(replace the version number with the latest release)</b>
     ```sh
@@ -98,7 +98,7 @@ To get a local copy up and running follow these steps.
 
 ## Testing
 
-The project includes a <i>playground</i> to try the ConversationsEngine with some example skills. 
+The project includes a <i>playground</i> to try the Conversation-Engine with some example skills. 
 1. To start the playground simple run the following command in your cloned github repository:
     ```sh
     mvn exec:java
@@ -107,19 +107,19 @@ The project includes a <i>playground</i> to try the ConversationsEngine with som
     * German
     * English
 3. For a list of supported request checkout
-    * [Current Skills German](https://github.com/Death-Truction/ConversationsEngine/blob/main/Current%20Skills%20German.md)
-    * [Current Skills English](https://github.com/Death-Truction/ConversationsEngine/blob/main/Current%20Skills%20English.md)
+    * [Current Skills German](https://github.com/Death-Truction/Conversation-Engine/blob/main/Current%20Skills%20German.md)
+    * [Current Skills English](https://github.com/Death-Truction/Conversation-Engine/blob/main/Current%20Skills%20English.md)
 
 ## Usage
 
-1. To use the ConversationsEngine Framework simply include the installed dependency in your pom <b>(replace the version number with the latest release)</b>
+1. To use the Conversation-Engine Framework simply include the installed dependency in your pom <b>(replace the version number with the latest release)</b>
     ```xml
     ...
       <dependencies>
         ...
         <dependency>
           <groupId>de.dai-labor</groupId>
-          <artifactId>conversations-engine</artifactId>
+          <artifactId>conversation-engine</artifactId>
           <version>1.0.0</version>
         </dependency>
         ...
@@ -127,49 +127,49 @@ The project includes a <i>playground</i> to try the ConversationsEngine with som
       ...
     ```
 2. Implement the interfaces found in the interfaces package at one of the following locations:
-    * [github](https://github.com/Death-Truction/ConversationsEngine/tree/main/ConversationsEngine/src/main/java/interfaces)
-    * [javadocs](https://death-truction.github.io/ConversationsEngine/apidocs/interfaces/package-summary.html)
+    * [github](https://github.com/Death-Truction/Conversation-Engine/tree/main/Conversation-Engine/src/main/java/interfaces)
+    * [javadocs](https://death-truction.github.io/Conversation-Engine/apidocs/interfaces/package-summary.html)
     * <i>For an implementation example checkout these test classes</i>
-      * [NLPComponent](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPComponent.java)
-      * [NLPAnswer](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/NLPAnswer.java)
-      * [Skill](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/skills/WeatherSkill.java)
-      * [SkillAnswer](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/java/interfaces_implementation/SkillAnswer.java)
+      * [NLPComponent](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/interfaces_implementation/NLPComponent.java)
+      * [NLPAnswer](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/interfaces_implementation/NLPAnswer.java)
+      * [Skill](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/skills/WeatherSkill.java)
+      * [SkillAnswer](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/interfaces_implementation/SkillAnswer.java)
 3. Create a valid state machine JSON-File 
     * by using my GUI (<b><i>Coming soon</i></b>)
-    * Create your own JSON-File by following [this JSON-Schema](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/main/resources/SkillStateMachine_Schema.json)
-4. Create a new ConversationsEngine object and add your NLPComponent and your skills
+    * Create your own JSON-File by following [this JSON-Schema](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/main/resources/SkillStateMachine_Schema.json)
+4. Create a new Conversation-Engine object and add your NLPComponent and your skills
     ```java
     NLPComponent nlp = new NLPComponent();
-    ConversationsEngine conversationsEngine = new ConversationsEngine(nlp);
+    ConversationEngine conversationEngine = new ConversationEngine(nlp);
     MySkill mySkill = new MySkill();
     String mySkillStateMachineJsonFile = loadJsonFileAsString("MySkill.json");
     stateMachine.addSkill(mySkill, mySkillStateMachineJsonFile);
     ```
-5. Now you can simply send your inputs to the ConversationsEngine and get the answers in a List
+5. Now you can simply send your inputs to the Conversation-Engine and get the answers in a List
     ```java
-    List<String> answers = conversationsEngine.userInput("Hello world!");
+    List<String> answers = conversationEngine.userInput("Hello world!");
     ```
 ## Logging
 
 The project includes two Logging-Facades named <i>"DeveloperLogger"</i> and <i>"ConversationLogger"</i><br>
 To use the output of the loggers you have to add your own logging framework to the project and configure the loggers.<br>
-Checkout the tests of the project, which are using the logging dependency [logback](https://death-truction.github.io/ConversationsEngine/dependencies.html) with a [simple configuration](https://github.com/Death-Truction/ConversationsEngine/blob/main/ConversationsEngine/src/test/resources/logback.xml).
+Checkout the tests of the project, which are using the logging dependency [logback](https://death-truction.github.io/Conversation-Engine/dependencies.html) with a [simple configuration](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/resources/logback.xml).
 ## Documentation
-* [Overview](https://death-truction.github.io/ConversationsEngine/index.html)
-* [Javadoc](https://death-truction.github.io/ConversationsEngine/apidocs/index.html)
+* [Overview](https://death-truction.github.io/Conversation-Engine/index.html)
+* [Javadoc](https://death-truction.github.io/Conversation-Engine/apidocs/index.html)
 
 ## Roadmap
 
-See the [open issues](https://github.com/death-truction/ConversationsEngine/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/death-truction/Conversation-Engine/issues) for a list of proposed features (and known issues).
 
 
 ## License
 
 Distributed under the MIT License. See [`License`][license-url] for more information.
 
-## [Used Dependencies](https://death-truction.github.io/ConversationsEngine/dependencies.html)
+## [Used Dependencies](https://death-truction.github.io/Conversation-Engine/dependencies.html)
 
-## [Used Plugins](https://death-truction.github.io/ConversationsEngine/plugins.html)
+## [Used Plugins](https://death-truction.github.io/Conversation-Engine/plugins.html)
 
 ## Acknowledgements
 
@@ -177,13 +177,13 @@ Distributed under the MIT License. See [`License`][license-url] for more informa
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/death-truction/ConversationsEngine.svg?style=for-the-badge
-[contributors-url]: https://github.com/death-truction/ConversationsEngine/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/death-truction/ConversationsEngine.svg?style=for-the-badge
-[forks-url]: https://github.com/death-truction/ConversationsEngine/network/members
-[stars-shield]: https://img.shields.io/github/stars/death-truction/ConversationsEngine.svg?style=for-the-badge
-[stars-url]: https://github.com/death-truction/ConversationsEngine/stargazers
-[issues-shield]: https://img.shields.io/github/issues/death-truction/ConversationsEngine.svg?style=for-the-badge
-[issues-url]: https://github.com/death-truction/ConversationsEngine/issues
-[license-shield]: https://img.shields.io/github/license/death-truction/ConversationsEngine.svg?style=for-the-badge
-[license-url]: https://github.com/death-truction/ConversationsEngine/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/death-truction/Conversation-Engine.svg?style=for-the-badge
+[contributors-url]: https://github.com/death-truction/Conversation-Engine/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/death-truction/Conversation-Engine.svg?style=for-the-badge
+[forks-url]: https://github.com/death-truction/Conversation-Engine/network/members
+[stars-shield]: https://img.shields.io/github/stars/death-truction/Conversation-Engine.svg?style=for-the-badge
+[stars-url]: https://github.com/death-truction/Conversation-Engine/stargazers
+[issues-shield]: https://img.shields.io/github/issues/death-truction/Conversation-Engine.svg?style=for-the-badge
+[issues-url]: https://github.com/death-truction/Conversation-Engine/issues
+[license-shield]: https://img.shields.io/github/license/death-truction/Conversation-Engine.svg?style=for-the-badge
+[license-url]: https://github.com/death-truction/Conversation-Engine/blob/main/LICENSE

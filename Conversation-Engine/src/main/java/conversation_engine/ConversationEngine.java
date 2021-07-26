@@ -33,7 +33,7 @@ import interfaces.ISkillAnswer;
  * @author Marcel Engelmann
  *
  */
-public class ConversationsEngine {
+public class ConversationEngine {
 
 	private static final int DEFAULTTIMEOUTVALUE = 300;
 	private static final String EMPTYCONTEXTOBJECT = "{}";
