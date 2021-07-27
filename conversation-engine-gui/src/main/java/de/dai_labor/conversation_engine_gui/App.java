@@ -19,6 +19,8 @@ public class App extends Application {
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
 		Image icon = new Image(getClass().getResource("images/Icon.png").toExternalForm());
 		stage.getIcons().add(icon);
+		stage.minHeightProperty().set(480.0);
+		stage.minWidthProperty().set(640.0);
 		Scene mainScene = new Scene(loadFXML("views/mainView"), 1280, 720);
 		mainScene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());
 		stage.setScene(mainScene);
