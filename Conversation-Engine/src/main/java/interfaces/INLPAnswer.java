@@ -20,7 +20,7 @@ public interface INLPAnswer {
 	List<String> getIntents();
 
 	/**
-	 * Indicates weather the {@link INLPComponent} has added new entities to the
+	 * Indicates whether the {@link INLPComponent} has added new entities to the
 	 * context object
 	 * 
 	 * @return true if new entities were added to the context object

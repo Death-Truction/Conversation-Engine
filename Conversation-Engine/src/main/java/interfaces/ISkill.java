@@ -16,7 +16,7 @@ import conversation_engine.ConversationEngine;
 public interface ISkill {
 
 	/**
-	 * Evaluates weather the skill can process the given intent or not
+	 * Evaluates whether the skill can process the given intent or not
 	 * 
 	 * @param intent       the intent to check
 	 * @param currentState the current state of the skill

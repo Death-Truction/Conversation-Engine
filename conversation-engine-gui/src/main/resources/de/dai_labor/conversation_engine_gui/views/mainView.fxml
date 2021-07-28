@@ -6,7 +6,7 @@
 <BorderPane fx:id="mainBorderPane" fx:controller="de.dai_labor.conversation_engine_gui.controllers.MainController" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
     <left>
     <!-- Navigation Menu -->
-        <VBox styleClass="navigationMenu" spacing="5">
+        <VBox style="-fx-background-color: DARKGRAY" spacing="5">
             <Button onAction="#navigateViewEvent" text="Dialog Model" userData="dialogModelView.fxml" />
          	<Button onAction="#navigateViewEvent" text="Dialog Data" userData="dialogDataView.fxml" />
             <Button onAction="#navigateViewEvent" text="Settings" userData="settingsView.fxml" />

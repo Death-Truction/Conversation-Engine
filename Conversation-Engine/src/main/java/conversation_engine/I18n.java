@@ -48,7 +48,7 @@ class I18n {
 	 * @param language the language locale to use as default
 	 */
 	static void setDefaultLanguage(Locale language) {
-		// Check weather the locale exists or not
+		// Check whether the locale exists or not
 		if (ResourceBundle.getBundle("localization.localization", language).getLocale().getLanguage()
 				.equals(language.getLanguage())) {
 			defaultLocale = language;

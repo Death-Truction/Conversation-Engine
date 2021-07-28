@@ -118,8 +118,8 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Creates a new {@link ConversationEngine} object with a default timeout of
-	 * 300 seconds and an empty context object
+	 * Creates a new {@link ConversationEngine} object with a default timeout of 300
+	 * seconds and an empty context object
 	 * 
 	 * @param nlpComponent    the NLPComponent that handles the user input
 	 * @param defaultLanguage the default language to use as backup
@@ -143,8 +143,8 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Creates a new {@link ConversationEngine} object with a default timeout of
-	 * 300 seconds
+	 * Creates a new {@link ConversationEngine} object with a default timeout of 300
+	 * seconds
 	 * 
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
@@ -615,7 +615,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Adds the question, weather the user wants to abort the last or all skills, to
+	 * Adds the question, whether the user wants to abort the last or all skills, to
 	 * the {@link UserOutput}
 	 */
 	private void askAbortQuestion() {
@@ -623,7 +623,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Adds the question weather the user wants to continue the last skill, to the
+	 * Adds the question whether the user wants to continue the last skill, to the
 	 * {@link UserOutput}
 	 */
 	private void askContinueLastSkill() {
@@ -725,7 +725,7 @@ public class ConversationEngine {
 	}
 
 	/**
-	 * Checks weather the {@link #currentSkillStateMachine} has ended or not
+	 * Checks whether the {@link #currentSkillStateMachine} has ended or not
 	 * 
 	 * @return true if the {@link #currentSkillStateMachine} has ended
 	 */

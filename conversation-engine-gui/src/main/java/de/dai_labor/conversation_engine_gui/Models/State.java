@@ -23,8 +23,9 @@ public class State extends StackPane {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
-		dragElementData.x = this.getBoundsInParent().getMinX() - event.getScreenX();
-		dragElementData.y = this.getBoundsInParent().getMinY() - event.getScreenY();
+		double scale = this.getParent().getScaleX();
+		dragElementData.x = this.getBoundsInParent().getMinX() * scale - event.getScreenX();
+		dragElementData.y = this.getBoundsInParent().getMinY() * scale - event.getScreenY();
 		this.toFront();
 	};
 
@@ -33,8 +34,9 @@ public class State extends StackPane {
 			return;
 		}
 		this.setCursor(Cursor.MOVE);
-		double xDifference = (event.getScreenX() + dragElementData.x);
-		double yDifference = (event.getScreenY() + dragElementData.y);
+		double scaleFactor = this.getParent().getScaleX();
+		double xDifference = (event.getScreenX() + dragElementData.x) / scaleFactor;
+		double yDifference = (event.getScreenY() + dragElementData.y) / scaleFactor;
 		this.relocate(xDifference, yDifference);
 	};
 
