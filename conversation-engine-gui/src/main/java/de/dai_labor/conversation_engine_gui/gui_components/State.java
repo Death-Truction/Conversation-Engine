@@ -1,5 +1,6 @@
-package de.dai_labor.conversation_engine_gui.models;
+package de.dai_labor.conversation_engine_gui.gui_components;
 
+import de.dai_labor.conversation_engine_gui.models.DragElementData;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -11,9 +12,9 @@ import javafx.scene.shape.Rectangle;
 
 public class State extends StackPane {
 
-	private final double INITIAL_SIZE = 80;
-	private final double INITIAL_ARC_SIZE = 15;
-	private final Color STATE_SHAPE_COLOR = Color.STEELBLUE;
+	public final static double INITIAL_SIZE = 80;
+	private final static double INITIAL_ARC_SIZE = 15;
+	private final static Color STATE_SHAPE_COLOR = Color.STEELBLUE;
 
 	private Rectangle stateShape;
 	private Label nameLabel;
@@ -23,9 +24,11 @@ public class State extends StackPane {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
-		double scale = this.getParent().getScaleX();
-		dragElementData.x = this.getBoundsInParent().getMinX() * scale - event.getScreenX();
-		dragElementData.y = this.getBoundsInParent().getMinY() * scale - event.getScreenY();
+		this.setCursor(Cursor.MOVE);
+		dragElementData.mouseX = event.getScreenX();
+		dragElementData.mouseY = event.getScreenY();
+		dragElementData.translateX = this.getTranslateX();
+		dragElementData.translateY = this.getTranslateY();
 		this.toFront();
 	};
 
@@ -33,19 +36,21 @@ public class State extends StackPane {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
-		this.setCursor(Cursor.MOVE);
-		double scaleFactor = this.getParent().getScaleX();
-		double xDifference = (event.getScreenX() + dragElementData.x) / scaleFactor;
-		double yDifference = (event.getScreenY() + dragElementData.y) / scaleFactor;
-		this.relocate(xDifference, yDifference);
+		double scale = this.getParent().getScaleX();
+		double xDifference = (event.getScreenX() - dragElementData.mouseX) / scale + dragElementData.translateX;
+		double yDifference = (event.getScreenY() - dragElementData.mouseY) / scale + dragElementData.translateY;
+		this.setTranslateX(xDifference);
+		this.setTranslateY(yDifference);
 	};
 
 	private EventHandler<MouseEvent> mouseReleasedEventHandler = event -> {
-		this.setCursor(Cursor.DEFAULT);
+		if (!event.isStillSincePress()) {
+			this.setCursor(Cursor.DEFAULT);
+		}
 	};
 
 	public State(String name, double x, double y) {
-		this.stateShape = new Rectangle(x, y, INITIAL_SIZE, INITIAL_SIZE);
+		this.stateShape = new Rectangle(INITIAL_SIZE, INITIAL_SIZE);
 		this.stateShape.setArcHeight(INITIAL_ARC_SIZE);
 		this.stateShape.setArcWidth(INITIAL_ARC_SIZE);
 		this.stateShape.setFill(STATE_SHAPE_COLOR);

@@ -2,43 +2,41 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
+import de.dai_labor.conversation_engine_gui.view.main.MainView;
+import de.dai_labor.conversation_engine_gui.view.main.MainViewModel;
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.MvvmFX;
+import de.saxsys.mvvmfx.ViewTuple;
+import eu.lestard.easydi.EasyDI;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
+		EasyDI easyDI = new EasyDI();
+		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
+		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
 		Image icon = new Image(getClass().getResource("images/Icon.png").toExternalForm());
 		stage.getIcons().add(icon);
 		stage.minHeightProperty().set(480.0);
 		stage.minWidthProperty().set(640.0);
-		Scene mainScene = new Scene(loadFXML("views/mainView"), 1280, 720);
+		stage.setHeight(720);
+		stage.setWidth(1280);
+		ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
+		Parent mainScene = viewTuple.getView();
 		mainScene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());
-		stage.setScene(mainScene);
+		stage.setScene(new Scene(mainScene));
 		stage.show();
 	}
 
-	private static Parent loadFXML(String fxml) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-		return fxmlLoader.load();
-	}
-
-	/**
-	 * Launches the user interface application
-	 * 
-	 * @param args These arguments are ignored
-	 */
 	public static void main(String[] args) {
-		launch();
+		Application.launch(App.class, args);
 	}
 
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox style="-fx-background-color: Gray" fx:controller="de.dai_labor.conversation_engine_gui.view.diagram.DialogueToolbarView"  xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+	<ToggleButton fx:id="stateButton" text="add State" userData="addState"></ToggleButton>
+	<ToggleButton fx:id="transitionButton" text="add Transition" userData="addTransition"></ToggleButton>
+	<Button fx:id="resetButton" text="reset view"></Button>
+</VBox>

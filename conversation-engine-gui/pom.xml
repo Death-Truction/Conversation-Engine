@@ -20,6 +20,16 @@
             <artifactId>javafx-fxml</artifactId>
             <version>16</version>
         </dependency>
+        <dependency>
+			<groupId>de.saxsys</groupId>
+			<artifactId>mvvmfx</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>eu.lestard</groupId>
+		    <artifactId>easy-di</artifactId>
+		    <version>0.3.0</version>
+		</dependency>
     </dependencies>
     <build>
         <plugins>

@@ -3,11 +3,16 @@ package de.dai_labor.conversation_engine_gui.models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DialogModelData {
+import javax.inject.Singleton;
+
+import de.dai_labor.conversation_engine_gui.gui_components.State;
+
+@Singleton
+public class DialogueModelData {
 	private Map<String, State> states = new HashMap<>();
 	private Map<Integer, Edge> edges = new HashMap<>();
 
-	public DialogModelData() {
+	public DialogueModelData() {
 	}
 
 	public State addNewState(double locationX, double locationY) {

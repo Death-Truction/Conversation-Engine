@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="mainPane" fx:controller="de.dai_labor.conversation_engine_gui.view.diagram.DialogueMainView" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+	<right>
+		<fx:include source="DialogueToolbarView.fxml" />
+	</right>
+</BorderPane>
