@@ -2,6 +2,7 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
+import de.dai_labor.conversation_engine_gui.models.DialogueModelData;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
 import de.dai_labor.conversation_engine_gui.view.main.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
@@ -16,9 +17,14 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
+	private EasyDI easyDI = new EasyDI();
+
+	public static void main(String[] args) {
+		Application.launch(App.class, args);
+	}
+
 	@Override
 	public void start(Stage stage) throws IOException {
-		EasyDI easyDI = new EasyDI();
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
 		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
@@ -35,8 +41,10 @@ public class App extends Application {
 		stage.show();
 	}
 
-	public static void main(String[] args) {
-		Application.launch(App.class, args);
+	@Override
+	public void stop() {
+		DialogueModelData dialogueModelData = easyDI.getInstance(DialogueModelData.class);
+		System.out.println(dialogueModelData.toString());
 	}
 
 }

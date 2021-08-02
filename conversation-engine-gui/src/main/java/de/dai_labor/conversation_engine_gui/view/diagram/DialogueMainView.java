@@ -7,6 +7,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
 public class DialogueMainView implements FxmlView<DialogueMainViewModel>, Initializable {
@@ -19,7 +20,9 @@ public class DialogueMainView implements FxmlView<DialogueMainViewModel>, Initia
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Node view = viewModel.getView();
 		this.mainPane.setCenter(viewModel.getView());
+		view.toBack();
 	}
 
 }

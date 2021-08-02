@@ -30,5 +30,4 @@ public class DialogueToolbarViewModel implements ViewModel {
 	public void resetView(ActionEvent e) {
 		this.dialogueMainViewModel.centerElements();
 	}
-
 }
