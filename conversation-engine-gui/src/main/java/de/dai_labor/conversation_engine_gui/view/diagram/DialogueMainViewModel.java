@@ -30,8 +30,8 @@ public class DialogueMainViewModel implements ViewModel {
 		this.diagramElementsLayer.relocate(-5000, -5000);
 		this.diagramElementsLayer.toBack();
 		this.dialoguePane.toBack();
-		this.addState(5300.0, 5300.0);
-		this.addState(5500.0, 5500.0);
+		// this.addState(5300.0, 5300.0);
+		// this.addState(5500.0, 5500.0);
 	}
 
 	public Node getView() {

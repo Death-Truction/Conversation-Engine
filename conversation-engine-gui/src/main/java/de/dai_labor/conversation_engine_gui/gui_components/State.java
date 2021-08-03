@@ -18,7 +18,7 @@ public class State extends StackPane {
 	private final static Color STATE_SHAPE_COLOR = Color.STEELBLUE;
 
 	private Circle stateShape;
-	private TextField nameLabel;
+	private TextField nameTextField;
 	private DragElementData dragElementData = new DragElementData();
 
 	private EventHandler<KeyEvent> labelKeyEvent = event -> {
@@ -66,31 +66,35 @@ public class State extends StackPane {
 		// this.stateShape.setArcWidth(INITIAL_ARC_SIZE);
 		this.stateShape.setFill(STATE_SHAPE_COLOR);
 		this.stateShape.setMouseTransparent(true);
-		this.nameLabel = new TextField(name);
-		this.nameLabel.setMaxWidth(INITIAL_SIZE * 2);
-		this.nameLabel.setAlignment(Pos.CENTER);
-		this.nameLabel.setStyle(
+		this.nameTextField = new TextField(name);
+		this.nameTextField.setMaxWidth(INITIAL_SIZE * 2);
+		this.nameTextField.setAlignment(Pos.CENTER);
+		this.nameTextField.setStyle(
 				"-fx-text-fill: white; -fx-background-color: transparent;-fx-highlight-fill: derive(-fx-control-inner-background,-20%); -fx-highlight-text-fill: -fx-text-inner-color;");
-		this.nameLabel.setMouseTransparent(true);
-		this.getChildren().addAll(this.stateShape, this.nameLabel);
+		this.nameTextField.setMouseTransparent(true);
+		this.getChildren().addAll(this.stateShape, this.nameTextField);
 		this.addEventHandlers();
 		this.relocate(x, y);
 	}
 
 	public String getName() {
-		return this.nameLabel.getText();
+		return this.nameTextField.getText();
 	}
 
 	public void focusLabel() {
-		this.nameLabel.requestFocus();
+		this.nameTextField.requestFocus();
 
+	}
+
+	public TextField getNameTextField() {
+		return this.nameTextField;
 	}
 
 	private void addEventHandlers() {
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this.mouseDraggedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventHandler);
-		this.nameLabel.addEventHandler(KeyEvent.KEY_RELEASED, this.labelKeyEvent);
+		this.nameTextField.addEventHandler(KeyEvent.KEY_RELEASED, this.labelKeyEvent);
 	}
 
 }

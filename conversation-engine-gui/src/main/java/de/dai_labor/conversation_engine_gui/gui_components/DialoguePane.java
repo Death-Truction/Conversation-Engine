@@ -108,8 +108,10 @@ public class DialoguePane extends Pane {
 			event.consume();
 		} else if (this.insertMode.get().equals("addTransition")) {
 			this.dialogueModelDataLayer.getChildren().remove(this.dragArrow);
+			Double scale = this.dialogueModelDataLayer.getScaleX();
 			StackPane tmpPane = new StackPane();
-			tmpPane.relocate(event.getX(), event.getY());
+			tmpPane.setTranslateX(event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX());
+			tmpPane.setTranslateY(event.getY() - this.dialogueModelDataLayer.getBoundsInParent().getMinY());
 			this.dragArrow = new Arrow(sourceTransitionState, tmpPane, this.dialogueModelDataLayer.getScaleX());
 			this.dragArrow.setMouseTransparent(true);
 			this.dialogueModelDataLayer.getChildren().add(this.dragArrow);

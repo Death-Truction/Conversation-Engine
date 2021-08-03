@@ -3,22 +3,22 @@ package de.dai_labor.conversation_engine_gui.gui_components;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
+//Source:
+// https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201
 public class Arrow extends Pane {
 	double sceneX, sceneY, layoutX, layoutY;
+	private TextField triggerTextField;
 
-	public Arrow(State source, State target) {
+	public Arrow(State source, State target, String triggerName) {
 		Line line = getLine(source, target, 1.0);
 		StackPane arrowAB = getArrow(true, line, source, target);
-		this.getChildren().addAll(line, arrowAB);
+		this.triggerTextField = getTextField(line, triggerName);
+		this.getChildren().addAll(line, arrowAB, this.triggerTextField);
 		arrowAB.setMouseTransparent(true);
 		this.setPickOnBounds(false);
 	}
@@ -139,13 +139,11 @@ public class Arrow extends Pane {
 	 * @param line Line on which the pane need to be set.
 	 * @return Pane located at the center of the provided line.
 	 */
-	private StackPane getWeight(Line line) {
+	private TextField getTextField(Line line, String text) {
 		double size = 20;
-		StackPane weight = new StackPane();
-		weight.setStyle("-fx-background-color:grey;-fx-border-width:1px;-fx-border-color:black;");
-		weight.setPrefSize(size, size);
-		weight.setMaxSize(size, size);
-		weight.setMinSize(size, size);
+		TextField weight = new TextField(text);
+		weight.setStyle(
+				"-fx-background-color: transparent; -fx-text-fill: White; -fx-font-size: 32px; -fx-alignment: center;");
 
 		DoubleBinding wgtSqrHalfWidth = weight.widthProperty().divide(2);
 		DoubleBinding wgtSqrHalfHeight = weight.heightProperty().divide(2);
@@ -157,84 +155,8 @@ public class Arrow extends Pane {
 		return weight;
 	}
 
-	/**
-	 * Builds a pane consisting of circle with the provided specifications.
-	 *
-	 * @param color Color of the circle
-	 * @param text  Text inside the circle
-	 * @return Draggable pane consisting a circle.
-	 */
-	private StackPane getDot(String color, String text) {
-		double radius = 50;
-		double paneSize = 2 * radius;
-		StackPane dotPane = new StackPane();
-		Circle dot = new Circle();
-		dot.setRadius(radius);
-		dot.setStyle("-fx-fill:" + color + ";-fx-stroke-width:2px;-fx-stroke:black;");
-
-		Label txt = new Label(text);
-		txt.setStyle("-fx-font-size:18px;-fx-font-weight:bold;");
-		dotPane.getChildren().addAll(dot, txt);
-		dotPane.setPrefSize(paneSize, paneSize);
-		dotPane.setMaxSize(paneSize, paneSize);
-		dotPane.setMinSize(paneSize, paneSize);
-		dotPane.setOnMousePressed(e -> {
-			sceneX = e.getSceneX();
-			sceneY = e.getSceneY();
-			layoutX = dotPane.getLayoutX();
-			layoutY = dotPane.getLayoutY();
-		});
-
-		EventHandler<MouseEvent> dotOnMouseDraggedEventHandler = e -> {
-			// Offset of drag
-			double offsetX = e.getSceneX() - sceneX;
-			double offsetY = e.getSceneY() - sceneY;
-
-			// Taking parent bounds
-			Bounds parentBounds = dotPane.getParent().getLayoutBounds();
-
-			// Drag node bounds
-			double currPaneLayoutX = dotPane.getLayoutX();
-			double currPaneWidth = dotPane.getWidth();
-			double currPaneLayoutY = dotPane.getLayoutY();
-			double currPaneHeight = dotPane.getHeight();
-
-			if ((currPaneLayoutX + offsetX < parentBounds.getWidth() - currPaneWidth)
-					&& (currPaneLayoutX + offsetX > -1)) {
-				// If the dragNode bounds is within the parent bounds, then you can set the
-				// offset value.
-				dotPane.setTranslateX(offsetX);
-			} else if (currPaneLayoutX + offsetX < 0) {
-				// If the sum of your offset and current layout position is negative, then you
-				// ALWAYS update your translate to negative layout value
-				// which makes the final layout position to 0 in mouse released event.
-				dotPane.setTranslateX(-currPaneLayoutX);
-			} else {
-				// If your dragNode bounds are outside parent bounds,ALWAYS setting the
-				// translate value that fits your node at end.
-				dotPane.setTranslateX(parentBounds.getWidth() - currPaneLayoutX - currPaneWidth);
-			}
-
-			if ((currPaneLayoutY + offsetY < parentBounds.getHeight() - currPaneHeight)
-					&& (currPaneLayoutY + offsetY > -1)) {
-				dotPane.setTranslateY(offsetY);
-			} else if (currPaneLayoutY + offsetY < 0) {
-				dotPane.setTranslateY(-currPaneLayoutY);
-			} else {
-				dotPane.setTranslateY(parentBounds.getHeight() - currPaneLayoutY - currPaneHeight);
-			}
-		};
-		dotPane.setOnMouseDragged(dotOnMouseDraggedEventHandler);
-		dotPane.setOnMouseReleased(e -> {
-			// Updating the new layout positions
-			dotPane.setLayoutX(layoutX + dotPane.getTranslateX());
-			dotPane.setLayoutY(layoutY + dotPane.getTranslateY());
-
-			// Resetting the translate positions
-			dotPane.setTranslateX(0);
-			dotPane.setTranslateY(0);
-		});
-		return dotPane;
+	public TextField getTriggerTextField() {
+		return this.triggerTextField;
 	}
 
 }

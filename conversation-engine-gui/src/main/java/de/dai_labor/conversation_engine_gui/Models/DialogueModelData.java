@@ -30,12 +30,8 @@ public class DialogueModelData {
 		return "State" + states.size();
 	}
 
-	private Integer getStateId() {
-		return states.size();
-	}
-
 	public Edge addTransition(State source, State target) {
-		Edge newEdge = new Edge(source, target);
+		Edge newEdge = new Edge(source, target, "Transition" + this.states.size());
 		edges.add(newEdge);
 		return newEdge;
 	}
