@@ -44,7 +44,6 @@ public class DialoguePane extends Pane {
 		this.addEventFilter(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventFilter);
 		this.addEventFilter(MouseEvent.ANY, this.mouseEventFilter);
 		this.addEventFilter(ScrollEvent.ANY, this.mouseScrollEventFilter);
-		this.dialogueModelDataLayer.setStyle("-fx-background-color: red");
 	}
 
 	public void centerMovingElement() {

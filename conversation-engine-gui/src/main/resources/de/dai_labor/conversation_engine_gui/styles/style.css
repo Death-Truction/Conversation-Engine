@@ -1,0 +1,36 @@
+.stateTextArea {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-highlight-fill: derive(-fx-control-inner-background,-20%);
+	-fx-highlight-text-fill: -fx-text-inner-color;
+	-fx-wrap-text: true;
+}
+
+.stateTextArea .text{
+	-fx-text-alignment: center;
+	-fx-alignment: center;
+	-fx-pref-width: 0;
+	-fx-pref-height: 0;
+}
+
+.stateTextArea .scroll-pane{
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;    
+	-fx-background-color: transparent;
+}
+
+.stateTextArea .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.stateTextArea .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
+.transitionTextField {
+	-fx-background-color: transparent;
+	-fx-text-fill: White;
+	-fx-font-size: 16px;
+	-fx-alignment: center;
+}

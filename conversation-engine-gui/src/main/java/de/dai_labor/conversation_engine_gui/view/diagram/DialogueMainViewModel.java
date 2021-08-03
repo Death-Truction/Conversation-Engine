@@ -3,7 +3,7 @@ package de.dai_labor.conversation_engine_gui.view.diagram;
 import javax.inject.Singleton;
 
 import de.dai_labor.conversation_engine_gui.gui_components.DialoguePane;
-import de.dai_labor.conversation_engine_gui.gui_components.Edge;
+import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.models.DialogueModelData;
 import de.saxsys.mvvmfx.ViewModel;
@@ -52,19 +52,23 @@ public class DialogueMainViewModel implements ViewModel {
 	}
 
 	public void addState(Double x, Double y) {
-		// center location on mousePointer
+		// center location to mousePointer
 		x -= State.INITIAL_SIZE;
 		y -= State.INITIAL_SIZE;
-		this.diagramElementsLayer.getChildren().add(dialogueModelData.addNewState(x, y));
+		State newState = dialogueModelData.addNewState(x, y);
+		this.diagramElementsLayer.getChildren().add(newState);
 		if (this.toggleButton != null) {
 			this.toggleButton.setSelected(false);
 		}
 	}
 
 	public void addTransition(State source, State target) {
-		Edge newTransition = this.dialogueModelData.addTransition(source, target);
-		this.diagramElementsLayer.getChildren().add(newTransition);
-		newTransition.toBack();
+		boolean transitionExist = this.dialogueModelData.transitionExists(source, target);
+		if (!transitionExist) {
+			Transition newTransition = this.dialogueModelData.addTransition(source, target);
+			this.diagramElementsLayer.getChildren().add(newTransition);
+			newTransition.toBack();
+		}
 		this.toggleButton.setSelected(false);
 	}
 

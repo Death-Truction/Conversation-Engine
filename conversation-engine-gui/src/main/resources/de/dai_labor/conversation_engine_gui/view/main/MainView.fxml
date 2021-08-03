@@ -18,24 +18,29 @@
     	</VBox>
     </center>
     <!-- Menu Bar -->
-   <top>
-      <BorderPane BorderPane.alignment="CENTER">
-         <center>
-            <MenuBar BorderPane.alignment="CENTER">
-              <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-         </center>
-      </BorderPane>
-   </top>
+<top>
+	<BorderPane BorderPane.alignment="CENTER">
+		<center>
+			<MenuBar BorderPane.alignment="CENTER">
+				<menus>
+					<Menu mnemonicParsing="false" text="File">
+						<items>
+						    <MenuItem fx:id="newMenuItem" mnemonicParsing="false" text="New" />
+						    <MenuItem fx:id="openMenuItem" mnemonicParsing="false" text="Open" />
+						    <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" text="Export" />
+						    <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+						    <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" text="Save as" />
+						    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
+						  </items>
+					</Menu>
+					<Menu mnemonicParsing="false" text="Help">
+						<items>
+							<MenuItem mnemonicParsing="false" text="About" />
+						</items>
+					</Menu>
+				</menus>
+			</MenuBar>
+		</center>
+	</BorderPane>
+</top>
 </BorderPane>

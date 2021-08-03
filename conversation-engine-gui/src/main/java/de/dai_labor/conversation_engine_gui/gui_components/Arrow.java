@@ -17,14 +17,14 @@ public class Arrow extends Pane {
 	public Arrow(State source, State target, String triggerName) {
 		Line line = getLine(source, target, 1.0);
 		StackPane arrowAB = getArrow(true, line, source, target);
-		this.triggerTextField = getTextField(line, triggerName);
+		this.triggerTextField = new TextField(triggerName);
+		setTextFieldProperties(line);
 		this.getChildren().addAll(line, arrowAB, this.triggerTextField);
 		arrowAB.setMouseTransparent(true);
 		this.setPickOnBounds(false);
 	}
 
 	public Arrow(State source, StackPane tmpPane, double scale) {
-		System.out.println(scale);
 		Line line = getLine(source, tmpPane, scale);
 		StackPane arrowAB = getArrow(true, line, source, tmpPane);
 		this.getChildren().addAll(line, arrowAB);
@@ -139,20 +139,19 @@ public class Arrow extends Pane {
 	 * @param line Line on which the pane need to be set.
 	 * @return Pane located at the center of the provided line.
 	 */
-	private TextField getTextField(Line line, String text) {
+	private void setTextFieldProperties(Line line) {
 		double size = 20;
-		TextField weight = new TextField(text);
-		weight.setStyle(
-				"-fx-background-color: transparent; -fx-text-fill: White; -fx-font-size: 32px; -fx-alignment: center;");
+		this.triggerTextField.getStyleClass().add("transitionTextField");
 
-		DoubleBinding wgtSqrHalfWidth = weight.widthProperty().divide(2);
-		DoubleBinding wgtSqrHalfHeight = weight.heightProperty().divide(2);
+		DoubleBinding wgtSqrHalfWidth = this.triggerTextField.widthProperty().divide(2);
+		DoubleBinding wgtSqrHalfHeight = this.triggerTextField.heightProperty().divide(2);
 		DoubleBinding lineXHalfLength = line.endXProperty().subtract(line.startXProperty()).divide(2);
 		DoubleBinding lineYHalfLength = line.endYProperty().subtract(line.startYProperty()).divide(2);
 
-		weight.layoutXProperty().bind(line.startXProperty().add(lineXHalfLength.subtract(wgtSqrHalfWidth)));
-		weight.layoutYProperty().bind(line.startYProperty().add(lineYHalfLength.subtract(wgtSqrHalfHeight)));
-		return weight;
+		this.triggerTextField.layoutXProperty()
+				.bind(line.startXProperty().add(lineXHalfLength.subtract(wgtSqrHalfWidth)));
+		this.triggerTextField.layoutYProperty()
+				.bind(line.startYProperty().add(lineYHalfLength.subtract(wgtSqrHalfHeight)));
 	}
 
 	public TextField getTriggerTextField() {
