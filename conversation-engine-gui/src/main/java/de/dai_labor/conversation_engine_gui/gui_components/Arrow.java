@@ -3,9 +3,14 @@ package de.dai_labor.conversation_engine_gui.gui_components;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 //Source:
@@ -13,21 +18,44 @@ import javafx.scene.shape.Line;
 public class Arrow extends Pane {
 	double sceneX, sceneY, layoutX, layoutY;
 	private TextField triggerTextField;
+	private static final Color DEFAULT_COLOR = Color.BLACK;
+	private static final Color SELECTED_COLOR = Color.GREEN;
+	private Line line;
+	private StackPane arrow;
 
 	public Arrow(State source, State target, String triggerName) {
-		Line line = getLine(source, target, 1.0);
-		StackPane arrowAB = getArrow(true, line, source, target);
+		this.line = getLine(source, target, 1.0);
+		this.arrow = getArrow(true, line, source, target);
+		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
+		this.unselect();
 		this.triggerTextField = new TextField(triggerName);
 		setTextFieldProperties(line);
-		this.getChildren().addAll(line, arrowAB, this.triggerTextField);
-		arrowAB.setMouseTransparent(true);
+		this.getChildren().addAll(line, arrow, this.triggerTextField);
+		arrow.setMouseTransparent(true);
 		this.setPickOnBounds(false);
+
 	}
 
 	public Arrow(State source, StackPane tmpPane, double scale) {
-		Line line = getLine(source, tmpPane, scale);
-		StackPane arrowAB = getArrow(true, line, source, tmpPane);
-		this.getChildren().addAll(line, arrowAB);
+		this.line = getLine(source, tmpPane, 1.0);
+		this.arrow = getArrow(true, line, source, tmpPane);
+		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
+		this.unselect();
+		this.getChildren().addAll(line, arrow);
+	}
+
+	public TextField getTriggerTextField() {
+		return this.triggerTextField;
+	}
+
+	public void select() {
+		this.line.setStroke(SELECTED_COLOR);
+		this.arrow.setBackground(new Background(new BackgroundFill(SELECTED_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+	}
+
+	public void unselect() {
+		this.line.setStroke(DEFAULT_COLOR);
+		this.arrow.setBackground(new Background(new BackgroundFill(DEFAULT_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
 	}
 
 	/**
@@ -64,8 +92,6 @@ public class Arrow extends Pane {
 	private StackPane getArrow(boolean toLineEnd, Line line, StackPane startDot, StackPane endDot) {
 		double size = 12; // Arrow size
 		StackPane arrow = new StackPane();
-		arrow.setStyle(
-				"-fx-background-color:#333333;-fx-border-width:1px;-fx-border-color:black;-fx-shape: \"M0,-4L4,0L0,4Z\"");//
 		arrow.setPrefSize(size, size);
 		arrow.setMaxSize(size, size);
 		arrow.setMinSize(size, size);
@@ -79,8 +105,8 @@ public class Arrow extends Pane {
 
 		// Determining the x point on the line which is at a certain distance.
 		DoubleBinding tX = Bindings.createDoubleBinding(() -> {
-			double xDiffSqu = (line.getEndX() - line.getStartX()) * (line.getEndX() - line.getStartX());
-			double yDiffSqu = (line.getEndY() - line.getStartY()) * (line.getEndY() - line.getStartY());
+			double xDiffSqu = Math.pow(line.getEndX() - line.getStartX(), 2);
+			double yDiffSqu = Math.pow(line.getEndY() - line.getStartY(), 2);
 			double lineLength = Math.sqrt(xDiffSqu + yDiffSqu);
 			double dt;
 			if (toLineEnd) {
@@ -152,10 +178,6 @@ public class Arrow extends Pane {
 				.bind(line.startXProperty().add(lineXHalfLength.subtract(wgtSqrHalfWidth)));
 		this.triggerTextField.layoutYProperty()
 				.bind(line.startYProperty().add(lineYHalfLength.subtract(wgtSqrHalfHeight)));
-	}
-
-	public TextField getTriggerTextField() {
-		return this.triggerTextField;
 	}
 
 }

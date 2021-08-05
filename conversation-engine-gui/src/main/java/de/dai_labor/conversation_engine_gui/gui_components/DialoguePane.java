@@ -1,6 +1,7 @@
 package de.dai_labor.conversation_engine_gui.gui_components;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.inject.Singleton;
 
@@ -11,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -26,17 +29,23 @@ public class DialoguePane extends Pane {
 	private static final double MAX_ZOOM_LEVEL = 3.0;
 	private BiConsumer<Double, Double> addState;
 	private BiConsumer<State, State> addTransition;
+	private Consumer<State> removeState;
+	private Consumer<Transition> removeTransition;
 	private SimpleStringProperty insertMode;
 	private State sourceTransitionState;
 	private State targetTransitionState;
 	private State selectedState;
+	private Transition selectedTransition;
 	private Arrow dragArrow;
 
 	public DialoguePane(Pane dialogModelDataLayer, SimpleStringProperty insertMode, BiConsumer<Double, Double> addState,
-			BiConsumer<State, State> addTransition) {
+			BiConsumer<State, State> addTransition, Consumer<State> removeState,
+			Consumer<Transition> removeTransition) {
 		this.dialogueModelDataLayer = dialogModelDataLayer;
 		this.addState = addState;
 		this.addTransition = addTransition;
+		this.removeState = removeState;
+		this.removeTransition = removeTransition;
 		this.insertMode = insertMode;
 		this.getChildren().add(0, this.dialogueModelDataLayer);
 		this.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventFilter);
@@ -44,6 +53,7 @@ public class DialoguePane extends Pane {
 		this.addEventFilter(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventFilter);
 		this.addEventFilter(MouseEvent.ANY, this.mouseEventFilter);
 		this.addEventFilter(ScrollEvent.ANY, this.mouseScrollEventFilter);
+		this.addEventFilter(KeyEvent.ANY, this.keyEventFilter);
 	}
 
 	public void centerMovingElement() {
@@ -73,13 +83,42 @@ public class DialoguePane extends Pane {
 		}
 	};
 
+	private EventHandler<KeyEvent> keyEventFilter = event -> {
+		if (event.getCode() == KeyCode.DELETE) {
+			if (this.selectedState != null) {
+				this.removeState.accept(this.selectedState);
+				this.selectedState = null;
+			}
+			if (this.selectedTransition != null) {
+				this.removeTransition.accept(this.selectedTransition);
+				this.selectedTransition = null;
+			}
+		}
+	};
+
 	private EventHandler<MouseEvent> mousePressedEventFilter = event -> {
-		if (this.selectedState != null) {
+		if (event.isPrimaryButtonDown()) {
 			this.requestFocus();
-			this.selectedState = null;
+			if (this.selectedState != null) {
+				this.selectedState.unselect();
+				this.selectedState = null;
+			}
+			if (this.selectedTransition != null) {
+				this.selectedTransition.unselect();
+				this.selectedTransition = null;
+			}
+			if (isStateTarget(event) && this.insertMode.get().equals("")) {
+				State eventTarget = (State) event.getPickResult().getIntersectedNode();
+				eventTarget.select();
+				this.selectedState = eventTarget;
+			}
+			if (isTransitionTarget(event) && this.insertMode.get().equals("")) {
+				Transition eventTarget = (Transition) event.getPickResult().getIntersectedNode();
+				eventTarget.select();
+				this.selectedTransition = eventTarget;
+			}
 		}
 		if (event.isSecondaryButtonDown()) {
-			this.setCursor(Cursor.MOVE);
 			dragElementData.mouseX = event.getScreenX();
 			dragElementData.mouseY = event.getScreenY();
 			dragElementData.translateX = dialogueModelDataLayer.getTranslateX();
@@ -91,7 +130,10 @@ public class DialoguePane extends Pane {
 		} else if (this.insertMode.get().isBlank() && isStateTarget(event) && event.getClickCount() == 2) {
 			State eventTarget = (State) event.getPickResult().getIntersectedNode();
 			eventTarget.focusLabel();
-			this.selectedState = eventTarget;
+			event.consume();
+		} else if (this.insertMode.get().isBlank() && isTransitionTarget(event) && event.getClickCount() == 2) {
+			Transition eventTarget = (Transition) event.getPickResult().getIntersectedNode();
+			eventTarget.focusTextField();
 			event.consume();
 		}
 
@@ -99,6 +141,7 @@ public class DialoguePane extends Pane {
 
 	private EventHandler<MouseEvent> mouseDraggedEventFilter = event -> {
 		if (event.isSecondaryButtonDown()) {
+			this.setCursor(Cursor.MOVE);
 			double scale = 1.0;
 			double xDifference = (event.getScreenX() - dragElementData.mouseX) / scale + dragElementData.translateX;
 			double yDifference = (event.getScreenY() - dragElementData.mouseY) / scale + dragElementData.translateY;
@@ -192,6 +235,14 @@ public class DialoguePane extends Pane {
 	private boolean isStateTarget(MouseEvent event) {
 		Class<? extends Node> eventTargetClass = event.getPickResult().getIntersectedNode().getClass();
 		if (eventTargetClass.equals(State.class)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isTransitionTarget(MouseEvent event) {
+		Class<? extends Node> eventTargetClass = event.getPickResult().getIntersectedNode().getClass();
+		if (eventTargetClass.equals(Transition.class)) {
 			return true;
 		}
 		return false;

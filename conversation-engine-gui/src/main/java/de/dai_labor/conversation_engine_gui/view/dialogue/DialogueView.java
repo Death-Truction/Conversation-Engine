@@ -1,4 +1,4 @@
-package de.dai_labor.conversation_engine_gui.view.diagram;
+package de.dai_labor.conversation_engine_gui.view.dialogue;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -10,10 +10,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
-public class DialogueMainView implements FxmlView<DialogueMainViewModel>, Initializable {
+public class DialogueView implements FxmlView<DialogueViewModel>, Initializable {
 
 	@InjectViewModel
-	private DialogueMainViewModel viewModel;
+	private DialogueViewModel viewModel;
 
 	@FXML
 	private BorderPane mainPane;

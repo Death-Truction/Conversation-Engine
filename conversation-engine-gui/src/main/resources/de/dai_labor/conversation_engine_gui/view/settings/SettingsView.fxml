@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane fx:controller="de.dai_labor.conversation_engine_gui.view.settings.SettingsView" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+	<center>
+		<Label text="SettingsView"/>
+	</center>
+</BorderPane>

@@ -22,6 +22,8 @@ public class Transition extends StackPane {
 				return;
 			}
 		});
+		this.transition.setMouseTransparent(true);
+		this.transition.toBack();
 	}
 
 	public State getSource() {
@@ -34,5 +36,18 @@ public class Transition extends StackPane {
 
 	public TextField getTriggerTextField() {
 		return this.transition.getTriggerTextField();
+	}
+
+	public void focusTextField() {
+		this.transition.getTriggerTextField().requestFocus();
+		this.transition.getTriggerTextField().selectAll();
+	}
+
+	public void select() {
+		this.transition.select();
+	}
+
+	public void unselect() {
+		this.transition.unselect();
 	}
 }

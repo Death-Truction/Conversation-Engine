@@ -1,4 +1,4 @@
-package de.dai_labor.conversation_engine_gui.view.diagram;
+package de.dai_labor.conversation_engine_gui.view.dialogue;
 
 import java.net.URL;
 import java.util.ResourceBundle;

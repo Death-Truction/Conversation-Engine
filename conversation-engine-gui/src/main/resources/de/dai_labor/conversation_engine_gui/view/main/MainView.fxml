@@ -6,10 +6,10 @@
 <BorderPane fx:id="mainBorderPane" fx:controller="de.dai_labor.conversation_engine_gui.view.main.MainView" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
     <left>
     <!-- Navigation Menu -->
-        <VBox style="-fx-background-color: DARKGRAY" spacing="5">
-            <Button text="Dialog Model"/>
-         	<Button text="Dialog Data"/>
-            <Button text="Settings"/>
+        <VBox alignment="top_center" style="-fx-background-color: DARKGRAY" spacing="5">
+            <Button fx:id="navButtonDialogue" text="Dialogue Model" userData="dialogue"/>
+         	<Button fx:id="navButtonDialogueData" text="Dialogue Data" userData="dialogueData"/>
+            <Button fx:id="navButtonSettings" text="Settings" userData="settings"/>
         </VBox>
     </left>
     <!-- Content of the views -->

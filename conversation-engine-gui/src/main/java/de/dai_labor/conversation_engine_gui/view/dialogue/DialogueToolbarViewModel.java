@@ -1,4 +1,4 @@
-package de.dai_labor.conversation_engine_gui.view.diagram;
+package de.dai_labor.conversation_engine_gui.view.dialogue;
 
 import javax.inject.Singleton;
 
@@ -10,12 +10,12 @@ import javafx.scene.control.ToggleGroup;
 @Singleton
 public class DialogueToolbarViewModel implements ViewModel {
 	private ToggleGroup toggleGroup = new ToggleGroup();
-	private DialogueMainViewModel dialogueMainViewModel;
+	private DialogueViewModel dialogueViewModel;
 
-	public DialogueToolbarViewModel(DialogueMainViewModel dialogueMainViewModel) {
-		this.dialogueMainViewModel = dialogueMainViewModel;
+	public DialogueToolbarViewModel(DialogueViewModel dialogueViewModel) {
+		this.dialogueViewModel = dialogueViewModel;
 		this.toggleGroup.selectedToggleProperty().addListener(event -> {
-			dialogueMainViewModel.setMode(this.toggleGroup.getSelectedToggle());
+			dialogueViewModel.setMode(this.toggleGroup.getSelectedToggle());
 		});
 	}
 
@@ -28,6 +28,6 @@ public class DialogueToolbarViewModel implements ViewModel {
 	}
 
 	public void resetView(ActionEvent e) {
-		this.dialogueMainViewModel.centerElements();
+		this.dialogueViewModel.centerElements();
 	}
 }

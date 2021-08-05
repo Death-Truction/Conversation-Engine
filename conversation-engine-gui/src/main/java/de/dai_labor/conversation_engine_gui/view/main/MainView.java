@@ -3,15 +3,12 @@ package de.dai_labor.conversation_engine_gui.view.main;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import de.dai_labor.conversation_engine_gui.view.diagram.DialogueMainView;
-import de.dai_labor.conversation_engine_gui.view.diagram.DialogueMainViewModel;
-import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.ViewTuple;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
@@ -37,12 +34,15 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 	private MenuItem saveMenuItem;
 	@FXML
 	private MenuItem saveAsMenuItem;
+	@FXML
+	private Button navButtonDialogue;
+	@FXML
+	private Button navButtonDialogueData;
+	@FXML
+	private Button navButtonSettings;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		ViewTuple<DialogueMainView, DialogueMainViewModel> viewTuple = FluentViewLoader.fxmlView(DialogueMainView.class)
-				.load();
-		setScene(viewTuple.getView());
 		// set the new view to the back
 		contentArea.setViewOrder(1000);
 		newMenuItem.setOnAction(viewModel::newFile);
@@ -51,12 +51,15 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 		saveMenuItem.setOnAction(viewModel::saveFile);
 		saveAsMenuItem.setOnAction(viewModel::saveAsFile);
 		closeMenuItem.setOnAction(viewModel::closeApplication);
+		navButtonDialogue.setOnAction(viewModel::setView);
+		navButtonDialogueData.setOnAction(viewModel::setView);
+		navButtonSettings.setOnAction(viewModel::setView);
+		viewModel.getViewBinding().addListener(event -> updateScene());
+		updateScene();
 	}
 
-	private void setScene(Node view) {
-		if (view == null) {
-			return;
-		}
+	private void updateScene() {
+		Node view = viewModel.getViewBinding().get();
 		this.contentArea.getChildren().clear();
 		this.contentArea.getChildren().add(view);
 		VBox.setVgrow(view, Priority.ALWAYS);

@@ -60,6 +60,14 @@ public class State extends StackPane {
 		event.consume();
 	};
 
+	public void select() {
+		this.stateShape.setFill(Color.GREEN);
+	}
+
+	public void unselect() {
+		this.stateShape.setFill(STATE_SHAPE_COLOR);
+	}
+
 	public State(int stateID, String name, double x, double y) {
 		this.stateID = stateID;
 		this.stateShape = new Circle(INITIAL_SIZE);

@@ -2,7 +2,6 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
-import de.dai_labor.conversation_engine_gui.models.DialogueModelData;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
 import de.dai_labor.conversation_engine_gui.view.main.MainViewModel;
@@ -20,8 +19,8 @@ import javafx.stage.WindowEvent;
 
 public class App extends Application {
 
-	private EasyDI easyDI = new EasyDI();
-	private Stage mainStage;
+	public static EasyDI easyDI = new EasyDI();
+	public static Stage mainStage;
 
 	public static void main(String[] args) {
 		Application.launch(App.class, args);
@@ -29,8 +28,8 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
-		this.mainStage = stage;
-		this.mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
+		App.mainStage = stage;
+		App.mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
 		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
@@ -53,13 +52,7 @@ public class App extends Application {
 	}
 
 	private EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
-		DialogueModelData dialogueModelData = easyDI.getInstance(DialogueModelData.class);
-		if (dialogueModelData.hasChanged() && Util.saveDataBeforeExit(mainStage)) {
-			String filepath = Util.pickSaveFilepath("Save to file", mainStage);
-			String data = dialogueModelData.getGUIData().toString();
-			Util.saveJSONStringToFile(filepath, data);
-		}
-
+		Util.saveGUIDataToFile(true, false);
 	};
 
 }
