@@ -152,6 +152,7 @@ public class DialogueViewModel implements ViewModel {
 		}
 		this.transitions = new ArrayList<>();
 		this.states = new HashMap<>();
+		this.hasDataChanged = false;
 	}
 
 	public boolean hasChanged() {
