@@ -168,11 +168,14 @@ public class DialogueViewModel implements ViewModel {
 		try {
 			JSONArray states = dialogueModelDataObject.getJSONArray("states");
 			JSONArray transitions = dialogueModelDataObject.getJSONArray("transitions");
-			double locationX = dialogueModelDataObject.getDouble("locationX");
-			double locationY = dialogueModelDataObject.getDouble("locationY");
+			double locationX = dialogueModelDataObject.optDouble("locationX", -5000);
+			double locationY = dialogueModelDataObject.optDouble("locationY", -5000);
+			double scale = dialogueModelDataObject.optDouble("scale", 1.0);
+			this.setDiagramScale(1);
 			this.diagramElementsLayer.setTranslateX(0);
 			this.diagramElementsLayer.setTranslateY(0);
 			this.diagramElementsLayer.relocate(locationX, locationY);
+			this.setDiagramScale(scale);
 			setStatesGUIData(states);
 			setTransitionsGUIData(transitions);
 		} catch (JSONException ex) {
@@ -184,10 +187,14 @@ public class DialogueViewModel implements ViewModel {
 
 	public JSONObject getGUIData() {
 		JSONObject data = new JSONObject();
+		double scale = this.diagramElementsLayer.getScaleX();
+		this.setDiagramScale(1);
 		data.put("states", getStatesGUIData());
 		data.put("transitions", getTransitionsGUIData());
 		data.put("locationX", this.diagramElementsLayer.getBoundsInParent().getMinX());
 		data.put("locationY", this.diagramElementsLayer.getBoundsInParent().getMinY());
+		data.put("scale", scale);
+		this.setDiagramScale(scale);
 		return data;
 
 	}
@@ -261,6 +268,11 @@ public class DialogueViewModel implements ViewModel {
 			String trigger = transition.getString("trigger");
 			this.addTransition(sourceState, targetState, trigger);
 		}
+	}
+
+	private void setDiagramScale(double scale) {
+		this.diagramElementsLayer.setScaleX(scale);
+		this.diagramElementsLayer.setScaleY(scale);
 	}
 
 }

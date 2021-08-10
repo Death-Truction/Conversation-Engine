@@ -37,7 +37,7 @@ public class Arrow extends Pane {
 	}
 
 	public Arrow(State source, StackPane tmpPane, double scale) {
-		this.line = getLine(source, tmpPane, 1.0);
+		this.line = getLine(source, tmpPane, scale);
 		this.arrow = getArrow(true, line, source, tmpPane);
 		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
 		this.unselect();
@@ -68,10 +68,10 @@ public class Arrow extends Pane {
 	private Line getLine(StackPane startDot, StackPane endDot, double scale) {
 		Line line = new Line();
 		line.setStrokeWidth(2);
-		line.startXProperty().bind(
-				startDot.layoutXProperty().add(startDot.translateXProperty()).add(startDot.widthProperty().divide(2)));
-		line.startYProperty().bind(
-				startDot.layoutYProperty().add(startDot.translateYProperty()).add(startDot.heightProperty().divide(2)));
+		line.startXProperty().bind(startDot.layoutXProperty().add(startDot.translateXProperty().divide(scale))
+				.add(startDot.widthProperty().divide(2)));
+		line.startYProperty().bind(startDot.layoutYProperty().add(startDot.translateYProperty().divide(scale))
+				.add(startDot.heightProperty().divide(2)));
 		line.endXProperty().bind(endDot.layoutXProperty().add(endDot.translateXProperty().divide(scale))
 				.add(endDot.widthProperty().divide(2)));
 		line.endYProperty().bind(endDot.layoutYProperty().add(endDot.translateYProperty().divide(scale))

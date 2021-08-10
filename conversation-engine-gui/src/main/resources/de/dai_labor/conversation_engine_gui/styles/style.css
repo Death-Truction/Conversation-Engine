@@ -10,7 +10,7 @@
 	-fx-text-alignment: center;
 	-fx-alignment: center;
 	-fx-pref-width: 0;
-	-fx-pref-height: 0;
+	-fx-pref-height: 0;	
 }
 
 .stateTextArea .scroll-pane{

@@ -45,24 +45,22 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void newFile(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false);
+		Util.saveGUIDataToFile(true, false, false);
 		dialogueViewModel.resetData();
 		App.easyDI.getInstance(Settings.class).setOpenedFilePath("");
 	}
 
 	public void openFile(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false);
+		Util.saveGUIDataToFile(true, false, false);
 		Util.loadGUIDataFromFile();
 	}
 
 	public void saveFile(ActionEvent event) {
-		// TODO: if data was imported or saved to a specific file before (must be saved
-		// in settings or so), then do not prompt for a file pick location
-		Util.saveGUIDataToFile(false, false);
+		Util.saveGUIDataToFile(false, false, true);
 	}
 
 	public void saveAsFile(ActionEvent event) {
-		Util.saveGUIDataToFile(false, true);
+		Util.saveGUIDataToFile(false, true, true);
 	}
 
 	public void exportFile(ActionEvent event) {
@@ -70,7 +68,7 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void closeApplication(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false);
+		Util.saveGUIDataToFile(true, false, false);
 		Platform.exit();
 	}
 

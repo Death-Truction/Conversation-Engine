@@ -52,7 +52,7 @@ public class App extends Application {
 	}
 
 	private EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
-		Util.saveGUIDataToFile(true, false);
+		Util.saveGUIDataToFile(true, false, false);
 	};
 
 }

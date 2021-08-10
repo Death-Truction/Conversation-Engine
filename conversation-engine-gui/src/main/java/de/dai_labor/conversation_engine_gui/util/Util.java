@@ -27,11 +27,11 @@ public class Util {
 	private Util() {
 	}
 
-	public static void saveGUIDataToFile(boolean askFirst, boolean saveToNewFile) {
+	public static void saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
 		EasyDI easyDI = App.easyDI;
 		DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
-		if (!saveToNewFile && !dialogueViewModel.hasChanged()) {
+		if (!saveToNewFile && !dialogueViewModel.hasChanged() && !forceSave) {
 			return;
 		}
 		String filepath = "";
@@ -49,6 +49,9 @@ public class Util {
 			filepath = Util.pickFilepath(true);
 		// if the user picked a file
 		if (!filepath.isBlank()) {
+			if (!filepath.endsWith(".cegui")) {
+				filepath += ".cegui";
+			}
 			settings.setOpenedFilePath(filepath);
 			Util.saveJSONStringToFile(filepath, data);
 			dialogueViewModel.hasChanged(false);
@@ -110,7 +113,7 @@ public class Util {
 
 	private static String pickFilepath(boolean save) {
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CE-GUI File", "*.cegui"));
+		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CEGUI File", "*.cegui", "*.CEGUI"));
 		File file = null;
 		if (save) {
 			fileChooser.setTitle("Save file");
