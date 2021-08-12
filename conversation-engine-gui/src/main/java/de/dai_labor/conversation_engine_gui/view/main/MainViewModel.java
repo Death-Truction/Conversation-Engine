@@ -47,7 +47,7 @@ public class MainViewModel implements ViewModel {
 	public void newFile(ActionEvent event) {
 		Util.saveGUIDataToFile(true, false, false);
 		dialogueViewModel.resetData();
-		App.easyDI.getInstance(Settings.class).setOpenedFilePath("");
+		App.easyDI.getInstance(Settings.class).setLastOpenedFilePath("");
 	}
 
 	public void openFile(ActionEvent event) {

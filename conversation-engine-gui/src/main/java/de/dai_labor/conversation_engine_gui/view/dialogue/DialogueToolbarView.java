@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.Pane;
 
 public class DialogueToolbarView implements FxmlView<DialogueToolbarViewModel>, Initializable {
 
@@ -21,6 +22,8 @@ public class DialogueToolbarView implements FxmlView<DialogueToolbarViewModel>, 
 	private ToggleButton transitionButton;
 	@FXML
 	private Button resetButton;
+	@FXML
+	private Pane stateButtonPane;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -28,5 +31,4 @@ public class DialogueToolbarView implements FxmlView<DialogueToolbarViewModel>, 
 		viewModel.addToggleGroup(transitionButton);
 		resetButton.setOnAction(viewModel::resetView);
 	}
-
 }

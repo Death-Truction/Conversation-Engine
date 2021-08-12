@@ -1,10 +1,8 @@
 package de.dai_labor.conversation_engine_gui.view.dialogue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Singleton;
@@ -19,6 +17,8 @@ import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
@@ -29,7 +29,7 @@ public class DialogueViewModel implements ViewModel {
 	private Pane diagramElementsLayer;
 	private SimpleStringProperty insertMode = new SimpleStringProperty("");
 	private Toggle toggleButton;
-	private Map<Integer, State> states;
+	private ObservableMap<Integer, State> states;
 	private List<Transition> transitions;
 	private boolean hasDataChanged;
 
@@ -44,7 +44,7 @@ public class DialogueViewModel implements ViewModel {
 		this.dialoguePane.toBack();
 		this.hasDataChanged = false;
 		this.transitions = new ArrayList<>();
-		this.states = new HashMap<>();
+		this.states = FXCollections.observableHashMap();
 	}
 
 	public Node getView() {
@@ -80,6 +80,10 @@ public class DialogueViewModel implements ViewModel {
 		if (this.toggleButton != null) {
 			this.toggleButton.setSelected(false);
 		}
+	}
+
+	public ObservableMap<Integer, State> getStates() {
+		return this.states;
 	}
 
 	public void removeState(State state) {
@@ -150,8 +154,8 @@ public class DialogueViewModel implements ViewModel {
 			State state = stateEntry.getValue();
 			((Pane) state.getParent()).getChildren().remove(state);
 		}
-		this.transitions = new ArrayList<>();
-		this.states = new HashMap<>();
+		this.transitions.clear();
+		this.states.clear();
 		this.hasDataChanged = false;
 	}
 

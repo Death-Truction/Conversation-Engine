@@ -60,15 +60,11 @@ public class State extends StackPane {
 		event.consume();
 	};
 
-	public void select() {
-		this.stateShape.setFill(Color.GREEN);
-	}
-
-	public void unselect() {
-		this.stateShape.setFill(STATE_SHAPE_COLOR);
-	}
-
 	public State(int stateID, String name, double x, double y) {
+		this(stateID, name, x, y, true);
+	}
+
+	public State(int stateID, String name, double x, double y, boolean draggable) {
 		this.stateID = stateID;
 		this.stateShape = new Circle(INITIAL_SIZE);
 		this.stateShape.setFill(STATE_SHAPE_COLOR);
@@ -78,12 +74,26 @@ public class State extends StackPane {
 		this.nameTextArea.getStyleClass().add("stateTextArea");
 		this.nameTextArea.setMouseTransparent(true);
 		this.getChildren().addAll(this.stateShape, this.nameTextArea);
-		this.addEventHandlers();
+		if (draggable) {
+			this.addEventHandlers();
+		}
 		this.relocate(x, y);
+	}
+
+	public void select() {
+		this.stateShape.setFill(Color.GREEN);
+	}
+
+	public void unselect() {
+		this.stateShape.setFill(STATE_SHAPE_COLOR);
 	}
 
 	public TextArea getTextArea() {
 		return this.nameTextArea;
+	}
+
+	public String getName() {
+		return this.nameTextArea.getText();
 	}
 
 	public int getStateID() {

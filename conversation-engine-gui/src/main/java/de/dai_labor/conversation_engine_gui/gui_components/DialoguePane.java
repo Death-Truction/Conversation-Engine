@@ -59,6 +59,10 @@ public class DialoguePane extends Pane {
 	public void centerMovingElement() {
 		double targetX = 0.0;
 		double targetY = 0.0;
+		dialogueModelDataLayer.setScaleX(1.0);
+		dialogueModelDataLayer.setScaleY(1.0);
+		this.dialogueModelDataLayer.setTranslateX(0);
+		this.dialogueModelDataLayer.setTranslateY(0);
 		for (Node state : this.dialogueModelDataLayer.getChildren()) {
 			Bounds bounds = state.getBoundsInParent();
 			targetX += bounds.getCenterX();
@@ -66,11 +70,9 @@ public class DialoguePane extends Pane {
 		}
 		targetX /= this.dialogueModelDataLayer.getChildren().size();
 		targetY /= this.dialogueModelDataLayer.getChildren().size();
-		this.dialogueModelDataLayer.setTranslateX(0);
-		this.dialogueModelDataLayer.setTranslateY(0);
-		this.dialogueModelDataLayer.relocate(this.getWidth() / 2 - targetX, this.getHeight() / 2 - targetY);
-		dialogueModelDataLayer.setScaleX(1.0);
-		dialogueModelDataLayer.setScaleY(1.0);
+		targetX = (this.getWidth() / 2) + (this.getScene().getWidth() / 2) - targetX;
+		targetY = (this.getHeight() / 2) + (this.getScene().getHeight() / 2) - targetY;
+		this.dialogueModelDataLayer.relocate(targetX, targetY);
 	}
 
 	// filter all MouseEvent types

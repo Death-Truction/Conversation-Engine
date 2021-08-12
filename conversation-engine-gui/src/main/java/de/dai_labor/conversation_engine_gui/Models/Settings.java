@@ -5,17 +5,26 @@ import javax.inject.Singleton;
 @Singleton
 public class Settings {
 
-	private String openedFilePath = "";
+	private String lastOpenedFilePath = "";
+	private String lastSavedFilePath = "";
 
 	public Settings() {
 
 	}
 
-	public void setOpenedFilePath(String filePath) {
-		this.openedFilePath = filePath;
+	public void setLastOpenedFilePath(String filePath) {
+		this.lastOpenedFilePath = filePath;
 	}
 
-	public String getOpenedFilePath() {
-		return this.openedFilePath;
+	public String getLastOpenedFilePath() {
+		return this.lastOpenedFilePath;
+	}
+
+	public void setLastSavedFilePath(String filePath) {
+		this.lastSavedFilePath = filePath;
+	}
+
+	public String getLastSavedFilePath() {
+		return this.lastSavedFilePath;
 	}
 }
