@@ -23,31 +23,33 @@ import javafx.scene.control.Button;
 
 public class MainViewModel implements ViewModel {
 
-	private DialogueViewModel dialogueViewModel;
-	private Map<String, ViewTuple> views;
-	private final String defaultViewID = "dialogue";
-	private SimpleObjectProperty<Node> currentView;
+	private final DialogueViewModel dialogueViewModel;
+	private final Map<String, ViewTuple> views;
+	private static final String DEFAULT_VIEW_ID = "dialogue";
+	private final SimpleObjectProperty<Node> currentView;
+	private ViewTuple currentViewTuple;
 
 	public MainViewModel(DialogueViewModel dialogueViewModel) {
 		this.dialogueViewModel = dialogueViewModel;
 		this.views = new HashMap<>();
-		ViewTuple<DialogueView, DialogueViewModel> dialogueViewTuple = FluentViewLoader.fxmlView(DialogueView.class)
-				.load();
-		ViewTuple<DialogueDataView, DialogueDataViewModel> dialogueDataViewTuple = FluentViewLoader
+		final ViewTuple<DialogueView, DialogueViewModel> dialogueViewTuple = FluentViewLoader
+				.fxmlView(DialogueView.class).load();
+		final ViewTuple<DialogueDataView, DialogueDataViewModel> dialogueDataViewTuple = FluentViewLoader
 				.fxmlView(DialogueDataView.class).load();
-		ViewTuple<SettingsView, SettingsViewModel> settingsViewTuple = FluentViewLoader.fxmlView(SettingsView.class)
-				.load();
-		this.views.put(defaultViewID, dialogueViewTuple);
+		final ViewTuple<SettingsView, SettingsViewModel> settingsViewTuple = FluentViewLoader
+				.fxmlView(SettingsView.class).load();
+		this.views.put(DEFAULT_VIEW_ID, dialogueViewTuple);
 		this.views.put("dialogueData", dialogueDataViewTuple);
 		this.views.put("settings", settingsViewTuple);
 		this.currentView = new SimpleObjectProperty<>();
-		this.currentView.set(this.views.get(defaultViewID).getView());
+		this.currentView.set(this.views.get(DEFAULT_VIEW_ID).getView());
+		this.currentViewTuple = this.views.get(DEFAULT_VIEW_ID);
 	}
 
 	public void newFile(ActionEvent event) {
 		Util.saveGUIDataToFile(true, false, false);
-		dialogueViewModel.resetData();
-		App.easyDI.getInstance(Settings.class).setLastOpenedFilePath("");
+		this.dialogueViewModel.resetData();
+		App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
 	}
 
 	public void openFile(ActionEvent event) {
@@ -77,9 +79,11 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void setView(ActionEvent event) {
-		Button source = (Button) event.getSource();
-		ViewTuple view = this.views.get((String) source.getUserData());
+		final Button source = (Button) event.getSource();
+		final ViewTuple view = this.views.get(source.getUserData());
 		if (view != null) {
+			this.currentViewTuple.getViewModel().publish("unload");
+			this.currentViewTuple = view;
 			this.currentView.set(view.getView());
 		}
 	}

@@ -7,6 +7,7 @@ module de.dai_labor.conversation_engine_gui {
 	requires transitive easy.di;
 	requires javax.inject;
 	requires org.json;
+	requires java.prefs;
 
 	opens de.dai_labor.conversation_engine_gui.view.main to de.saxsys.mvvmfx, javafx.fxml, easy.di;
 	opens de.dai_labor.conversation_engine_gui.view.dialogue to de.saxsys.mvvmfx, javafx.fxml, easy.di;

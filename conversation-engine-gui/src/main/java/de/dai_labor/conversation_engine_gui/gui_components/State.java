@@ -1,6 +1,8 @@
 package de.dai_labor.conversation_engine_gui.gui_components;
 
 import de.dai_labor.conversation_engine_gui.models.DragElementData;
+import de.dai_labor.conversation_engine_gui.models.Settings;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
@@ -10,82 +12,86 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 
 public class State extends StackPane {
 
-	public final static double INITIAL_SIZE = 40;
-	private final static Color STATE_SHAPE_COLOR = Color.STEELBLUE;
+	private final Circle stateShape;
+	private final TextArea nameTextArea;
+	private final DragElementData dragElementData = new DragElementData();
+	private final int stateID;
+	private final Settings settings;
 
-	private Circle stateShape;
-	private TextArea nameTextArea;
-	private DragElementData dragElementData = new DragElementData();
-	private int stateID;
-
-	private EventHandler<KeyEvent> labelKeyEvent = event -> {
+	private final EventHandler<KeyEvent> labelKeyEvent = event -> {
 		if (event.getCode().equals(KeyCode.ENTER)) {
 			this.requestFocus();
 			event.consume();
 		}
 	};
 
-	private EventHandler<MouseEvent> mousePressedEventHandler = event -> {
+	private final EventHandler<MouseEvent> mousePressedEventHandler = event -> {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
-		dragElementData.mouseX = event.getScreenX();
-		dragElementData.mouseY = event.getScreenY();
-		dragElementData.translateX = this.getTranslateX();
-		dragElementData.translateY = this.getTranslateY();
+		this.dragElementData.mouseX = event.getScreenX();
+		this.dragElementData.mouseY = event.getScreenY();
+		this.dragElementData.translateX = this.getTranslateX();
+		this.dragElementData.translateY = this.getTranslateY();
 		this.toFront();
 		event.consume();
 	};
 
-	private EventHandler<MouseEvent> mouseDraggedEventHandler = event -> {
+	private final EventHandler<MouseEvent> mouseDraggedEventHandler = event -> {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
 		this.setCursor(Cursor.MOVE);
-		double scale = this.getParent().getScaleX();
-		double xDifference = (event.getScreenX() - dragElementData.mouseX) / scale + dragElementData.translateX;
-		double yDifference = (event.getScreenY() - dragElementData.mouseY) / scale + dragElementData.translateY;
+		final double scale = this.getParent().getScaleX();
+		final double xDifference = (event.getScreenX() - this.dragElementData.mouseX) / scale
+				+ this.dragElementData.translateX;
+		final double yDifference = (event.getScreenY() - this.dragElementData.mouseY) / scale
+				+ this.dragElementData.translateY;
 		this.setTranslateX(xDifference);
 		this.setTranslateY(yDifference);
 		event.consume();
 	};
 
-	private EventHandler<MouseEvent> mouseReleasedEventHandler = event -> {
+	private final EventHandler<MouseEvent> mouseReleasedEventHandler = event -> {
 		if (!event.isStillSincePress()) {
 			this.setCursor(Cursor.DEFAULT);
 		}
 		event.consume();
 	};
 
-	public State(int stateID, String name, double x, double y) {
-		this(stateID, name, x, y, true);
-	}
-
-	public State(int stateID, String name, double x, double y, boolean draggable) {
+	public State(int stateID, String name, double x, double y, boolean draggable, Settings settings) {
+		this.settings = settings;
 		this.stateID = stateID;
-		this.stateShape = new Circle(INITIAL_SIZE);
-		this.stateShape.setFill(STATE_SHAPE_COLOR);
+		int stateSize = settings.getStateSizeProperty().get();
+		int stateFontSize = settings.getStateFontSizeProperty().get();
+		Color stateFontColor = settings.getStateFontColorProperty().get();
+		Color stateNormalColor = settings.getStateNormalColorProperty().get();
+		this.stateShape = new Circle(stateSize, stateNormalColor);
 		this.stateShape.setMouseTransparent(true);
 		this.nameTextArea = new TextArea(name);
-		this.nameTextArea.setMaxSize(INITIAL_SIZE * 2, INITIAL_SIZE * 2);
+		this.nameTextArea.setStyle("-fx-text-fill: " + stateFontColor.toString().replace("0x", "#"));
+		this.nameTextArea.setFont(new Font(stateFontSize));
+		this.nameTextArea.setMaxSize(stateSize * 2.0, stateSize * 2.0);
 		this.nameTextArea.getStyleClass().add("stateTextArea");
 		this.nameTextArea.setMouseTransparent(true);
 		this.getChildren().addAll(this.stateShape, this.nameTextArea);
+		this.addDynamicEventListeners();
 		if (draggable) {
-			this.addEventHandlers();
+			this.addDraggingEventHandlers();
 		}
 		this.relocate(x, y);
 	}
 
 	public void select() {
-		this.stateShape.setFill(Color.GREEN);
+		this.stateShape.setFill(this.settings.getStateSelectedColorProperty().get());
 	}
 
 	public void unselect() {
-		this.stateShape.setFill(STATE_SHAPE_COLOR);
+		this.stateShape.setFill(this.settings.getStateNormalColorProperty().get());
 	}
 
 	public TextArea getTextArea() {
@@ -105,7 +111,29 @@ public class State extends StackPane {
 		this.nameTextArea.selectAll();
 	}
 
-	private void addEventHandlers() {
+	private void addDynamicEventListeners() {
+		this.settings.getStateSizeProperty().addListener((ChangeListener<? super Number>) (observ, oldVal, newVal) -> {
+			final double value = (int) newVal;
+			this.stateShape.setRadius(value);
+			this.nameTextArea.setMaxSize(value * 2.0, value * 2.0);
+		});
+		this.settings.getStateFontSizeProperty()
+				.addListener((ChangeListener<? super Number>) (observ, oldVal, newVal) -> {
+					final double value = (int) newVal;
+					this.nameTextArea.setFont(new Font(value));
+				});
+		this.settings.getStateFontColorProperty()
+				.addListener((ChangeListener<? super Color>) (observ, oldVal, newVal) -> {
+					this.nameTextArea.setStyle("-fx-text-fill: " + newVal.toString().replace("0x", "#"));
+				});
+		this.settings.getStateNormalColorProperty()
+				.addListener((ChangeListener<? super Color>) (observ, oldVal, newVal) -> {
+					this.stateShape.setFill(newVal);
+				});
+
+	}
+
+	private void addDraggingEventHandlers() {
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this.mouseDraggedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventHandler);

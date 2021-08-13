@@ -55,6 +55,17 @@ public class DialoguePane extends Pane {
 		this.addEventFilter(ScrollEvent.ANY, this.mouseScrollEventFilter);
 		this.addEventFilter(KeyEvent.ANY, this.keyEventFilter);
 	}
+	
+	public void unselectAll() {
+		if (this.selectedState != null) {
+			this.selectedState.unselect();
+			this.selectedState = null;
+		}
+		if (this.selectedTransition != null) {
+			this.selectedTransition.unselect();
+			this.selectedTransition = null;
+		}
+	}
 
 	public void centerMovingElement() {
 		double targetX = 0.0;

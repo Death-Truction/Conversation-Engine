@@ -20,28 +20,29 @@ public class Arrow extends Pane {
 	private TextField triggerTextField;
 	private static final Color DEFAULT_COLOR = Color.BLACK;
 	private static final Color SELECTED_COLOR = Color.GREEN;
-	private Line line;
-	private StackPane arrow;
+	private final Line line;
+	private final StackPane arrow;
+	private static final double DEFAULT_ARROW_SIZE = 12; // Arrow size
 
 	public Arrow(State source, State target, String triggerName) {
-		this.line = getLine(source, target, 1.0);
-		this.arrow = getArrow(true, line, source, target);
-		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
+		this.line = this.getLine(source, target, 1.0);
+		this.arrow = this.getArrow(true, this.line, source, target);
+		this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
 		this.unselect();
 		this.triggerTextField = new TextField(triggerName);
-		setTextFieldProperties(line);
-		this.getChildren().addAll(line, arrow, this.triggerTextField);
-		arrow.setMouseTransparent(true);
+		this.setTextFieldProperties(this.line);
+		this.getChildren().addAll(this.line, this.arrow, this.triggerTextField);
+		this.arrow.setMouseTransparent(true);
 		this.setPickOnBounds(false);
 
 	}
 
 	public Arrow(State source, StackPane tmpPane, double scale) {
-		this.line = getLine(source, tmpPane, scale);
-		this.arrow = getArrow(true, line, source, tmpPane);
-		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
+		this.line = this.getLine(source, tmpPane, scale);
+		this.arrow = this.getArrow(true, this.line, source, tmpPane);
+		this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
 		this.unselect();
-		this.getChildren().addAll(line, arrow);
+		this.getChildren().addAll(this.line, this.arrow);
 	}
 
 	public TextField getTriggerTextField() {
@@ -66,8 +67,8 @@ public class Arrow extends Pane {
 	 * @return Line joining the layout center points of the provided panes.
 	 */
 	private Line getLine(StackPane startDot, StackPane endDot, double scale) {
-		Line line = new Line();
-		line.setStrokeWidth(2);
+		final Line line = new Line();
+		line.setStrokeWidth(DEFAULT_ARROW_SIZE / 8);
 		line.startXProperty().bind(startDot.layoutXProperty().add(startDot.translateXProperty().divide(scale))
 				.add(startDot.widthProperty().divide(2)));
 		line.startYProperty().bind(startDot.layoutYProperty().add(startDot.translateYProperty().divide(scale))
@@ -90,64 +91,65 @@ public class Arrow extends Pane {
 	 * @return Arrow towards the specified pane.
 	 */
 	private StackPane getArrow(boolean toLineEnd, Line line, StackPane startDot, StackPane endDot) {
-		double size = 12; // Arrow size
-		StackPane arrow = new StackPane();
-		arrow.setPrefSize(size, size);
-		arrow.setMaxSize(size, size);
-		arrow.setMinSize(size, size);
+		final StackPane arrow = new StackPane();
+		arrow.setPrefSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
+		arrow.setMaxSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
+		arrow.setMinSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
 
 		// Determining the arrow visibility unless there is enough space between dots.
-		DoubleBinding xDiff = line.endXProperty().subtract(line.startXProperty());
-		DoubleBinding yDiff = line.endYProperty().subtract(line.startYProperty());
-		BooleanBinding visible = (xDiff.lessThanOrEqualTo(size).and(xDiff.greaterThanOrEqualTo(-size))
-				.and(yDiff.greaterThanOrEqualTo(-size)).and(yDiff.lessThanOrEqualTo(size))).not();
+		final DoubleBinding xDiff = line.endXProperty().subtract(line.startXProperty());
+		final DoubleBinding yDiff = line.endYProperty().subtract(line.startYProperty());
+		final BooleanBinding visible = xDiff.lessThanOrEqualTo(DEFAULT_ARROW_SIZE)
+				.and(xDiff.greaterThanOrEqualTo(-DEFAULT_ARROW_SIZE))
+				.and(yDiff.greaterThanOrEqualTo(-DEFAULT_ARROW_SIZE)).and(yDiff.lessThanOrEqualTo(DEFAULT_ARROW_SIZE))
+				.not();
 		arrow.visibleProperty().bind(visible);
 
 		// Determining the x point on the line which is at a certain distance.
-		DoubleBinding tX = Bindings.createDoubleBinding(() -> {
-			double xDiffSqu = Math.pow(line.getEndX() - line.getStartX(), 2);
-			double yDiffSqu = Math.pow(line.getEndY() - line.getStartY(), 2);
-			double lineLength = Math.sqrt(xDiffSqu + yDiffSqu);
+		final DoubleBinding tX = Bindings.createDoubleBinding(() -> {
+			final double xDiffSqu = Math.pow(line.getEndX() - line.getStartX(), 2);
+			final double yDiffSqu = Math.pow(line.getEndY() - line.getStartY(), 2);
+			final double lineLength = Math.sqrt(xDiffSqu + yDiffSqu);
 			double dt;
 			if (toLineEnd) {
 				// When determining the point towards end, the required distance is total length
 				// minus (radius + arrow half width)
-				dt = lineLength - (endDot.getWidth() / 2) - (arrow.getWidth() / 2);
+				dt = lineLength - endDot.getWidth() / 2 - arrow.getWidth() / 2;
 			} else {
 				// When determining the point towards start, the required distance is just
 				// (radius + arrow half width)
-				dt = (startDot.getWidth() / 2) + (arrow.getWidth() / 2);
+				dt = startDot.getWidth() / 2 + arrow.getWidth() / 2;
 			}
 
-			double t = dt / lineLength;
-			double dx = ((1 - t) * line.getStartX()) + (t * line.getEndX());
+			final double t = dt / lineLength;
+			final double dx = (1 - t) * line.getStartX() + t * line.getEndX();
 			return dx;
 		}, line.startXProperty(), line.endXProperty(), line.startYProperty(), line.endYProperty());
 
 		// Determining the y point on the line which is at a certain distance.
-		DoubleBinding tY = Bindings.createDoubleBinding(() -> {
-			double xDiffSqu = (line.getEndX() - line.getStartX()) * (line.getEndX() - line.getStartX());
-			double yDiffSqu = (line.getEndY() - line.getStartY()) * (line.getEndY() - line.getStartY());
-			double lineLength = Math.sqrt(xDiffSqu + yDiffSqu);
+		final DoubleBinding tY = Bindings.createDoubleBinding(() -> {
+			final double xDiffSqu = (line.getEndX() - line.getStartX()) * (line.getEndX() - line.getStartX());
+			final double yDiffSqu = (line.getEndY() - line.getStartY()) * (line.getEndY() - line.getStartY());
+			final double lineLength = Math.sqrt(xDiffSqu + yDiffSqu);
 			double dt;
 			if (toLineEnd) {
-				dt = lineLength - (endDot.getHeight() / 2) - (arrow.getHeight() / 2);
+				dt = lineLength - endDot.getHeight() / 2 - arrow.getHeight() / 2;
 			} else {
-				dt = (startDot.getHeight() / 2) + (arrow.getHeight() / 2);
+				dt = startDot.getHeight() / 2 + arrow.getHeight() / 2;
 			}
-			double t = dt / lineLength;
-			double dy = ((1 - t) * line.getStartY()) + (t * line.getEndY());
+			final double t = dt / lineLength;
+			final double dy = (1 - t) * line.getStartY() + t * line.getEndY();
 			return dy;
 		}, line.startXProperty(), line.endXProperty(), line.startYProperty(), line.endYProperty());
 
 		arrow.layoutXProperty().bind(tX.subtract(arrow.widthProperty().divide(2)));
 		arrow.layoutYProperty().bind(tY.subtract(arrow.heightProperty().divide(2)));
 
-		DoubleBinding endArrowAngle = Bindings.createDoubleBinding(() -> {
-			double stX = toLineEnd ? line.getStartX() : line.getEndX();
-			double stY = toLineEnd ? line.getStartY() : line.getEndY();
-			double enX = toLineEnd ? line.getEndX() : line.getStartX();
-			double enY = toLineEnd ? line.getEndY() : line.getStartY();
+		final DoubleBinding endArrowAngle = Bindings.createDoubleBinding(() -> {
+			final double stX = toLineEnd ? line.getStartX() : line.getEndX();
+			final double stY = toLineEnd ? line.getStartY() : line.getEndY();
+			final double enX = toLineEnd ? line.getEndX() : line.getStartX();
+			final double enY = toLineEnd ? line.getEndY() : line.getStartY();
 			double angle = Math.toDegrees(Math.atan2(enY - stY, enX - stX));
 			if (angle < 0) {
 				angle += 360;
@@ -166,13 +168,12 @@ public class Arrow extends Pane {
 	 * @return Pane located at the center of the provided line.
 	 */
 	private void setTextFieldProperties(Line line) {
-		double size = 20;
 		this.triggerTextField.getStyleClass().add("transitionTextField");
 
-		DoubleBinding wgtSqrHalfWidth = this.triggerTextField.widthProperty().divide(2);
-		DoubleBinding wgtSqrHalfHeight = this.triggerTextField.heightProperty().divide(2);
-		DoubleBinding lineXHalfLength = line.endXProperty().subtract(line.startXProperty()).divide(2);
-		DoubleBinding lineYHalfLength = line.endYProperty().subtract(line.startYProperty()).divide(2);
+		final DoubleBinding wgtSqrHalfWidth = this.triggerTextField.widthProperty().divide(2);
+		final DoubleBinding wgtSqrHalfHeight = this.triggerTextField.heightProperty().divide(2);
+		final DoubleBinding lineXHalfLength = line.endXProperty().subtract(line.startXProperty()).divide(2);
+		final DoubleBinding lineYHalfLength = line.endYProperty().subtract(line.startYProperty()).divide(2);
 
 		this.triggerTextField.layoutXProperty()
 				.bind(line.startXProperty().add(lineXHalfLength.subtract(wgtSqrHalfWidth)));

@@ -31,12 +31,13 @@ public class Util {
 		EasyDI easyDI = App.easyDI;
 		DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
+		settings.savePrefs();
 		if (!saveToNewFile && !dialogueViewModel.hasChanged() && !forceSave) {
 			return;
 		}
 		String filepath = "";
 		if (!saveToNewFile) {
-			filepath = settings.getLastOpenedFilePath();
+			filepath = settings.getLastOpenedFile();
 		}
 		// ask user if he wants to save the unsaved changes
 		if (askFirst && !Util.saveDataBeforeExit()) {
@@ -45,14 +46,15 @@ public class Util {
 		JSONObject savedData = dialogueViewModel.getGUIData();
 		String data = savedData.toString();
 		// if the file has not been saved before -> ask for a save location
-		if (filepath.isBlank())
+		if (filepath.isBlank()) {
 			filepath = Util.fileChooser(true, new ExtensionFilter("CEGUI File", "*.cegui", "*.CEGUI"));
+		}
 		// if the user picked a file
 		if (!filepath.isBlank()) {
 			if (!filepath.endsWith(".cegui")) {
 				filepath += ".cegui";
 			}
-			settings.setLastOpenedFilePath(filepath);
+			settings.setLastOpenedFile(filepath);
 			Util.saveJSONStringToFile(filepath, data);
 			dialogueViewModel.hasChanged(false);
 		}
@@ -64,7 +66,7 @@ public class Util {
 		EasyDI easyDI = App.easyDI;
 		Settings settings = easyDI.getInstance(Settings.class);
 		String filepath = fileChooser(false, new ExtensionFilter("CEGUI File", "*.cegui", "*.CEGUI"));
-		settings.setLastOpenedFilePath(filepath);
+		settings.setLastOpenedFile(filepath);
 		String jsonString = loadStringFromFile(filepath);
 		if (jsonString.isBlank()) {
 			return;
@@ -116,26 +118,21 @@ public class Util {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(extensions);
 		File file = null;
+		File folder = new File(settings.getLastFileChooserPath());
+		if (folder.isDirectory()) {
+			fileChooser.setInitialDirectory(folder);
+		}
 		if (save) {
 			fileChooser.setTitle("Save file");
-			File folder = new File(settings.getLastOpenedFilePath());
-			if (folder.isDirectory()) {
-				fileChooser.setInitialDirectory(folder);
-			}
 			file = fileChooser.showSaveDialog(App.mainStage);
-			settings.setLastOpenedFilePath(file.getParent());
 		} else {
 			fileChooser.setTitle("Open file");
-			File folder = new File(settings.getLastSavedFilePath());
-			if (folder.isDirectory()) {
-				fileChooser.setInitialDirectory(folder);
-			}
 			file = fileChooser.showOpenDialog(App.mainStage);
-			settings.setLastSavedFilePath(file.getParent());
 		}
 		if (file == null) {
 			return "";
 		}
+		settings.setLastFileChooserPath(file.getParent());
 		return file.getAbsolutePath();
 	}
 

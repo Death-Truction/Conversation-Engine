@@ -33,25 +33,20 @@ public class App extends Application {
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
 		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
-		Image icon = new Image(getClass().getResource("images/Icon.png").toExternalForm());
+		final Image icon = new Image(this.getClass().getResource("images/Icon.png").toExternalForm());
 		stage.getIcons().add(icon);
 		stage.minHeightProperty().set(480.0);
 		stage.minWidthProperty().set(640.0);
 		stage.setHeight(720);
 		stage.setWidth(1280);
-		ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
-		Parent mainScene = viewTuple.getView();
-		mainScene.getStylesheets().add(getClass().getResource("styles/style.css").toExternalForm());
+		final ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
+		final Parent mainScene = viewTuple.getView();
+		mainScene.getStylesheets().add(this.getClass().getResource("styles/style.css").toExternalForm());
 		stage.setScene(new Scene(mainScene));
 		stage.show();
 	}
 
-	@Override
-	public void stop() {
-		//
-	}
-
-	private EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
+	private final EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
 		Util.saveGUIDataToFile(true, false, false);
 	};
 

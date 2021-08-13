@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import de.dai_labor.conversation_engine_gui.gui_components.DialoguePane;
 import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.gui_components.Transition;
+import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,18 +26,20 @@ import javafx.scene.layout.Pane;
 
 @Singleton
 public class DialogueViewModel implements ViewModel {
-	private DialoguePane dialoguePane;
-	private Pane diagramElementsLayer;
-	private SimpleStringProperty insertMode = new SimpleStringProperty("");
+	private final DialoguePane dialoguePane;
+	private final Pane diagramElementsLayer;
+	private final SimpleStringProperty insertMode = new SimpleStringProperty("");
+	private final Settings settings;
 	private Toggle toggleButton;
-	private ObservableMap<Integer, State> states;
-	private List<Transition> transitions;
+	private final ObservableMap<Integer, State> states;
+	private final List<Transition> transitions;
 	private boolean hasDataChanged;
 
-	public DialogueViewModel() {
+	public DialogueViewModel(Settings settings) {
+		this.settings = settings;
 		this.diagramElementsLayer = new Pane();
-		this.dialoguePane = new DialoguePane(diagramElementsLayer, this.insertMode, this::addState, this::addTransition,
-				this::removeState, this::removeTransition);
+		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this::addState,
+				this::addTransition, this::removeState, this::removeTransition);
 		this.diagramElementsLayer.setMinWidth(10000);
 		this.diagramElementsLayer.setMinHeight(10000);
 		this.diagramElementsLayer.relocate(-5000, -5000);
@@ -45,6 +48,9 @@ public class DialogueViewModel implements ViewModel {
 		this.hasDataChanged = false;
 		this.transitions = new ArrayList<>();
 		this.states = FXCollections.observableHashMap();
+		this.subscribe("unload", (ignore, ignore2) -> {
+			this.dialoguePane.unselectAll();
+		});
 	}
 
 	public Node getView() {
@@ -66,13 +72,13 @@ public class DialogueViewModel implements ViewModel {
 
 	public void addState(double locationX, double locationY) {
 		// center location to mousePointer
-		locationX -= State.INITIAL_SIZE;
-		locationY -= State.INITIAL_SIZE;
-		this.addState(getStateId(), getStateName(), locationX, locationY);
+		locationX -= this.settings.getStateSizeProperty().get();
+		locationY -= this.settings.getStateSizeProperty().get();
+		this.addState(this.getStateId(), this.getStateName(), locationX, locationY);
 	}
 
 	public void addState(int id, String name, double locationX, double locationY) {
-		State newState = new State(id, name, locationX, locationY);
+		final State newState = new State(id, name, locationX, locationY, true, this.settings);
 		newState.getTextArea().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
 		this.states.put(id, newState);
 		this.hasDataChanged = true;
@@ -87,16 +93,16 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void removeState(State state) {
-		for (Iterator<Transition> iterator = this.transitions.iterator(); iterator.hasNext();) {
-			Transition transition = iterator.next();
+		for (final Iterator<Transition> iterator = this.transitions.iterator(); iterator.hasNext();) {
+			final Transition transition = iterator.next();
 			if (transition.getSource().equals(state) || transition.getTarget().equals(state)) {
 				this.hasDataChanged = true;
 				iterator.remove();
 				this.diagramElementsLayer.getChildren().remove(transition);
 			}
 		}
-		for (Iterator<Entry<Integer, State>> iterator = this.states.entrySet().iterator(); iterator.hasNext();) {
-			State tmpState = iterator.next().getValue();
+		for (final Iterator<Entry<Integer, State>> iterator = this.states.entrySet().iterator(); iterator.hasNext();) {
+			final State tmpState = iterator.next().getValue();
 			if (tmpState.equals(state)) {
 				this.hasDataChanged = true;
 				iterator.remove();
@@ -112,11 +118,11 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void addTransition(State source, State target) {
-		boolean transitionExist = this.transitionExists(source, target);
+		final boolean transitionExist = this.transitionExists(source, target);
 		if (!transitionExist) {
-			Transition newTransition = new Transition(source, target, "Transition" + this.transitions.size());
+			final Transition newTransition = new Transition(source, target, "Transition" + this.transitions.size());
 			newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
-			transitions.add(newTransition);
+			this.transitions.add(newTransition);
 			this.hasDataChanged = true;
 			this.diagramElementsLayer.getChildren().add(newTransition);
 			newTransition.toBack();
@@ -125,9 +131,9 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void addTransition(State source, State target, String trigger) {
-		Transition newTransition = new Transition(source, target, trigger);
+		final Transition newTransition = new Transition(source, target, trigger);
 		newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
-		transitions.add(newTransition);
+		this.transitions.add(newTransition);
 		this.hasDataChanged = true;
 		this.diagramElementsLayer.getChildren().add(newTransition);
 		newTransition.toBack();
@@ -137,7 +143,7 @@ public class DialogueViewModel implements ViewModel {
 		if (source == target) {
 			return true;
 		}
-		for (Transition transition : this.transitions) {
+		for (final Transition transition : this.transitions) {
 			if (transition.getSource().equals(source) && transition.getTarget().equals(target)) {
 				return true;
 			}
@@ -147,11 +153,11 @@ public class DialogueViewModel implements ViewModel {
 
 	public void resetData() {
 		// TODO: better algo?
-		for (Transition transition : transitions) {
+		for (final Transition transition : this.transitions) {
 			((Pane) transition.getParent()).getChildren().remove(transition);
 		}
-		for (Entry<Integer, State> stateEntry : states.entrySet()) {
-			State state = stateEntry.getValue();
+		for (final Entry<Integer, State> stateEntry : this.states.entrySet()) {
+			final State state = stateEntry.getValue();
 			((Pane) state.getParent()).getChildren().remove(state);
 		}
 		this.transitions.clear();
@@ -168,21 +174,21 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void setGUIData(JSONObject dialogueModelDataObject) {
-		resetData();
+		this.resetData();
 		try {
-			JSONArray states = dialogueModelDataObject.getJSONArray("states");
-			JSONArray transitions = dialogueModelDataObject.getJSONArray("transitions");
-			double locationX = dialogueModelDataObject.optDouble("locationX", -5000);
-			double locationY = dialogueModelDataObject.optDouble("locationY", -5000);
-			double scale = dialogueModelDataObject.optDouble("scale", 1.0);
+			final JSONArray states = dialogueModelDataObject.getJSONArray("states");
+			final JSONArray transitions = dialogueModelDataObject.getJSONArray("transitions");
+			final double locationX = dialogueModelDataObject.optDouble("locationX", -5000);
+			final double locationY = dialogueModelDataObject.optDouble("locationY", -5000);
+			final double scale = dialogueModelDataObject.optDouble("scale", 1.0);
 			this.setDiagramScale(1);
 			this.diagramElementsLayer.setTranslateX(0);
 			this.diagramElementsLayer.setTranslateY(0);
 			this.diagramElementsLayer.relocate(locationX, locationY);
 			this.setDiagramScale(scale);
-			setStatesGUIData(states);
-			setTransitionsGUIData(transitions);
-		} catch (JSONException ex) {
+			this.setStatesGUIData(states);
+			this.setTransitionsGUIData(transitions);
+		} catch (final JSONException ex) {
 			Util.showError("Error loading your file", ex.getLocalizedMessage());
 		}
 
@@ -190,11 +196,11 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public JSONObject getGUIData() {
-		JSONObject data = new JSONObject();
-		double scale = this.diagramElementsLayer.getScaleX();
+		final JSONObject data = new JSONObject();
+		final double scale = this.diagramElementsLayer.getScaleX();
 		this.setDiagramScale(1);
-		data.put("states", getStatesGUIData());
-		data.put("transitions", getTransitionsGUIData());
+		data.put("states", this.getStatesGUIData());
+		data.put("transitions", this.getTransitionsGUIData());
 		data.put("locationX", this.diagramElementsLayer.getBoundsInParent().getMinX());
 		data.put("locationY", this.diagramElementsLayer.getBoundsInParent().getMinY());
 		data.put("scale", scale);
@@ -205,14 +211,14 @@ public class DialogueViewModel implements ViewModel {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("States: \n");
-		for (Entry<Integer, State> stateEntry : states.entrySet()) {
-			State state = stateEntry.getValue();
+		for (final Entry<Integer, State> stateEntry : this.states.entrySet()) {
+			final State state = stateEntry.getValue();
 			sb.append("\t" + state.getTextArea().getText() + "\n");
 		}
 		sb.append("Transitions: \n");
-		for (Transition transition : transitions) {
+		for (final Transition transition : this.transitions) {
 			sb.append("\t" + transition.getSource().getTextArea().getText() + " - "
 					+ transition.getTarget().getTextArea().getText() + " | Trigger: "
 					+ transition.getTriggerTextField().getText() + "\n");
@@ -221,7 +227,7 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	private String getStateName() {
-		return "State" + states.size();
+		return "State" + this.states.size();
 	}
 
 	private int getStateId() {
@@ -229,11 +235,11 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	private JSONArray getStatesGUIData() {
-		JSONArray statesData = new JSONArray();
-		for (Entry<Integer, State> stateEntry : states.entrySet()) {
-			State state = stateEntry.getValue();
-			int id = stateEntry.getKey();
-			JSONObject stateData = new JSONObject();
+		final JSONArray statesData = new JSONArray();
+		for (final Entry<Integer, State> stateEntry : this.states.entrySet()) {
+			final State state = stateEntry.getValue();
+			final int id = stateEntry.getKey();
+			final JSONObject stateData = new JSONObject();
 			stateData.put("locationX", state.getBoundsInParent().getMinX());
 			stateData.put("locationY", state.getBoundsInParent().getMinY());
 			stateData.put("name", state.getTextArea().getText());
@@ -244,9 +250,9 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	private JSONArray getTransitionsGUIData() {
-		JSONArray transitionsData = new JSONArray();
-		for (Transition transition : transitions) {
-			JSONObject transitionData = new JSONObject();
+		final JSONArray transitionsData = new JSONArray();
+		for (final Transition transition : this.transitions) {
+			final JSONObject transitionData = new JSONObject();
 			transitionData.put("source", transition.getSource().getStateID());
 			transitionData.put("target", transition.getTarget().getStateID());
 			transitionData.put("trigger", transition.getTriggerTextField().getText());
@@ -258,7 +264,7 @@ public class DialogueViewModel implements ViewModel {
 	private void setStatesGUIData(JSONArray states) throws JSONException {
 
 		for (int i = 0; i < states.length(); i++) {
-			JSONObject state = states.getJSONObject(i);
+			final JSONObject state = states.getJSONObject(i);
 			this.addState(state.getInt("id"), state.getString("name"), state.getDouble("locationX"),
 					state.getDouble("locationY"));
 		}
@@ -266,10 +272,10 @@ public class DialogueViewModel implements ViewModel {
 
 	private void setTransitionsGUIData(JSONArray transitions) {
 		for (int i = 0; i < transitions.length(); i++) {
-			JSONObject transition = transitions.getJSONObject(i);
-			State sourceState = states.get(transition.getInt("source"));
-			State targetState = states.get(transition.getInt("target"));
-			String trigger = transition.getString("trigger");
+			final JSONObject transition = transitions.getJSONObject(i);
+			final State sourceState = this.states.get(transition.getInt("source"));
+			final State targetState = this.states.get(transition.getInt("target"));
+			final String trigger = transition.getString("trigger");
 			this.addTransition(sourceState, targetState, trigger);
 		}
 	}
