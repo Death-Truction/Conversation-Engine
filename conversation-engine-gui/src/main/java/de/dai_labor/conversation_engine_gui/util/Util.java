@@ -17,7 +17,6 @@ import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import eu.lestard.easydi.EasyDI;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -27,21 +26,24 @@ public class Util {
 	private Util() {
 	}
 
-	public static void saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
+	public static SaveStateEnum saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
 		EasyDI easyDI = App.easyDI;
 		DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
 		settings.savePrefs();
 		if (!saveToNewFile && !dialogueViewModel.hasChanged() && !forceSave) {
-			return;
+			return SaveStateEnum.NO;
 		}
 		String filepath = "";
 		if (!saveToNewFile) {
 			filepath = settings.getLastOpenedFile();
 		}
 		// ask user if he wants to save the unsaved changes
-		if (askFirst && !Util.saveDataBeforeExit()) {
-			return;
+		if (askFirst) {
+			SaveStateEnum saveState = Util.saveDataBeforeExit();
+			if (saveState != SaveStateEnum.YES) {
+				return saveState;
+			}
 		}
 		JSONObject savedData = dialogueViewModel.getGUIData();
 		String data = savedData.toString();
@@ -57,8 +59,10 @@ public class Util {
 			settings.setLastOpenedFile(filepath);
 			Util.saveJSONStringToFile(filepath, data);
 			dialogueViewModel.hasChanged(false);
+			return SaveStateEnum.YES;
 		}
-
+		// if the user pressed cancel on the fileChooser
+		return SaveStateEnum.CANCEL;
 	}
 
 	public static void loadGUIDataFromFile() {
@@ -96,7 +100,7 @@ public class Util {
 		errorAlert.showAndWait();
 	}
 
-	public static boolean saveDataBeforeExit() {
+	public static SaveStateEnum saveDataBeforeExit() {
 
 		Alert saveBeforeExitConfirmation = new Alert(Alert.AlertType.CONFIRMATION,
 				"You have unsaved changes.\nWould you like to save them now?");
@@ -104,13 +108,21 @@ public class Util {
 		saveBeforeExitConfirmation.setTitle("Unsaved changes");
 		saveBeforeExitConfirmation.initModality(Modality.APPLICATION_MODAL);
 		saveBeforeExitConfirmation.initOwner(App.mainStage);
-		((Button) saveBeforeExitConfirmation.getDialogPane().lookupButton(ButtonType.OK)).setText("Yes");
-		((Button) saveBeforeExitConfirmation.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("No");
-		Optional<ButtonType> closeResponse = saveBeforeExitConfirmation.showAndWait();
-		if (closeResponse.isPresent()) {
-			return ButtonType.OK.equals(closeResponse.get());
+		ButtonType yesButton = new ButtonType("Yes");
+		ButtonType noButton = new ButtonType("No");
+		ButtonType cancelButton = new ButtonType("Cancel");
+		saveBeforeExitConfirmation.getButtonTypes().clear();
+		saveBeforeExitConfirmation.getButtonTypes().addAll(yesButton, noButton, cancelButton);
+		Optional<ButtonType> response = saveBeforeExitConfirmation.showAndWait();
+		if (response.isPresent()) {
+			if (response.get() == yesButton) {
+				return SaveStateEnum.YES;
+			}
+			if (response.get() == noButton) {
+				return SaveStateEnum.NO;
+			}
 		}
-		return false;
+		return SaveStateEnum.CANCEL;
 	}
 
 	public static String fileChooser(boolean save, ExtensionFilter extensions) {

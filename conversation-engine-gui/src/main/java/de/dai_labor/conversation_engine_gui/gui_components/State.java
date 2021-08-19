@@ -2,7 +2,9 @@ package de.dai_labor.conversation_engine_gui.gui_components;
 
 import de.dai_labor.conversation_engine_gui.models.DragElementData;
 import de.dai_labor.conversation_engine_gui.models.Settings;
-import javafx.beans.value.ChangeListener;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
@@ -17,10 +19,11 @@ import javafx.scene.text.Font;
 public class State extends StackPane {
 
 	private final Circle stateShape;
-	private final TextArea nameTextArea;
+	private TextArea nameTextArea = null;
 	private final DragElementData dragElementData = new DragElementData();
 	private final int stateID;
 	private final Settings settings;
+	private SimpleObjectProperty<State> selectedState;
 
 	private final EventHandler<KeyEvent> labelKeyEvent = event -> {
 		if (event.getCode().equals(KeyCode.ENTER)) {
@@ -33,11 +36,16 @@ public class State extends StackPane {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
+		this.selectedState.set(this);
+		this.toFront();
+		if (event.getClickCount() == 2) {
+			this.focusLabel();
+			event.consume();
+		}
 		this.dragElementData.mouseX = event.getScreenX();
 		this.dragElementData.mouseY = event.getScreenY();
 		this.dragElementData.translateX = this.getTranslateX();
 		this.dragElementData.translateY = this.getTranslateY();
-		this.toFront();
 		event.consume();
 	};
 
@@ -63,9 +71,12 @@ public class State extends StackPane {
 		event.consume();
 	};
 
-	public State(int stateID, String name, double x, double y, boolean draggable, Settings settings) {
+	public State(int stateID, String name, double x, double y, Settings settings,
+			SimpleObjectProperty<State> selectedState, boolean requestFocus) {
 		this.settings = settings;
 		this.stateID = stateID;
+		this.selectedState = selectedState;
+		this.selectedState.addListener((observable, oldVal, newVal) -> this.selectStatus(newVal));
 		int stateSize = settings.getStateSizeProperty().get();
 		int stateFontSize = settings.getStateFontSizeProperty().get();
 		Color stateFontColor = settings.getStateFontColorProperty().get();
@@ -80,18 +91,23 @@ public class State extends StackPane {
 		this.nameTextArea.setMouseTransparent(true);
 		this.getChildren().addAll(this.stateShape, this.nameTextArea);
 		this.addDynamicEventListeners();
-		if (draggable) {
-			this.addDraggingEventHandlers();
-		}
+		this.addDraggingEventHandlers();
 		this.relocate(x, y);
+		this.setFocusTraversable(true);
+		if (requestFocus) {
+			this.initFocusRequest();
+			this.selectedState.set(this);
+		}
 	}
 
-	public void select() {
-		this.stateShape.setFill(this.settings.getStateSelectedColorProperty().get());
-	}
-
-	public void unselect() {
-		this.stateShape.setFill(this.settings.getStateNormalColorProperty().get());
+	public void selectStatus(State newVal) {
+		if (newVal != null && newVal.equals(this)) {
+			this.stateShape.fillProperty().bind(this.settings.getStateSelectedColorProperty());
+		} else {
+			this.nameTextArea.deselect();
+			this.requestFocus();
+			this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
+		}
 	}
 
 	public TextArea getTextArea() {
@@ -106,30 +122,29 @@ public class State extends StackPane {
 		return this.stateID;
 	}
 
-	public void focusLabel() {
+	private void focusLabel() {
 		this.nameTextArea.requestFocus();
 		this.nameTextArea.selectAll();
 	}
 
-	private void addDynamicEventListeners() {
-		this.settings.getStateSizeProperty().addListener((ChangeListener<? super Number>) (observ, oldVal, newVal) -> {
-			final double value = (int) newVal;
-			this.stateShape.setRadius(value);
-			this.nameTextArea.setMaxSize(value * 2.0, value * 2.0);
+	private void initFocusRequest() {
+		Platform.runLater(() -> {
+			if (this.selectedState.get().equals(this)) {
+				this.focusLabel();
+			}
 		});
-		this.settings.getStateFontSizeProperty()
-				.addListener((ChangeListener<? super Number>) (observ, oldVal, newVal) -> {
-					final double value = (int) newVal;
-					this.nameTextArea.setFont(new Font(value));
-				});
-		this.settings.getStateFontColorProperty()
-				.addListener((ChangeListener<? super Color>) (observ, oldVal, newVal) -> {
-					this.nameTextArea.setStyle("-fx-text-fill: " + newVal.toString().replace("0x", "#"));
-				});
-		this.settings.getStateNormalColorProperty()
-				.addListener((ChangeListener<? super Color>) (observ, oldVal, newVal) -> {
-					this.stateShape.setFill(newVal);
-				});
+	}
+
+	private void addDynamicEventListeners() {
+		this.nameTextArea.maxHeightProperty().bind(this.settings.getStateSizeProperty().multiply(2));
+		this.nameTextArea.maxWidthProperty().bind(this.settings.getStateSizeProperty().multiply(2));
+		this.stateShape.radiusProperty().bind(this.settings.getStateSizeProperty());
+		this.nameTextArea.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> new Font(this.settings.getStateFontSizeProperty().get()),
+						this.settings.getStateFontSizeProperty()));
+		this.nameTextArea.styleProperty().bind(Bindings.createObjectBinding(
+				() -> "-fx-text-fill: " + this.settings.getStateFontColorProperty().get().toString().replace("0x", "#"),
+				this.settings.getStateFontColorProperty()));
 
 	}
 

@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 public class SettingsView implements FxmlView<SettingsViewModel>, Initializable {
 
@@ -28,21 +30,37 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable 
 	@FXML
 	private TextField transitionSize;
 	@FXML
-	private ColorPicker transitionColor;
+	private ColorPicker transitionNormalColor;
 	@FXML
 	private TextField transitionFontSize;
 	@FXML
 	private ColorPicker transitionFontColor;
+	@FXML
+	private ColorPicker transitionSelectedColor;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// Converters
+		StringConverter<? extends Number> converter = new IntegerStringConverter();
 		this.stateSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
-		this.stateSize.textProperty().bindBidirectional(this.viewModel.getStateSizeProperty());
+		this.stateSize.textProperty().bindBidirectional(this.viewModel.getStateSizeProperty(),
+				(StringConverter<Number>) converter);
 		this.stateFontSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
-		this.stateFontSize.textProperty().bindBidirectional(this.viewModel.getStateFontSizeProperty());
+		this.stateFontSize.textProperty().bindBidirectional(this.viewModel.getStateFontSizeProperty(),
+				(StringConverter<Number>) converter);
 		this.stateFontColor.valueProperty().bindBidirectional(this.viewModel.getStateFontColorProperty());
 		this.stateNormalColor.valueProperty().bindBidirectional(this.viewModel.getStateNormalColorProperty());
 		this.stateSelectedColor.valueProperty().bindBidirectional(this.viewModel.getStateSelectedColorProperty());
+		this.transitionSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
+		this.transitionSize.textProperty().bindBidirectional(this.viewModel.getTransitionSizeProperty(),
+				(StringConverter<Number>) converter);
+		this.transitionFontSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
+		this.transitionFontSize.textProperty().bindBidirectional(this.viewModel.getTransitionFontSizeProperty(),
+				(StringConverter<Number>) converter);
+		this.transitionFontColor.valueProperty().bindBidirectional(this.viewModel.getTransitionFontColorProperty());
+		this.transitionNormalColor.valueProperty().bindBidirectional(this.viewModel.getTransitionNormalColorProperty());
+		this.transitionSelectedColor.valueProperty()
+				.bindBidirectional(this.viewModel.getTransitionSelectedColorProperty());
 	}
 
 }

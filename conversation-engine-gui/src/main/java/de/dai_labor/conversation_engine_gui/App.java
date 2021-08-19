@@ -2,6 +2,7 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
+import de.dai_labor.conversation_engine_gui.util.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
 import de.dai_labor.conversation_engine_gui.view.main.MainViewModel;
@@ -47,7 +48,9 @@ public class App extends Application {
 	}
 
 	private final EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
-		Util.saveGUIDataToFile(true, false, false);
+		if (Util.saveGUIDataToFile(true, false, false) == SaveStateEnum.CANCEL) {
+			event.consume();
+		}
 	};
 
 }

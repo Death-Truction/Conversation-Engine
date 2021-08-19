@@ -1,29 +1,31 @@
 package de.dai_labor.conversation_engine_gui.gui_components;
 
+import de.dai_labor.conversation_engine_gui.models.Settings;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 public class Transition extends StackPane {
 	private State source;
 	private State target;
 	private Arrow transition;
+	private SimpleObjectProperty<Transition> selectedTransition;
 
-	public Transition(State source, State target, String triggerName) {
+	public Transition(State source, State target, String triggerName,
+			SimpleObjectProperty<Transition> selectedTransition, boolean requestFocus, Settings settings) {
 		this.source = source;
 		this.target = target;
-		this.transition = new Arrow(source, target, triggerName);
+		this.selectedTransition = selectedTransition;
+		this.selectedTransition.addListener((observable, oldVal, newVal) -> this.selectionStatus(newVal));
+		this.transition = new Arrow(source, target, triggerName, () -> this.selectedTransition.set(this), settings);
 		this.getChildren().add(this.transition);
-		this.transition.addEventFilter(MouseEvent.ANY, event -> {
-			if (event.getEventType() != MouseEvent.MOUSE_PRESSED || event.getButton() != MouseButton.PRIMARY
-					|| event.getClickCount() != 2) {
-				event.consume();
-				return;
-			}
-		});
-		this.transition.setMouseTransparent(true);
 		this.transition.toBack();
+		if (requestFocus) {
+			this.selectedTransition.set(this);
+			this.initFocusRequest();
+		}
+		this.setPickOnBounds(false);
 	}
 
 	public State getSource() {
@@ -38,16 +40,23 @@ public class Transition extends StackPane {
 		return this.transition.getTriggerTextField();
 	}
 
-	public void focusTextField() {
-		this.transition.getTriggerTextField().requestFocus();
-		this.transition.getTriggerTextField().selectAll();
+	private void focusTriggerTextField() {
+		this.transition.focusTriggerTextField();
 	}
 
-	public void select() {
-		this.transition.select();
+	private void initFocusRequest() {
+		Platform.runLater(() -> {
+			if (this.selectedTransition.get().equals(this)) {
+				this.focusTriggerTextField();
+			}
+		});
 	}
 
-	public void unselect() {
-		this.transition.unselect();
+	public void selectionStatus(Transition newVal) {
+		if (newVal != null && newVal.equals(this)) {
+			this.transition.select();
+		} else {
+			this.transition.deselect();
+		}
 	}
 }

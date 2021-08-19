@@ -4,94 +4,55 @@ import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 public class SettingsViewModel implements ViewModel {
-
-	private final SimpleStringProperty stateSizeProperty = new SimpleStringProperty();
-	private final SimpleStringProperty stateFontSizeProperty = new SimpleStringProperty();
-	private final SimpleObjectProperty<Color> stateFontColorProperty = new SimpleObjectProperty<>();
-	private final SimpleObjectProperty<Color> stateNormalColorProperty = new SimpleObjectProperty<>();
-	private final SimpleObjectProperty<Color> stateSelectedColorProperty = new SimpleObjectProperty<>();
 	private Settings settings = null;
 	private static final int MIN_STATE_SIZE = 10;
 	private static final int MAX_STATE_SIZE = 200;
 
 	public SettingsViewModel(Settings settings) {
 		this.settings = settings;
-		this.setInitValues();
-		this.addListeners();
 	}
 
-	public SimpleStringProperty getStateSizeProperty() {
-		return this.stateSizeProperty;
+	public SimpleIntegerProperty getStateSizeProperty() {
+		return this.settings.getStateSizeProperty();
 	}
 
-	public SimpleStringProperty getStateFontSizeProperty() {
-		return this.stateFontSizeProperty;
+	public SimpleIntegerProperty getStateFontSizeProperty() {
+		return this.settings.getStateFontSizeProperty();
 	}
 
 	public SimpleObjectProperty<Color> getStateNormalColorProperty() {
-		return this.stateNormalColorProperty;
+		return this.settings.getStateNormalColorProperty();
 	}
 
 	public SimpleObjectProperty<Color> getStateSelectedColorProperty() {
-		return this.stateSelectedColorProperty;
+		return this.settings.getStateSelectedColorProperty();
 	}
 
 	public SimpleObjectProperty<Color> getStateFontColorProperty() {
-		return this.stateFontColorProperty;
+		return this.settings.getStateFontColorProperty();
 	}
 
-	private void setInitValues() {
-		this.stateSizeProperty.set(String.valueOf(this.settings.getStateSizeProperty().get()));
-		this.stateFontSizeProperty.set(String.valueOf(this.settings.getStateFontSizeProperty().get()));
-		this.stateFontColorProperty.set(this.settings.getStateFontColorProperty().get());
-		this.stateNormalColorProperty.set(this.settings.getStateNormalColorProperty().get());
-		this.stateSelectedColorProperty.set(this.settings.getStateSelectedColorProperty().get());
+	public SimpleIntegerProperty getTransitionSizeProperty() {
+		return this.settings.getTransitionSizeProperty();
 	}
 
-	private void addListeners() {
-		this.stateSizeProperty.addListener(this.stateSizeListener);
-		this.stateFontSizeProperty.addListener(this.stateFontSizeListener);
-		this.stateFontColorProperty.addListener(this.stateFontColorListener);
-		this.stateNormalColorProperty.addListener(this.stateNormalColorListener);
-		this.stateSelectedColorProperty.addListener(this.stateSelectedColorListener);
+	public SimpleIntegerProperty getTransitionFontSizeProperty() {
+		return this.settings.getTransitionFontSizeProperty();
 	}
 
-	private final ChangeListener<String> stateSizeListener = (observable, oldVal, newVal) -> {
-		this.setIntegerPropertyValue(this.settings.getStateSizeProperty(), newVal);
-	};
-
-	private final ChangeListener<String> stateFontSizeListener = (observable, oldVal, newVal) -> {
-		this.setIntegerPropertyValue(this.settings.getStateFontSizeProperty(), newVal);
-	};
-
-	private void setIntegerPropertyValue(SimpleIntegerProperty settingsProperty, String value) {
-		if (value.isEmpty()) {
-			settingsProperty.set(10);
-			return;
-		}
-		int val = Integer.parseInt(value);
-		if (val < MIN_STATE_SIZE) {
-			val = MIN_STATE_SIZE;
-		} else if (val > MAX_STATE_SIZE) {
-			val = MAX_STATE_SIZE;
-		}
-		settingsProperty.set(val);
+	public SimpleObjectProperty<Color> getTransitionNormalColorProperty() {
+		return this.settings.getTransitionNormalColorProperty();
 	}
 
-	private final ChangeListener<Color> stateNormalColorListener = (observable, oldVal, newVal) -> {
-		this.settings.getStateNormalColorProperty().set(newVal);
-	};
+	public SimpleObjectProperty<Color> getTransitionSelectedColorProperty() {
+		return this.settings.getTransitionSelectedColorProperty();
+	}
 
-	private final ChangeListener<Color> stateSelectedColorListener = (observable, oldVal, newVal) -> {
-		this.settings.getStateSelectedColorProperty().set(newVal);
-	};
-	private final ChangeListener<Color> stateFontColorListener = (observable, oldVal, newVal) -> {
-		this.settings.getStateFontColorProperty().set(newVal);
-	};
+	public SimpleObjectProperty<Color> getTransitionFontColorProperty() {
+		return this.settings.getTransitionFontColorProperty();
+	}
 
 }

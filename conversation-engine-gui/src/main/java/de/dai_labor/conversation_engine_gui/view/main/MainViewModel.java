@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.dai_labor.conversation_engine_gui.App;
 import de.dai_labor.conversation_engine_gui.models.Settings;
+import de.dai_labor.conversation_engine_gui.util.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataView;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;
@@ -47,14 +48,16 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void newFile(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false, false);
-		this.dialogueViewModel.resetData();
-		App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
+		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+			this.dialogueViewModel.resetData();
+			App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
+		}
 	}
 
 	public void openFile(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false, false);
-		Util.loadGUIDataFromFile();
+		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+			Util.loadGUIDataFromFile();
+		}
 	}
 
 	public void saveFile(ActionEvent event) {
@@ -70,8 +73,9 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void closeApplication(ActionEvent event) {
-		Util.saveGUIDataToFile(true, false, false);
-		Platform.exit();
+		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+			Platform.exit();
+		}
 	}
 
 	public SimpleObjectProperty<Node> getViewBinding() {

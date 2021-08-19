@@ -1,47 +1,61 @@
 package de.dai_labor.conversation_engine_gui.gui_components;
 
+import de.dai_labor.conversation_engine_gui.models.Settings;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 
 //Source:
 // https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201
 public class Arrow extends Pane {
 	double sceneX, sceneY, layoutX, layoutY;
 	private TextField triggerTextField;
-	private static final Color DEFAULT_COLOR = Color.BLACK;
-	private static final Color SELECTED_COLOR = Color.GREEN;
 	private final Line line;
-	private final StackPane arrow;
+	private StackPane arrow;
 	private static final double DEFAULT_ARROW_SIZE = 12; // Arrow size
+	private Runnable setSelectedTransition;
+	private Settings settings;
 
-	public Arrow(State source, State target, String triggerName) {
+	public Arrow(State source, State target, String triggerName, Runnable setSelectedTransition, Settings settings) {
+		this.setSelectedTransition = setSelectedTransition;
+		this.settings = settings;
 		this.line = this.getLine(source, target, 1.0);
 		this.arrow = this.getArrow(true, this.line, source, target);
 		this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-		this.unselect();
 		this.triggerTextField = new TextField(triggerName);
 		this.setTextFieldProperties(this.line);
 		this.getChildren().addAll(this.line, this.arrow, this.triggerTextField);
-		this.arrow.setMouseTransparent(true);
 		this.setPickOnBounds(false);
-
+		this.addEventListeners();
+		this.addSettingsChangeListeners();
+		// small hack to force recalculating the bindings for the arrow head (otherwise
+		// it only gets displayed correctly after any interaction with the transition
+		// arrow)
+		Platform.runLater(() -> {
+			this.select();
+			this.deselect();
+		});
 	}
 
+	// display temporally dragging arrow
 	public Arrow(State source, StackPane tmpPane, double scale) {
 		this.line = this.getLine(source, tmpPane, scale);
 		this.arrow = this.getArrow(true, this.line, source, tmpPane);
 		this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-		this.unselect();
 		this.getChildren().addAll(this.line, this.arrow);
 	}
 
@@ -50,13 +64,73 @@ public class Arrow extends Pane {
 	}
 
 	public void select() {
-		this.line.setStroke(SELECTED_COLOR);
-		this.arrow.setBackground(new Background(new BackgroundFill(SELECTED_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+		this.line.strokeProperty().bind(this.settings.getTransitionSelectedColorProperty());
+		this.arrow.backgroundProperty()
+				.bind(Bindings.createObjectBinding(
+						() -> new Background(
+								new BackgroundFill(this.settings.getTransitionSelectedColorProperty().get(),
+										CornerRadii.EMPTY, Insets.EMPTY)),
+						this.settings.getTransitionSelectedColorProperty()));
 	}
 
-	public void unselect() {
-		this.line.setStroke(DEFAULT_COLOR);
-		this.arrow.setBackground(new Background(new BackgroundFill(DEFAULT_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+	public void deselect() {
+		this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
+		this.arrow.backgroundProperty()
+				.bind(Bindings
+						.createObjectBinding(
+								() -> new Background(
+										new BackgroundFill(this.settings.getTransitionNormalColorProperty().get(),
+												CornerRadii.EMPTY, Insets.EMPTY)),
+								this.settings.getTransitionNormalColorProperty()));
+		this.triggerTextField.deselect();
+	}
+
+	private void addEventListeners() {
+		this.line.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.arrow.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.triggerTextField.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.triggerTextField.addEventFilter(KeyEvent.KEY_RELEASED, this.keyReleasedEventHandler);
+	}
+
+	private void addSettingsChangeListeners() {
+		this.triggerTextField.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> new Font(this.settings.getTransitionFontSizeProperty().get()),
+						this.settings.getTransitionFontSizeProperty()));
+		this.triggerTextField.styleProperty()
+				.bind(Bindings.createObjectBinding(
+						() -> "-fx-text-fill: "
+								+ this.settings.getTransitionFontColorProperty().get().toString().replace("0x", "#"),
+						this.settings.getTransitionFontColorProperty()));
+		this.arrow.minHeightProperty().bind(this.settings.getTransitionSizeProperty());
+		this.arrow.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
+		this.arrow.maxHeightProperty().bind(this.settings.getTransitionSizeProperty());
+		this.arrow.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
+		this.line.strokeWidthProperty()
+				.bind(Bindings.createDoubleBinding(
+						() -> (this.settings.getTransitionSizeProperty().get() <= 8 ? 1.0
+								: this.settings.getTransitionSizeProperty().get() / 8.0),
+						this.settings.getTransitionSizeProperty()));
+	}
+
+	private EventHandler<MouseEvent> mousePressedEventHandler = event -> {
+		if (event.isPrimaryButtonDown()) {
+			this.setSelectedTransition.run();
+			if (event.getClickCount() == 2) {
+				this.focusTriggerTextField();
+			}
+		}
+		event.consume();
+	};
+	private EventHandler<KeyEvent> keyReleasedEventHandler = event -> {
+		if (event.getCode().equals(KeyCode.ENTER)) {
+			this.requestFocus();
+		}
+		event.consume();
+	};
+
+	public void focusTriggerTextField() {
+		this.triggerTextField.requestFocus();
+		this.triggerTextField.selectAll();
 	}
 
 	/**
@@ -68,7 +142,6 @@ public class Arrow extends Pane {
 	 */
 	private Line getLine(StackPane startDot, StackPane endDot, double scale) {
 		final Line line = new Line();
-		line.setStrokeWidth(DEFAULT_ARROW_SIZE / 8);
 		line.startXProperty().bind(startDot.layoutXProperty().add(startDot.translateXProperty().divide(scale))
 				.add(startDot.widthProperty().divide(2)));
 		line.startYProperty().bind(startDot.layoutYProperty().add(startDot.translateYProperty().divide(scale))
@@ -92,9 +165,6 @@ public class Arrow extends Pane {
 	 */
 	private StackPane getArrow(boolean toLineEnd, Line line, StackPane startDot, StackPane endDot) {
 		final StackPane arrow = new StackPane();
-		arrow.setPrefSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
-		arrow.setMaxSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
-		arrow.setMinSize(DEFAULT_ARROW_SIZE, DEFAULT_ARROW_SIZE);
 
 		// Determining the arrow visibility unless there is enough space between dots.
 		final DoubleBinding xDiff = line.endXProperty().subtract(line.startXProperty());

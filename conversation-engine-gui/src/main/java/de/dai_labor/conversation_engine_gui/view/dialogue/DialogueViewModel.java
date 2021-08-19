@@ -17,6 +17,7 @@ import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -29,6 +30,8 @@ public class DialogueViewModel implements ViewModel {
 	private final DialoguePane dialoguePane;
 	private final Pane diagramElementsLayer;
 	private final SimpleStringProperty insertMode = new SimpleStringProperty("");
+	private SimpleObjectProperty<State> selectedState = new SimpleObjectProperty<>();
+	private SimpleObjectProperty<Transition> selectedTransition = new SimpleObjectProperty<>();
 	private final Settings settings;
 	private Toggle toggleButton;
 	private final ObservableMap<Integer, State> states;
@@ -38,8 +41,9 @@ public class DialogueViewModel implements ViewModel {
 	public DialogueViewModel(Settings settings) {
 		this.settings = settings;
 		this.diagramElementsLayer = new Pane();
-		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this::addState,
-				this::addTransition, this::removeState, this::removeTransition);
+		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this.selectedState,
+				this.selectedTransition, this::addState, this::addTransition, this::removeState,
+				this::removeTransition);
 		this.diagramElementsLayer.setMinWidth(10000);
 		this.diagramElementsLayer.setMinHeight(10000);
 		this.diagramElementsLayer.relocate(-5000, -5000);
@@ -74,11 +78,12 @@ public class DialogueViewModel implements ViewModel {
 		// center location to mousePointer
 		locationX -= this.settings.getStateSizeProperty().get();
 		locationY -= this.settings.getStateSizeProperty().get();
-		this.addState(this.getStateId(), this.getStateName(), locationX, locationY);
+		this.addState(this.getStateId(), "State" + (this.states.size() + 1), locationX, locationY, true);
 	}
 
-	public void addState(int id, String name, double locationX, double locationY) {
-		final State newState = new State(id, name, locationX, locationY, true, this.settings);
+	public void addState(int id, String name, double locationX, double locationY, boolean focusRequest) {
+		final State newState = new State(id, name, locationX, locationY, this.settings, this.selectedState,
+				focusRequest);
 		newState.getTextArea().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
 		this.states.put(id, newState);
 		this.hasDataChanged = true;
@@ -118,25 +123,23 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void addTransition(State source, State target) {
+		this.addTransition(source, target, "Transition" + (this.transitions.size() + 1), true);
+	}
+
+	public void addTransition(State source, State target, String trigger, boolean focusRequest) {
 		final boolean transitionExist = this.transitionExists(source, target);
 		if (!transitionExist) {
-			final Transition newTransition = new Transition(source, target, "Transition" + this.transitions.size());
+			final Transition newTransition = new Transition(source, target,
+					"Transition" + (this.transitions.size() + 1), this.selectedTransition, focusRequest, this.settings);
 			newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
 			this.transitions.add(newTransition);
 			this.hasDataChanged = true;
 			this.diagramElementsLayer.getChildren().add(newTransition);
 			newTransition.toBack();
 		}
-		this.toggleButton.setSelected(false);
-	}
-
-	public void addTransition(State source, State target, String trigger) {
-		final Transition newTransition = new Transition(source, target, trigger);
-		newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
-		this.transitions.add(newTransition);
-		this.hasDataChanged = true;
-		this.diagramElementsLayer.getChildren().add(newTransition);
-		newTransition.toBack();
+		if (this.toggleButton != null) {
+			this.toggleButton.setSelected(false);
+		}
 	}
 
 	public boolean transitionExists(State source, State target) {
@@ -226,10 +229,6 @@ public class DialogueViewModel implements ViewModel {
 		return sb.toString();
 	}
 
-	private String getStateName() {
-		return "State" + this.states.size();
-	}
-
 	private int getStateId() {
 		return this.states.size();
 	}
@@ -266,7 +265,7 @@ public class DialogueViewModel implements ViewModel {
 		for (int i = 0; i < states.length(); i++) {
 			final JSONObject state = states.getJSONObject(i);
 			this.addState(state.getInt("id"), state.getString("name"), state.getDouble("locationX"),
-					state.getDouble("locationY"));
+					state.getDouble("locationY"), false);
 		}
 	}
 
@@ -276,7 +275,7 @@ public class DialogueViewModel implements ViewModel {
 			final State sourceState = this.states.get(transition.getInt("source"));
 			final State targetState = this.states.get(transition.getInt("target"));
 			final String trigger = transition.getString("trigger");
-			this.addTransition(sourceState, targetState, trigger);
+			this.addTransition(sourceState, targetState, trigger, false);
 		}
 	}
 

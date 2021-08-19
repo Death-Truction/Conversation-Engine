@@ -17,6 +17,11 @@ public class Settings {
 	private static final String STATE_FONT_COLOR = "state_font_color";
 	private static final String STATE_NORMAL_COLOR = "state_normal_color";
 	private static final String STATE_SELECTED_COLOR = "state_selected_color";
+	private static final String TRANSITION_SIZE = "transition_size";
+	private static final String TRANSITION_FONT_SIZE = "transition_font_size";
+	private static final String TRANSITION_FONT_COLOR = "transition_font_color";
+	private static final String TRANSITION_NORMAL_COLOR = "transition_normal_color";
+	private static final String TRANSITION_SELECTED_COLOR = "transition_selected_color";
 
 	private String lastFileChooserPath;
 	private String lastOpenedFile = "";
@@ -25,6 +30,11 @@ public class Settings {
 	private SimpleObjectProperty<Color> stateFontColorProperty;
 	private SimpleObjectProperty<Color> stateNormalColorProperty;
 	private SimpleObjectProperty<Color> stateSelectedColorProperty;
+	private SimpleIntegerProperty transitionSizeProperty;
+	private SimpleIntegerProperty transitionFontSizeProperty;
+	private SimpleObjectProperty<Color> transitionFontColorProperty;
+	private SimpleObjectProperty<Color> transitionNormalColorProperty;
+	private SimpleObjectProperty<Color> transitionSelectedColorProperty;
 
 	Preferences prefs;
 
@@ -69,6 +79,26 @@ public class Settings {
 		return this.stateSelectedColorProperty;
 	}
 
+	public SimpleIntegerProperty getTransitionSizeProperty() {
+		return this.transitionSizeProperty;
+	}
+
+	public SimpleIntegerProperty getTransitionFontSizeProperty() {
+		return this.transitionFontSizeProperty;
+	}
+
+	public SimpleObjectProperty<Color> getTransitionFontColorProperty() {
+		return this.transitionFontColorProperty;
+	}
+
+	public SimpleObjectProperty<Color> getTransitionNormalColorProperty() {
+		return this.transitionNormalColorProperty;
+	}
+
+	public SimpleObjectProperty<Color> getTransitionSelectedColorProperty() {
+		return this.transitionSelectedColorProperty;
+	}
+
 	public void savePrefs() {
 		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserPath);
 		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
@@ -86,6 +116,14 @@ public class Settings {
 				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "STEELBLUE")));
 		this.stateSelectedColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_SELECTED_COLOR, "GREEN")));
+		this.transitionSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(TRANSITION_SIZE, 12));
+		this.transitionFontSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(TRANSITION_FONT_SIZE, 12));
+		this.transitionFontColorProperty = new SimpleObjectProperty<>(
+				Color.valueOf(this.prefs.get(TRANSITION_FONT_COLOR, "STEELBLUE")));
+		this.transitionNormalColorProperty = new SimpleObjectProperty<>(
+				Color.valueOf(this.prefs.get(TRANSITION_NORMAL_COLOR, "BLACK")));
+		this.transitionSelectedColorProperty = new SimpleObjectProperty<>(
+				Color.valueOf(this.prefs.get(TRANSITION_SELECTED_COLOR, "GREEN")));
 	}
 
 }
