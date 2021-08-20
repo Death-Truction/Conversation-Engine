@@ -2,6 +2,7 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
+import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.dai_labor.conversation_engine_gui.util.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
@@ -51,6 +52,7 @@ public class App extends Application {
 		if (Util.saveGUIDataToFile(true, false, false) == SaveStateEnum.CANCEL) {
 			event.consume();
 		}
+		easyDI.getInstance(Settings.class).savePrefs();
 	};
 
 }

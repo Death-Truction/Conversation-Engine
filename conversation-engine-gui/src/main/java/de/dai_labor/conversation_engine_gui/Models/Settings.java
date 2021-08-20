@@ -23,8 +23,8 @@ public class Settings {
 	private static final String TRANSITION_NORMAL_COLOR = "transition_normal_color";
 	private static final String TRANSITION_SELECTED_COLOR = "transition_selected_color";
 
-	private String lastFileChooserPath;
 	private String lastOpenedFile = "";
+	private String lastFileChooserPath;
 	private SimpleIntegerProperty stateSizeProperty;
 	private SimpleIntegerProperty stateFontSizeProperty;
 	private SimpleObjectProperty<Color> stateFontColorProperty;
@@ -100,10 +100,10 @@ public class Settings {
 	}
 
 	public void savePrefs() {
-		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserPath);
-		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
-		this.prefs.put(STATE_NORMAL_COLOR, this.stateNormalColorProperty.get().toString());
 		// TODO: save all values
+//		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserPath);
+//		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
+//		this.prefs.put(STATE_NORMAL_COLOR, this.stateNormalColorProperty.get().toString());
 	}
 
 	private void loadPrefs() {
@@ -111,7 +111,7 @@ public class Settings {
 		this.stateSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_SIZE, 40));
 		this.stateFontSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_FONT_SIZE, 12));
 		this.stateFontColorProperty = new SimpleObjectProperty<>(
-				Color.valueOf(this.prefs.get(STATE_FONT_COLOR, "WHITE")));
+				Color.valueOf(this.prefs.get(STATE_FONT_COLOR, "BLACK")));
 		this.stateNormalColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "STEELBLUE")));
 		this.stateSelectedColorProperty = new SimpleObjectProperty<>(

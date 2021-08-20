@@ -13,6 +13,8 @@ import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueView;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import de.dai_labor.conversation_engine_gui.view.settings.SettingsView;
 import de.dai_labor.conversation_engine_gui.view.settings.SettingsViewModel;
+import de.dai_labor.conversation_engine_gui.view.simulation.SimulationSettingsView;
+import de.dai_labor.conversation_engine_gui.view.simulation.SimulationSettingsViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
@@ -24,14 +26,12 @@ import javafx.scene.control.Button;
 
 public class MainViewModel implements ViewModel {
 
-	private final DialogueViewModel dialogueViewModel;
 	private final Map<String, ViewTuple> views;
 	private static final String DEFAULT_VIEW_ID = "dialogue";
 	private final SimpleObjectProperty<Node> currentView;
 	private ViewTuple currentViewTuple;
 
-	public MainViewModel(DialogueViewModel dialogueViewModel) {
-		this.dialogueViewModel = dialogueViewModel;
+	public MainViewModel() {
 		this.views = new HashMap<>();
 		final ViewTuple<DialogueView, DialogueViewModel> dialogueViewTuple = FluentViewLoader
 				.fxmlView(DialogueView.class).load();
@@ -39,9 +39,12 @@ public class MainViewModel implements ViewModel {
 				.fxmlView(DialogueDataView.class).load();
 		final ViewTuple<SettingsView, SettingsViewModel> settingsViewTuple = FluentViewLoader
 				.fxmlView(SettingsView.class).load();
+		final ViewTuple<SimulationSettingsView, SimulationSettingsViewModel> simulationSettingsViewTuple = FluentViewLoader
+				.fxmlView(SimulationSettingsView.class).load();
 		this.views.put(DEFAULT_VIEW_ID, dialogueViewTuple);
 		this.views.put("dialogueData", dialogueDataViewTuple);
 		this.views.put("settings", settingsViewTuple);
+		this.views.put("simulationSettings", simulationSettingsViewTuple);
 		this.currentView = new SimpleObjectProperty<>();
 		this.currentView.set(this.views.get(DEFAULT_VIEW_ID).getView());
 		this.currentViewTuple = this.views.get(DEFAULT_VIEW_ID);
@@ -49,8 +52,9 @@ public class MainViewModel implements ViewModel {
 
 	public void newFile(ActionEvent event) {
 		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
-			this.dialogueViewModel.resetData();
 			App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
+			App.easyDI.getInstance(DialogueViewModel.class).resetData();
+			App.easyDI.getInstance(DialogueDataViewModel.class).resetData();
 		}
 	}
 

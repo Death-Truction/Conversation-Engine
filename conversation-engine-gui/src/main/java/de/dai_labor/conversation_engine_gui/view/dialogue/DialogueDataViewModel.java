@@ -4,9 +4,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
+
+import org.json.JSONObject;
+
 import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -14,74 +19,58 @@ import javafx.collections.ObservableList;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+@Singleton
 public class DialogueDataViewModel implements ViewModel {
 
 	private DialogueViewModel dialogueViewModel;
-	private SimpleStringProperty skillNameProperty;
-	private SimpleStringProperty skillFilePathProperty;
-	private SimpleStringProperty intentsProperty;
-	private SimpleStringProperty entitiesProperty;
-	private ObservableList<String> availableStates;
+	private SimpleStringProperty skillNameProperty = new SimpleStringProperty();
+	private SimpleStringProperty skillFilePathProperty = new SimpleStringProperty();
+	private SimpleStringProperty intentsProperty = new SimpleStringProperty();
+	private SimpleStringProperty entitiesProperty = new SimpleStringProperty();
+	private SimpleStringProperty selectedStartStateProperty = new SimpleStringProperty();
+	private SimpleStringProperty selectedEndStateProperty = new SimpleStringProperty();
+	private ObservableList<String> availableStates = FXCollections.observableArrayList();
+	private boolean hasDataChanged = false;
 
 	public DialogueDataViewModel(DialogueViewModel dialogueViewModel) {
 		this.dialogueViewModel = dialogueViewModel;
-		this.availableStates = FXCollections.observableArrayList();
-		this.skillFilePathProperty = new SimpleStringProperty();
-		this.skillNameProperty = new SimpleStringProperty();
-		this.intentsProperty = new SimpleStringProperty();
-		this.entitiesProperty = new SimpleStringProperty();
-		updateAvailableStates(null);
-		this.dialogueViewModel.getStates().addListener((MapChangeListener<? super Integer, ? super State>) change -> {
-			updateAvailableStates(null);
+		this.updateAvailableStates(null);
+		this.dialogueViewModel.getStates()
+				.addListener((MapChangeListener.Change<? extends Integer, ? extends State> change) -> {
+					this.updateAvailableStates(null);
+				});
+		this.selectedStartStateProperty.addListener(change -> {
+			dialogueViewModel.setStartState(this.selectedStartStateProperty.get());
 		});
+		this.selectedEndStateProperty.addListener(change -> {
+			dialogueViewModel.setEndState(this.selectedEndStateProperty.get());
+		});
+		this.addChangedListener(this.skillNameProperty, this.skillFilePathProperty, this.intentsProperty,
+				this.entitiesProperty, this.selectedEndStateProperty, this.selectedStartStateProperty);
 	}
 
 	public SimpleStringProperty getSkillFilePathProperty() {
 		return this.skillFilePathProperty;
 	}
 
-	public String getSkillFilePath() {
-		return this.skillFilePathProperty.get();
-	}
-
-	public void setSkillFilePath(String filePath) {
-		this.skillFilePathProperty.set(filePath);
-	}
-
 	public SimpleStringProperty getSkillNameProperty() {
 		return this.skillNameProperty;
-	}
-
-	public String getSkillName() {
-		return this.skillNameProperty.get();
-	}
-
-	public void setSkillName(String skillName) {
-		this.skillNameProperty.set(skillName);
 	}
 
 	public SimpleStringProperty getIntentsProperty() {
 		return this.intentsProperty;
 	}
 
-	public String getIntents() {
-		return this.intentsProperty.get();
-	}
-
-	public void setIntents(String intents) {
-		this.intentsProperty.set(intents);
-	}
-
 	public SimpleStringProperty getEntitiesProperty() {
 		return this.entitiesProperty;
 	}
 
-	public String getEntities() {
-		return this.entitiesProperty.get();
+	public SimpleStringProperty getSelectedStartStateProperty() {
+		return this.selectedStartStateProperty;
 	}
 
-	public void setEntities(String entities) {
-		this.entitiesProperty.set(entities);
+	public SimpleStringProperty getSelectedEndStateProperty() {
+		return this.selectedEndStateProperty;
 	}
 
 	public ObservableList<String> getAvailableState() {
@@ -93,20 +82,67 @@ public class DialogueDataViewModel implements ViewModel {
 		for (State state : this.dialogueViewModel.getStates().values()) {
 			allStates.add(state.getName());
 		}
-		availableStates.retainAll(allStates);
-		allStates.removeAll(availableStates);
-		availableStates.addAll(allStates);
+		this.availableStates.retainAll(allStates);
+		allStates.removeAll(this.availableStates);
+		this.availableStates.addAll(allStates);
 	}
 
 	public void pickSkillFilePath(MouseEvent e) {
 		String filepath = Util.fileChooser(false, new ExtensionFilter("Java Class", "*.class", "*.CLASS"));
-		this.setSkillFilePath(filepath);
-		if (this.getSkillName() == null || this.getSkillName().isBlank()) {
+		this.skillFilePathProperty.set(filepath);
+
+		if (this.skillNameProperty.get() == null || this.skillNameProperty.get().isBlank()) {
 			String filename = new File(filepath).getName();
 			if (filename.indexOf(".") > -1) {
 				filename = filename.substring(0, filename.lastIndexOf("."));
 			}
-			this.setSkillName(filename);
+			this.skillNameProperty.set(filename);
 		}
+	}
+
+	public void resetData() {
+		this.skillNameProperty.set("");
+		this.skillFilePathProperty.set("");
+		this.intentsProperty.set("");
+		this.entitiesProperty.set("");
+		this.selectedStartStateProperty.set("");
+		this.selectedEndStateProperty.set("");
+		this.hasDataChanged = false;
+	}
+
+	public JSONObject getGUIData() {
+		JSONObject data = new JSONObject();
+		data.put("skillName", this.skillNameProperty.get());
+		data.put("skillFilePath", this.skillFilePathProperty.get());
+		data.put("intents", this.intentsProperty.get());
+		data.put("entities", this.entitiesProperty.get());
+		data.put("startState", this.selectedStartStateProperty.get());
+		data.put("endState", this.selectedEndStateProperty.get());
+		return data;
+	}
+
+	public void setGUIData(JSONObject data) {
+		this.skillNameProperty.set(data.optString("skillName", ""));
+		this.skillFilePathProperty.set(data.optString("skillFilePath", ""));
+		this.intentsProperty.set(data.optString("intents", ""));
+		this.entitiesProperty.set(data.optString("entities", ""));
+		this.selectedStartStateProperty.set(data.optString("startState", ""));
+		this.selectedEndStateProperty.set(data.optString("endState", ""));
+		this.hasDataChanged = false;
+	}
+
+	public boolean hasChanged() {
+		return this.hasDataChanged;
+	}
+
+	private void addChangedListener(Property... properties) {
+		for (Property property : properties) {
+			property.addListener(change -> this.hasDataChanged = true);
+		}
+	}
+
+	public void setUnchanged() {
+		this.hasDataChanged = false;
+
 	}
 }

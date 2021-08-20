@@ -12,6 +12,7 @@ module de.dai_labor.conversation_engine_gui {
 	opens de.dai_labor.conversation_engine_gui.view.main to de.saxsys.mvvmfx, javafx.fxml, easy.di;
 	opens de.dai_labor.conversation_engine_gui.view.dialogue to de.saxsys.mvvmfx, javafx.fxml, easy.di;
 	opens de.dai_labor.conversation_engine_gui.view.settings to de.saxsys.mvvmfx, javafx.fxml, easy.di;
+	opens de.dai_labor.conversation_engine_gui.view.simulation to de.saxsys.mvvmfx, javafx.fxml, easy.di;
 	opens de.dai_labor.conversation_engine_gui.models to easy.di;
 
 	exports de.dai_labor.conversation_engine_gui;

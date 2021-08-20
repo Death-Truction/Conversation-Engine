@@ -40,6 +40,14 @@ public class Transition extends StackPane {
 		return this.transition.getTriggerTextField();
 	}
 
+	private void selectionStatus(Transition newVal) {
+		if (newVal != null && newVal.equals(this)) {
+			this.transition.select();
+		} else {
+			this.transition.deselect();
+		}
+	}
+
 	private void focusTriggerTextField() {
 		this.transition.focusTriggerTextField();
 	}
@@ -50,13 +58,5 @@ public class Transition extends StackPane {
 				this.focusTriggerTextField();
 			}
 		});
-	}
-
-	public void selectionStatus(Transition newVal) {
-		if (newVal != null && newVal.equals(this)) {
-			this.transition.select();
-		} else {
-			this.transition.deselect();
-		}
 	}
 }

@@ -37,6 +37,8 @@ public class DialogueViewModel implements ViewModel {
 	private final ObservableMap<Integer, State> states;
 	private final List<Transition> transitions;
 	private boolean hasDataChanged;
+	private State startState;
+	private State endState;
 
 	public DialogueViewModel(Settings settings) {
 		this.settings = settings;
@@ -78,7 +80,8 @@ public class DialogueViewModel implements ViewModel {
 		// center location to mousePointer
 		locationX -= this.settings.getStateSizeProperty().get();
 		locationY -= this.settings.getStateSizeProperty().get();
-		this.addState(this.getStateId(), "State" + (this.states.size() + 1), locationX, locationY, true);
+		int emptyStateId = this.getFirstEmptyStateId();
+		this.addState(emptyStateId, "State" + (emptyStateId + 1), locationX, locationY, true);
 	}
 
 	public void addState(int id, String name, double locationX, double locationY, boolean focusRequest) {
@@ -123,14 +126,14 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void addTransition(State source, State target) {
-		this.addTransition(source, target, "Transition" + (this.transitions.size() + 1), true);
+		this.addTransition(source, target, this.getFirstEmptyTransitionName(), true);
 	}
 
 	public void addTransition(State source, State target, String trigger, boolean focusRequest) {
 		final boolean transitionExist = this.transitionExists(source, target);
 		if (!transitionExist) {
-			final Transition newTransition = new Transition(source, target,
-					"Transition" + (this.transitions.size() + 1), this.selectedTransition, focusRequest, this.settings);
+			final Transition newTransition = new Transition(source, target, trigger, this.selectedTransition,
+					focusRequest, this.settings);
 			newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.hasDataChanged = true);
 			this.transitions.add(newTransition);
 			this.hasDataChanged = true;
@@ -155,14 +158,7 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void resetData() {
-		// TODO: better algo?
-		for (final Transition transition : this.transitions) {
-			((Pane) transition.getParent()).getChildren().remove(transition);
-		}
-		for (final Entry<Integer, State> stateEntry : this.states.entrySet()) {
-			final State state = stateEntry.getValue();
-			((Pane) state.getParent()).getChildren().remove(state);
-		}
+		this.diagramElementsLayer.getChildren().clear();
 		this.transitions.clear();
 		this.states.clear();
 		this.hasDataChanged = false;
@@ -172,8 +168,8 @@ public class DialogueViewModel implements ViewModel {
 		return this.hasDataChanged;
 	}
 
-	public void hasChanged(boolean value) {
-		this.hasDataChanged = value;
+	public void setUnchanged() {
+		this.hasDataChanged = false;
 	}
 
 	public void setGUIData(JSONObject dialogueModelDataObject) {
@@ -195,7 +191,7 @@ public class DialogueViewModel implements ViewModel {
 			Util.showError("Error loading your file", ex.getLocalizedMessage());
 		}
 
-		this.hasChanged(false);
+		this.setUnchanged();
 	}
 
 	public JSONObject getGUIData() {
@@ -229,8 +225,25 @@ public class DialogueViewModel implements ViewModel {
 		return sb.toString();
 	}
 
-	private int getStateId() {
+	private int getFirstEmptyStateId() {
+		for (int i = 0; i < this.states.size(); i++) {
+			if (!this.states.containsKey(i)) {
+				return i;
+			}
+		}
 		return this.states.size();
+	}
+
+	private String getFirstEmptyTransitionName() {
+		for (int i = 0; i < this.transitions.size(); i++) {
+			String newTransitionName = "Transition" + i;
+			if (this.transitions.stream()
+					.anyMatch(transition -> transition.getTriggerTextField().getText().equals(newTransitionName))) {
+				continue;
+			}
+			return newTransitionName;
+		}
+		return "Transition" + (this.transitions.size() + 1);
 	}
 
 	private JSONArray getStatesGUIData() {
@@ -252,8 +265,8 @@ public class DialogueViewModel implements ViewModel {
 		final JSONArray transitionsData = new JSONArray();
 		for (final Transition transition : this.transitions) {
 			final JSONObject transitionData = new JSONObject();
-			transitionData.put("source", transition.getSource().getStateID());
-			transitionData.put("target", transition.getTarget().getStateID());
+			transitionData.put("source", transition.getSource().getStateId());
+			transitionData.put("target", transition.getTarget().getStateId());
 			transitionData.put("trigger", transition.getTriggerTextField().getText());
 			transitionsData.put(transitionData);
 		}
@@ -282,6 +295,39 @@ public class DialogueViewModel implements ViewModel {
 	private void setDiagramScale(double scale) {
 		this.diagramElementsLayer.setScaleX(scale);
 		this.diagramElementsLayer.setScaleY(scale);
+	}
+
+	public void setStartState(String selectedItem) {
+		State newStartState = this.getStateByName(selectedItem);
+		if (this.startState != newStartState && newStartState != null) {
+			newStartState.setStartState();
+			if (this.startState != null) {
+				this.startState.setNormalState();
+			}
+			this.startState = newStartState;
+		}
+
+	}
+
+	public void setEndState(String selectedItem) {
+		State newEndState = this.getStateByName(selectedItem);
+		if (this.endState != newEndState && newEndState != null) {
+			newEndState.setEndState();
+			if (this.endState != null) {
+				this.endState.setNormalState();
+			}
+			this.endState = newEndState;
+		}
+
+	}
+
+	private State getStateByName(String stateName) {
+		for (State state : this.states.values()) {
+			if (state.getName().equals(stateName)) {
+				return state;
+			}
+		}
+		return null;
 	}
 
 }

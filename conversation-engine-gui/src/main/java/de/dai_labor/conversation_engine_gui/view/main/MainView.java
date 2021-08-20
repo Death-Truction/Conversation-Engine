@@ -40,26 +40,29 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 	private Button navButtonDialogueData;
 	@FXML
 	private Button navButtonSettings;
+	@FXML
+	private Button navButtonSimulation;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// set the new view to the back
-		contentArea.setViewOrder(1000);
-		newMenuItem.setOnAction(viewModel::newFile);
-		openMenuItem.setOnAction(viewModel::openFile);
-		exportMenuItem.setOnAction(viewModel::exportFile);
-		saveMenuItem.setOnAction(viewModel::saveFile);
-		saveAsMenuItem.setOnAction(viewModel::saveAsFile);
-		closeMenuItem.setOnAction(viewModel::closeApplication);
-		navButtonDialogue.setOnAction(viewModel::setView);
-		navButtonDialogueData.setOnAction(viewModel::setView);
-		navButtonSettings.setOnAction(viewModel::setView);
-		viewModel.getViewBinding().addListener(event -> updateScene());
-		updateScene();
+		this.contentArea.setViewOrder(1000);
+		this.newMenuItem.setOnAction(this.viewModel::newFile);
+		this.openMenuItem.setOnAction(this.viewModel::openFile);
+		this.exportMenuItem.setOnAction(this.viewModel::exportFile);
+		this.saveMenuItem.setOnAction(this.viewModel::saveFile);
+		this.saveAsMenuItem.setOnAction(this.viewModel::saveAsFile);
+		this.closeMenuItem.setOnAction(this.viewModel::closeApplication);
+		this.navButtonDialogue.setOnAction(this.viewModel::setView);
+		this.navButtonDialogueData.setOnAction(this.viewModel::setView);
+		this.navButtonSettings.setOnAction(this.viewModel::setView);
+		this.navButtonSimulation.setOnAction(this.viewModel::setView);
+		this.viewModel.getViewBinding().addListener(event -> this.updateScene());
+		this.updateScene();
 	}
 
 	private void updateScene() {
-		Node view = viewModel.getViewBinding().get();
+		Node view = this.viewModel.getViewBinding().get();
 		this.contentArea.getChildren().clear();
 		this.contentArea.getChildren().add(view);
 		VBox.setVgrow(view, Priority.ALWAYS);

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import de.dai_labor.conversation_engine_gui.App;
 import de.dai_labor.conversation_engine_gui.models.Settings;
+import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import eu.lestard.easydi.EasyDI;
 import javafx.scene.control.Alert;
@@ -29,9 +30,9 @@ public class Util {
 	public static SaveStateEnum saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
 		EasyDI easyDI = App.easyDI;
 		DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
+		DialogueDataViewModel dialogueDataViewModel = easyDI.getInstance(DialogueDataViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
-		settings.savePrefs();
-		if (!saveToNewFile && !dialogueViewModel.hasChanged() && !forceSave) {
+		if (!saveToNewFile && !dialogueViewModel.hasChanged() && !dialogueDataViewModel.hasChanged() && !forceSave) {
 			return SaveStateEnum.NO;
 		}
 		String filepath = "";
@@ -45,7 +46,9 @@ public class Util {
 				return saveState;
 			}
 		}
-		JSONObject savedData = dialogueViewModel.getGUIData();
+		JSONObject savedData = new JSONObject();
+		savedData.put("dialogueView", dialogueViewModel.getGUIData());
+		savedData.put("dialogueData", dialogueDataViewModel.getGUIData());
 		String data = savedData.toString();
 		// if the file has not been saved before -> ask for a save location
 		if (filepath.isBlank()) {
@@ -58,7 +61,8 @@ public class Util {
 			}
 			settings.setLastOpenedFile(filepath);
 			Util.saveJSONStringToFile(filepath, data);
-			dialogueViewModel.hasChanged(false);
+			dialogueViewModel.setUnchanged();
+			dialogueDataViewModel.setUnchanged();
 			return SaveStateEnum.YES;
 		}
 		// if the user pressed cancel on the fileChooser
@@ -76,9 +80,20 @@ public class Util {
 			return;
 		}
 		JSONObject guiData = new JSONObject(jsonString);
+		// TODO: display error on json exception?
+//		savedData.put("dialogueView", dialogueViewModel.getGUIData());
+//		savedData.put("dialogueData", dialogueDataViewModel.getGUIData());
 		if (guiData != null) {
-			DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
-			dialogueViewModel.setGUIData(guiData);
+			JSONObject dialogueView = guiData.optJSONObject("dialogueView");
+			if (dialogueView != null) {
+				DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
+				dialogueViewModel.setGUIData(dialogueView);
+			}
+			JSONObject dialogueViewData = guiData.optJSONObject("dialogueData");
+			if (dialogueViewData != null) {
+				DialogueDataViewModel dialogueViewModel = easyDI.getInstance(DialogueDataViewModel.class);
+				dialogueViewModel.setGUIData(dialogueViewData);
+			}
 		}
 	}
 

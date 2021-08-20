@@ -45,10 +45,7 @@ public class Arrow extends Pane {
 		// small hack to force recalculating the bindings for the arrow head (otherwise
 		// it only gets displayed correctly after any interaction with the transition
 		// arrow)
-		Platform.runLater(() -> {
-			this.select();
-			this.deselect();
-		});
+		Platform.runLater(this::deselect);
 	}
 
 	// display temporally dragging arrow
@@ -93,6 +90,7 @@ public class Arrow extends Pane {
 	}
 
 	private void addSettingsChangeListeners() {
+		this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
 		this.triggerTextField.fontProperty()
 				.bind(Bindings.createObjectBinding(() -> new Font(this.settings.getTransitionFontSizeProperty().get()),
 						this.settings.getTransitionFontSizeProperty()));

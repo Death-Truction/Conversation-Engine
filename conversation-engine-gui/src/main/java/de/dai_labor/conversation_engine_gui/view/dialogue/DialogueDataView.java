@@ -40,6 +40,8 @@ public class DialogueDataView implements FxmlView<DialogueDataViewModel>, Initia
 
 	private void bindData() {
 		this.startState.setItems(this.viewModel.getAvailableState());
+		this.startState.valueProperty().bindBidirectional(this.viewModel.getSelectedStartStateProperty());
+		this.endState.valueProperty().bindBidirectional(this.viewModel.getSelectedEndStateProperty());
 		this.endState.setItems(this.viewModel.getAvailableState());
 		this.skillFilePath.textProperty().bindBidirectional(this.viewModel.getSkillFilePathProperty());
 		this.skillName.textProperty().bindBidirectional(this.viewModel.getSkillNameProperty());
