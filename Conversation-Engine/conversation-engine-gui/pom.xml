@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.dai-labor</groupId>
+        <artifactId>conversation-engine</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+	<name>gui</name>
+
+    <artifactId>conversation-engine-gui</artifactId>
+    <developers>
+		<developer>
+			<id>engelmann</id>
+			<name>Marcel Engelmann</name>
+			<url>https://github.com/Death-Truction</url>
+			<roles>
+		        <role>architect</role>
+		        <role>developer</role>
+			</roles>
+		<timezone>Europe/Berlin</timezone>
+		<properties>
+	        <picUrl>https://avatars.githubusercontent.com/u/45203759?s=80</picUrl>
+	    </properties>
+		</developer>
+	</developers>
+	
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://raw.githubusercontent.com/Death-Truction/ConversationEngine/main/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/Death-Truction/ConversationEngine/issues</url>
+    </issueManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>16</version>
+        </dependency>
+        <dependency>
+			<groupId>de.saxsys</groupId>
+			<artifactId>mvvmfx</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>eu.lestard</groupId>
+		    <artifactId>easy-di</artifactId>
+		    <version>0.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.controlsfx</groupId>
+		    <artifactId>controlsfx</artifactId>
+		    <version>11.1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
+		<dependency>
+			<groupId>org.everit.json</groupId>
+			<artifactId>org.everit.json.schema</artifactId>
+			<version>1.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>conversation-engine-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+				  <release>14</release>
+				</configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.6</version>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running -->
+                        <!-- Usage: mvn clean javafx:run -->
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>de.dai_labor.conversation_engine_gui.App</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
