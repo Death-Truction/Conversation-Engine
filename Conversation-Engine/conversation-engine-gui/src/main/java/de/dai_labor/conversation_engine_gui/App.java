@@ -24,10 +24,6 @@ public class App extends Application {
 	public static EasyDI easyDI = new EasyDI();
 	public static Stage mainStage;
 
-	public static void main(String[] args) {
-		Application.launch(App.class, args);
-	}
-
 	@Override
 	public void start(Stage stage) throws IOException {
 		App.mainStage = stage;
