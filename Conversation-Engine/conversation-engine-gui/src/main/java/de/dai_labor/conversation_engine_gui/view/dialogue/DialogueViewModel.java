@@ -27,6 +27,7 @@ import javafx.scene.layout.Pane;
 
 @Singleton
 public class DialogueViewModel implements ViewModel {
+	private static final int DIAGRAM_ELEMENT_LAYER_SIZE = 2200;
 	private final DialoguePane dialoguePane;
 	private final Pane diagramElementsLayer = new Pane();
 	private final SimpleStringProperty insertMode = new SimpleStringProperty("");
@@ -45,9 +46,10 @@ public class DialogueViewModel implements ViewModel {
 		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this.selectedState,
 				this.selectedTransition, this::addState, this::addTransition, this::removeState,
 				this::removeTransition);
-		this.diagramElementsLayer.setMinWidth(10000);
-		this.diagramElementsLayer.setMinHeight(10000);
-		this.diagramElementsLayer.relocate(-5000, -5000);
+		this.diagramElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
+		this.diagramElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
+		this.diagramElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
+		this.diagramElementsLayer.setStyle("-fx-background-color: red");
 		this.diagramElementsLayer.toBack();
 		this.dialoguePane.toBack();
 		this.subscribe("unload", (ignore, ignore2) -> {
@@ -100,8 +102,38 @@ public class DialogueViewModel implements ViewModel {
 		return this.startState;
 	}
 
+	public void setStartState(String selectedItem) {
+		State newStartState = this.getStateByName(selectedItem);
+		if (this.startState != newStartState && newStartState != null) {
+			if (this.startState != null) {
+				this.startState.setNormalState();
+			}
+			newStartState.setStartState();
+			this.startState = newStartState;
+			if (this.startState == this.endState) {
+				this.endState = null;
+			}
+		}
+
+	}
+
 	public State getEndState() {
 		return this.endState;
+	}
+
+	public void setEndState(String selectedItem) {
+		State newEndState = this.getStateByName(selectedItem);
+		if (this.endState != newEndState && newEndState != null) {
+			if (this.endState != null) {
+				this.endState.setNormalState();
+			}
+			newEndState.setEndState();
+			this.endState = newEndState;
+			if (this.startState == this.endState) {
+				this.startState = null;
+			}
+		}
+
 	}
 
 	public void removeState(State state) {
@@ -180,8 +212,8 @@ public class DialogueViewModel implements ViewModel {
 	public void setGUIData(JSONObject dialogueModelDataObject) {
 		this.resetData();
 		try {
-			final JSONArray states = dialogueModelDataObject.getJSONArray("states");
-			final JSONArray transitions = dialogueModelDataObject.getJSONArray("transitions");
+			final JSONArray newStates = dialogueModelDataObject.getJSONArray("states");
+			final JSONArray newTransitions = dialogueModelDataObject.getJSONArray("transitions");
 			final double locationX = dialogueModelDataObject.optDouble("locationX", -5000);
 			final double locationY = dialogueModelDataObject.optDouble("locationY", -5000);
 			final double scale = dialogueModelDataObject.optDouble("scale", 1.0);
@@ -190,8 +222,8 @@ public class DialogueViewModel implements ViewModel {
 			this.diagramElementsLayer.setTranslateY(0);
 			this.diagramElementsLayer.relocate(locationX, locationY);
 			this.setDiagramScale(scale);
-			this.setStatesGUIData(states);
-			this.setTransitionsGUIData(transitions);
+			this.setStatesGUIData(newStates);
+			this.setTransitionsGUIData(newTransitions);
 		} catch (final JSONException ex) {
 			Util.showError("Error loading your file", ex.getLocalizedMessage());
 		}
@@ -223,7 +255,7 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	private String getFirstEmptyTransitionName() {
-		for (int i = 0; i < this.transitions.size(); i++) {
+		for (int i = 1; i <= this.transitions.size(); i++) {
 			String newTransitionName = "Transition" + i;
 			if (this.transitions.stream()
 					.anyMatch(transition -> transition.getTriggerTextField().getText().equals(newTransitionName))) {
@@ -283,30 +315,6 @@ public class DialogueViewModel implements ViewModel {
 	private void setDiagramScale(double scale) {
 		this.diagramElementsLayer.setScaleX(scale);
 		this.diagramElementsLayer.setScaleY(scale);
-	}
-
-	public void setStartState(String selectedItem) {
-		State newStartState = this.getStateByName(selectedItem);
-		if (this.startState != newStartState && newStartState != null) {
-			newStartState.setStartState();
-			if (this.startState != null) {
-				this.startState.setNormalState();
-			}
-			this.startState = newStartState;
-		}
-
-	}
-
-	public void setEndState(String selectedItem) {
-		State newEndState = this.getStateByName(selectedItem);
-		if (this.endState != newEndState && newEndState != null) {
-			newEndState.setEndState();
-			if (this.endState != null) {
-				this.endState.setNormalState();
-			}
-			this.endState = newEndState;
-		}
-
 	}
 
 	private State getStateByName(String stateName) {

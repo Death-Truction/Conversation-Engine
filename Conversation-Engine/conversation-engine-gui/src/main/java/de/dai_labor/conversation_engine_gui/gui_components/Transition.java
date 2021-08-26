@@ -42,7 +42,7 @@ public class Transition extends StackPane {
 
 	@Override
 	public String toString() {
-		return this.source + " -> " + this.target;
+		return this.source.getName() + " -> " + this.target.getName();
 	}
 
 	private void selectionStatus(Transition newVal) {

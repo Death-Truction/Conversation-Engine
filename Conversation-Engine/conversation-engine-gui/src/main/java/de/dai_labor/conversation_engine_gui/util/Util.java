@@ -19,10 +19,13 @@ import de.dai_labor.conversation_engine_gui.view.simulation.SimulationSettingsVi
 import eu.lestard.easydi.EasyDI;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Util {
 	private Util() {
@@ -44,7 +47,7 @@ public class Util {
 		}
 		// ask user if he wants to save the unsaved changes
 		if (askFirst) {
-			SaveStateEnum saveState = Util.saveDataBeforeExit();
+			SaveStateEnum saveState = Util.saveDataBeforeExitConfirmation();
 			if (saveState != SaveStateEnum.YES) {
 				return saveState;
 			}
@@ -106,16 +109,18 @@ public class Util {
 		errorAlert.showAndWait();
 	}
 
-	public static SaveStateEnum saveDataBeforeExit() {
+	public static SaveStateEnum saveDataBeforeExitConfirmation() {
 
 		Alert saveBeforeExitConfirmation = new Alert(Alert.AlertType.CONFIRMATION,
 				"You have unsaved changes.\nWould you like to save them now?");
 		saveBeforeExitConfirmation.setHeaderText("Save unsaved changes");
 		saveBeforeExitConfirmation.setTitle("Unsaved changes");
 		saveBeforeExitConfirmation.initModality(Modality.APPLICATION_MODAL);
+		((Stage) saveBeforeExitConfirmation.getDialogPane().getScene().getWindow()).getIcons()
+				.add(new Image(App.class.getResource("images/Icon.png").toExternalForm()));
 		ButtonType yesButton = new ButtonType("Yes");
 		ButtonType noButton = new ButtonType("No");
-		ButtonType cancelButton = new ButtonType("Cancel");
+		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 		saveBeforeExitConfirmation.getButtonTypes().clear();
 		saveBeforeExitConfirmation.getButtonTypes().addAll(yesButton, noButton, cancelButton);
 		Optional<ButtonType> response = saveBeforeExitConfirmation.showAndWait();

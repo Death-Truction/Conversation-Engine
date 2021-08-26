@@ -2,8 +2,10 @@ package de.dai_labor.conversation_engine_gui.view.simulation;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.dai_labor.conversation_engine_gui.App;
 import de.dai_labor.conversation_engine_gui.gui_components.State;
@@ -62,6 +64,10 @@ public class SimulationStage {
 		if (endState == null) {
 			this.addErrorMessage("Missing end state");
 		}
+		List<String> duplicatedStates = this.getDuplicateStateNames(allStates);
+		if (!duplicatedStates.isEmpty()) {
+			this.addErrorMessage("You must not have duplicated state names: " + String.join(",", duplicatedStates));
+		}
 		// check whether the start state is the source or the end state the target of a
 		// transition
 		if (startState != null && endState != null) {
@@ -99,5 +105,18 @@ public class SimulationStage {
 		// TODO: add stage/view settings like window size
 		this.simulationStage.setScene(new Scene(viewTuple.getView()));
 		this.simulationStage.show();
+	}
+
+	private List<String> getDuplicateStateNames(Map<Integer, State> states) {
+		Set<String> allStateNames = new HashSet<>();
+		List<String> duplicates = new ArrayList<>();
+		for (State state : states.values()) {
+			if (!allStateNames.add(state.getName())) {
+				duplicates.add(state.getName());
+			}
+		}
+
+		return duplicates;
+
 	}
 }

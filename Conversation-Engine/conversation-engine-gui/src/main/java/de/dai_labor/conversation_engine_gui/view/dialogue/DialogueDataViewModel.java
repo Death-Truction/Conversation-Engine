@@ -16,13 +16,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 @Singleton
 public class DialogueDataViewModel implements ViewModel {
 
-	private DialogueViewModel dialogueViewModel;
+	private ObservableMap<Integer, State> allStates;
 	private SimpleStringProperty skillNameProperty = new SimpleStringProperty();
 	private SimpleStringProperty skillFilePathProperty = new SimpleStringProperty();
 	private SimpleStringProperty intentsProperty = new SimpleStringProperty();
@@ -33,13 +34,15 @@ public class DialogueDataViewModel implements ViewModel {
 	private boolean hasDataChanged = false;
 
 	public DialogueDataViewModel(DialogueViewModel dialogueViewModel) {
-		this.dialogueViewModel = dialogueViewModel;
+		this.allStates = dialogueViewModel.getStates();
 		this.updateAvailableStates(null);
-		this.dialogueViewModel.getStates()
-				.addListener((MapChangeListener.Change<? extends Integer, ? extends State> change) -> {
-					this.updateAvailableStates(null);
-				});
+		this.allStates.addListener((MapChangeListener.Change<? extends Integer, ? extends State> change) -> {
+			this.updateAvailableStates(null);
+		});
 		this.selectedStartStateProperty.addListener(change -> {
+			if (this.selectedStartStateProperty.get() == null) {
+				return;
+			}
 			dialogueViewModel.setStartState(this.selectedStartStateProperty.get());
 			if (this.selectedEndStateProperty.get() != null
 					&& this.selectedEndStateProperty.get().equals(this.selectedStartStateProperty.get())) {
@@ -47,6 +50,9 @@ public class DialogueDataViewModel implements ViewModel {
 			}
 		});
 		this.selectedEndStateProperty.addListener(change -> {
+			if (this.selectedEndStateProperty.get() == null) {
+				return;
+			}
 			dialogueViewModel.setEndState(this.selectedEndStateProperty.get());
 			if (this.selectedStartStateProperty.get() != null
 					&& this.selectedStartStateProperty.get().equals(this.selectedEndStateProperty.get())) {
@@ -86,13 +92,13 @@ public class DialogueDataViewModel implements ViewModel {
 	}
 
 	public void updateAvailableStates(MouseEvent e) {
-		List<String> allStates = new ArrayList<>();
-		for (State state : this.dialogueViewModel.getStates().values()) {
-			allStates.add(state.getName());
+		List<String> allStateNames = new ArrayList<>();
+		for (State state : this.allStates.values()) {
+			allStateNames.add(state.getName());
 		}
-		this.availableStates.retainAll(allStates);
-		allStates.removeAll(this.availableStates);
-		this.availableStates.addAll(allStates);
+		this.availableStates.retainAll(allStateNames);
+		allStateNames.removeAll(this.availableStates);
+		this.availableStates.addAll(allStateNames);
 	}
 
 	public void pickSkillFilePath(MouseEvent e) {
