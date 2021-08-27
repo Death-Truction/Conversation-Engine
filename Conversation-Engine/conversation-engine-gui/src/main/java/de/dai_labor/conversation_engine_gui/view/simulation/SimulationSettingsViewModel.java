@@ -24,12 +24,13 @@ public class SimulationSettingsViewModel implements ViewModel {
 	private ObservableList<String> availableLanguages = FXCollections.observableArrayList();
 	private Settings settings;
 	private boolean dataHasChanged = false;
+	private final String defaultLanguage = "German";
 
 	public SimulationSettingsViewModel(Settings settings) {
 		this.settings = settings;
 		this.availableLanguages.add("English");
-		this.availableLanguages.add("German");
-		this.selectedLanguageProperty.set("German");
+		this.availableLanguages.add(this.defaultLanguage);
+		this.selectedLanguageProperty.set(this.defaultLanguage);
 		this.addChangedListener(this.selectedLanguageProperty, this.conversationInputProperty,
 				this.skillFilePathProperty, this.nlpComponentPathProperty);
 		this.nlpComponentPathProperty.addListener(change -> {
@@ -107,10 +108,10 @@ public class SimulationSettingsViewModel implements ViewModel {
 	}
 
 	public void resetData() {
-		this.selectedLanguageProperty.set("");
+		this.selectedLanguageProperty.set(this.defaultLanguage);
 		this.conversationInputProperty.set("");
 		this.skillFilePathProperty.set("");
-
+		this.nlpComponentPathProperty.set("");
 	}
 
 }

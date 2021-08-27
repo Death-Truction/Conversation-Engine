@@ -128,7 +128,7 @@ public class Settings {
 		this.stateFontColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_FONT_COLOR, "BLACK")));
 		this.stateNormalColorProperty = new SimpleObjectProperty<>(
-				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "0xA5A5A5")));
+				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "STEELBLUE")));
 		this.stateSelectedColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_SELECTED_COLOR, "GREEN")));
 		this.transitionSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(TRANSITION_SIZE, 12));
