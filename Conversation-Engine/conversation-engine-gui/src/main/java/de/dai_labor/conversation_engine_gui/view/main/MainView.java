@@ -3,6 +3,8 @@ package de.dai_labor.conversation_engine_gui.view.main;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.inject.Singleton;
+
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
@@ -14,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+@Singleton
 public class MainView implements FxmlView<MainViewModel>, Initializable {
 
 	@InjectViewModel

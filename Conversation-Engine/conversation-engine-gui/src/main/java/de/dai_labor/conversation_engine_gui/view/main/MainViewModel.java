@@ -55,6 +55,7 @@ public class MainViewModel implements ViewModel {
 			App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
 			App.easyDI.getInstance(DialogueViewModel.class).resetData();
 			App.easyDI.getInstance(DialogueDataViewModel.class).resetData();
+			App.easyDI.getInstance(SimulationSettingsViewModel.class).resetData();
 		}
 	}
 

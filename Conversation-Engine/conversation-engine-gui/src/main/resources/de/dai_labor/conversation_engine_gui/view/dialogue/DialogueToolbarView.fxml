@@ -6,5 +6,5 @@
 <VBox alignment="top_center" style="-fx-background-color: Gray" fx:controller="de.dai_labor.conversation_engine_gui.view.dialogue.DialogueToolbarView"  xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
 	<ToggleButton fx:id="stateButton" text="add state" userData="addState"/>
 	<ToggleButton fx:id="transitionButton" text="add transition" userData="addTransition"/>
-	<Button fx:id="resetButton" text="reset view"/>
+	<Button fx:id="resetButton" text="center view"/>
 </VBox>

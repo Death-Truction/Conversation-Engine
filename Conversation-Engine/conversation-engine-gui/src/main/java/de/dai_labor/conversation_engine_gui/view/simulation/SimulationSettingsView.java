@@ -26,15 +26,21 @@ public class SimulationSettingsView implements Initializable, FxmlView<Simulatio
 	private TextField nlpComponentPath;
 	@FXML
 	private Button nlpComponentPathButton;
+	@FXML
+	private Button selectSkillFilePath;
+	@FXML
+	private TextField skillFilePath;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.language.setItems(this.viewModel.getAvailableLanguages());
 		this.language.valueProperty().bindBidirectional(this.viewModel.getSelectedLanguageProperty());
-		this.conversationInputs.textProperty().bind(this.viewModel.getConversationInputProperty());
-		this.startButton.setOnAction(event -> this.viewModel.startSimulation());
+		this.conversationInputs.textProperty().bindBidirectional(this.viewModel.getConversationInputProperty());
+		this.skillFilePath.textProperty().bindBidirectional(this.viewModel.getSkillFilePathProperty());
 		this.nlpComponentPath.textProperty().bindBidirectional(this.viewModel.getNLPComponentPathProperty());
 		this.nlpComponentPathButton.setOnAction(event -> this.viewModel.pickNLPComponentFilePath());
+		this.selectSkillFilePath.setOnAction(event -> this.viewModel.pickSkillFilePath());
+		this.startButton.setOnAction(event -> this.viewModel.startSimulation());
 	}
 
 }

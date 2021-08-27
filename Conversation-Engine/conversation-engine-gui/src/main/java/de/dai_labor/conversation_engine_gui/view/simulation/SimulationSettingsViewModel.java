@@ -19,6 +19,8 @@ public class SimulationSettingsViewModel implements ViewModel {
 
 	private SimpleStringProperty selectedLanguageProperty = new SimpleStringProperty();
 	private SimpleStringProperty conversationInputProperty = new SimpleStringProperty();
+	private SimpleStringProperty skillFilePathProperty = new SimpleStringProperty();
+	private SimpleStringProperty nlpComponentPathProperty = new SimpleStringProperty();
 	private ObservableList<String> availableLanguages = FXCollections.observableArrayList();
 	private Settings settings;
 	private boolean dataHasChanged = false;
@@ -28,6 +30,12 @@ public class SimulationSettingsViewModel implements ViewModel {
 		this.availableLanguages.add("English");
 		this.availableLanguages.add("German");
 		this.selectedLanguageProperty.set("German");
+		this.addChangedListener(this.selectedLanguageProperty, this.conversationInputProperty,
+				this.skillFilePathProperty, this.nlpComponentPathProperty);
+		this.nlpComponentPathProperty.addListener(change -> {
+			String path = this.nlpComponentPathProperty.get().split("\\.")[0];
+			this.settings.getLastNLPComponentFolderPath().set(path);
+		});
 	}
 
 	public SimpleStringProperty getSelectedLanguageProperty() {
@@ -39,12 +47,17 @@ public class SimulationSettingsViewModel implements ViewModel {
 	}
 
 	public SimpleStringProperty getNLPComponentPathProperty() {
-		return this.settings.getNLPComponentPathProperty();
+		return this.nlpComponentPathProperty;
+
+	}
+
+	public SimpleStringProperty getSkillFilePathProperty() {
+		return this.skillFilePathProperty;
 	}
 
 	public void pickNLPComponentFilePath() {
-		this.settings.getNLPComponentPathProperty()
-				.set(Util.fileChooser(false, new ExtensionFilter("java-class", "*.class")));
+		this.nlpComponentPathProperty.set(Util.fileChooser(false, new ExtensionFilter("java-class", "*.class"),
+				this.settings.getLastNLPComponentFolderPath().get()));
 	}
 
 	public ObservableList<String> getAvailableLanguages() {
@@ -52,7 +65,9 @@ public class SimulationSettingsViewModel implements ViewModel {
 	}
 
 	public void startSimulation() {
-		SimulationStage simulationStage = App.easyDI.getInstance(SimulationStage.class);
+		// creates a new class and injects the required dependencies
+		// the simulation stage does everything by itself
+		App.easyDI.getInstance(SimulationStage.class);
 	}
 
 	public boolean hasChanged() {
@@ -67,19 +82,35 @@ public class SimulationSettingsViewModel implements ViewModel {
 		JSONObject data = new JSONObject();
 		data.put("selectedLanguage", this.selectedLanguageProperty.get());
 		data.put("conversationInput", this.conversationInputProperty.get());
+		data.put("skillFilePath", this.skillFilePathProperty.get());
+		data.put("nlpFilePath", this.nlpComponentPathProperty.get());
 		return data;
 	}
 
 	public void setGUIData(JSONObject data) {
 		this.selectedLanguageProperty.set(data.optString("selectedLanguage", "German"));
 		this.conversationInputProperty.set(data.optString("conversationInput"));
+		this.skillFilePathProperty.set(data.optString("conversationInput"));
+		this.nlpComponentPathProperty.set(data.optString("nlpFilePath"));
 		this.dataHasChanged = false;
+	}
+
+	public void pickSkillFilePath() {
+		String filepath = Util.fileChooser(false, new ExtensionFilter("Java Class", "*.class", "*.CLASS"));
+		this.skillFilePathProperty.set(filepath);
 	}
 
 	private void addChangedListener(Property... properties) {
 		for (Property property : properties) {
-			this.dataHasChanged = true;
+			property.addListener(change -> this.dataHasChanged = true);
 		}
+	}
+
+	public void resetData() {
+		this.selectedLanguageProperty.set("");
+		this.conversationInputProperty.set("");
+		this.skillFilePathProperty.set("");
+
 	}
 
 }

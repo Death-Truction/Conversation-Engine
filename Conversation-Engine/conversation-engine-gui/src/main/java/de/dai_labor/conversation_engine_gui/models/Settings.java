@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 public class Settings {
 
 	private static final String LAST_FILE_CHOOSER_PATH = "last_file_chooser_path";
-	private static final String NLP_COMPONENT_FILE_PATH = "nlp_component_path";
+	private static final String LAST_NLP_COMPONENT_FOLDER_PATH = "nlp_component_path";
 	private static final String STATE_SIZE = "state_size";
 	private static final String STATE_FONT_SIZE = "state_font_size";
 	private static final String STATE_FONT_COLOR = "state_font_color";
@@ -26,7 +26,7 @@ public class Settings {
 	private static final String TRANSITION_SELECTED_COLOR = "transition_selected_color";
 
 	private String lastOpenedFile = "";
-	private String lastFileChooserPath;
+	private String lastFileChooserFolder;
 	private SimpleIntegerProperty stateSizeProperty;
 	private SimpleIntegerProperty stateFontSizeProperty;
 	private SimpleObjectProperty<Color> stateFontColorProperty;
@@ -37,7 +37,7 @@ public class Settings {
 	private SimpleObjectProperty<Color> transitionFontColorProperty;
 	private SimpleObjectProperty<Color> transitionNormalColorProperty;
 	private SimpleObjectProperty<Color> transitionSelectedColorProperty;
-	private SimpleStringProperty nlpComponentPathProperty;
+	private SimpleStringProperty lastNLPComponentFolderPath;
 
 	Preferences prefs;
 
@@ -54,12 +54,12 @@ public class Settings {
 		this.lastOpenedFile = filePath;
 	}
 
-	public String getLastFileChooserPath() {
-		return this.lastFileChooserPath;
+	public String getLastFileChooserFolder() {
+		return this.lastFileChooserFolder;
 	}
 
-	public void setLastFileChooserPath(String filePath) {
-		this.lastOpenedFile = filePath;
+	public void setLastFileChooserFolder(String filePath) {
+		this.lastFileChooserFolder = filePath;
 	}
 
 	public SimpleIntegerProperty getStateSizeProperty() {
@@ -102,25 +102,33 @@ public class Settings {
 		return this.transitionSelectedColorProperty;
 	}
 
-	public SimpleStringProperty getNLPComponentPathProperty() {
-		return this.nlpComponentPathProperty;
+	public SimpleStringProperty getLastNLPComponentFolderPath() {
+		return this.lastNLPComponentFolderPath;
 	}
 
 	public void savePrefs() {
-		// TODO: save all values
-//		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserPath);
-//		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
-//		this.prefs.put(STATE_NORMAL_COLOR, this.stateNormalColorProperty.get().toString());
+		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserFolder);
+		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
+		this.prefs.putInt(STATE_FONT_SIZE, this.stateFontSizeProperty.get());
+		this.prefs.put(STATE_FONT_COLOR, this.stateFontColorProperty.get().toString());
+		this.prefs.put(STATE_NORMAL_COLOR, this.stateNormalColorProperty.get().toString());
+		this.prefs.put(STATE_SELECTED_COLOR, this.stateSelectedColorProperty.get().toString());
+		this.prefs.putInt(TRANSITION_SIZE, this.transitionSizeProperty.get());
+		this.prefs.putInt(TRANSITION_FONT_SIZE, this.transitionFontSizeProperty.get());
+		this.prefs.put(TRANSITION_FONT_COLOR, this.transitionFontColorProperty.get().toString());
+		this.prefs.put(TRANSITION_NORMAL_COLOR, this.transitionNormalColorProperty.get().toString());
+		this.prefs.put(TRANSITION_SELECTED_COLOR, this.transitionSelectedColorProperty.get().toString());
+		this.prefs.put(LAST_NLP_COMPONENT_FOLDER_PATH, this.lastNLPComponentFolderPath.get());
 	}
 
 	private void loadPrefs() {
-		this.lastFileChooserPath = this.prefs.get(LAST_FILE_CHOOSER_PATH, "");
+		this.lastFileChooserFolder = this.prefs.get(LAST_FILE_CHOOSER_PATH, "");
 		this.stateSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_SIZE, 40));
 		this.stateFontSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_FONT_SIZE, 12));
 		this.stateFontColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_FONT_COLOR, "BLACK")));
 		this.stateNormalColorProperty = new SimpleObjectProperty<>(
-				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "STEELBLUE")));
+				Color.valueOf(this.prefs.get(STATE_NORMAL_COLOR, "0xA5A5A5")));
 		this.stateSelectedColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(STATE_SELECTED_COLOR, "GREEN")));
 		this.transitionSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(TRANSITION_SIZE, 12));
@@ -131,7 +139,7 @@ public class Settings {
 				Color.valueOf(this.prefs.get(TRANSITION_NORMAL_COLOR, "BLACK")));
 		this.transitionSelectedColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(TRANSITION_SELECTED_COLOR, "GREEN")));
-		this.nlpComponentPathProperty = new SimpleStringProperty(this.prefs.get(NLP_COMPONENT_FILE_PATH, ""));
+		this.lastNLPComponentFolderPath = new SimpleStringProperty(this.prefs.get(LAST_NLP_COMPONENT_FOLDER_PATH, ""));
 	}
 
 }

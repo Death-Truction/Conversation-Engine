@@ -16,7 +16,9 @@ import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.dai_labor.conversation_engine_gui.util.Util;
+import de.dai_labor.conversation_engine_gui.view.main.MainView;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -27,7 +29,7 @@ import javafx.scene.layout.Pane;
 
 @Singleton
 public class DialogueViewModel implements ViewModel {
-	private static final int DIAGRAM_ELEMENT_LAYER_SIZE = 2200;
+	private static final int DIAGRAM_ELEMENT_LAYER_SIZE = 50000;
 	private final DialoguePane dialoguePane;
 	private final Pane diagramElementsLayer = new Pane();
 	private final SimpleStringProperty insertMode = new SimpleStringProperty("");
@@ -41,16 +43,18 @@ public class DialogueViewModel implements ViewModel {
 	private State startState;
 	private State endState;
 
-	public DialogueViewModel(Settings settings) {
+	public DialogueViewModel(Settings settings, MainView mainView) {
 		this.settings = settings;
 		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this.selectedState,
 				this.selectedTransition, this::addState, this::addTransition, this::removeState,
 				this::removeTransition);
-		this.diagramElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
-		this.diagramElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
-		this.diagramElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
-		this.diagramElementsLayer.setStyle("-fx-background-color: red");
-		this.diagramElementsLayer.toBack();
+		Platform.runLater(() -> {
+			this.diagramElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
+			this.diagramElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
+			this.diagramElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
+			this.diagramElementsLayer.toBack();
+
+		});
 		this.dialoguePane.toBack();
 		this.subscribe("unload", (ignore, ignore2) -> {
 			this.dialoguePane.unselectAll();

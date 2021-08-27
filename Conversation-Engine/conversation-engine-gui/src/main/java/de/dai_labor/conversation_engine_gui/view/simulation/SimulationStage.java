@@ -82,7 +82,7 @@ public class SimulationStage {
 			}
 		}
 		String nlpComponentPath = this.simulationSettingsViewModel.getNLPComponentPathProperty().get();
-		if (nlpComponentPath.isBlank()) {
+		if (nlpComponentPath == null || nlpComponentPath.isBlank()) {
 			this.addErrorMessage("You must select a NLP-Component");
 		} else {
 			// TODO: load nlpComponent dynamically and check for errors

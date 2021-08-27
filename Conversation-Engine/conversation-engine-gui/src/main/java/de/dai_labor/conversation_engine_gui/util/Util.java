@@ -38,6 +38,7 @@ public class Util {
 		SimulationSettingsViewModel simulationSettingsViewModel = easyDI.getInstance(SimulationSettingsViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
 		boolean dataHasChanged = hasDataChanged(dialogueViewModel, dialogueDataViewModel, simulationSettingsViewModel);
+
 		if (!saveToNewFile && !dataHasChanged && !forceSave) {
 			return SaveStateEnum.NO;
 		}
@@ -137,10 +138,15 @@ public class Util {
 
 	public static String fileChooser(boolean save, ExtensionFilter extensions) {
 		Settings settings = App.easyDI.getInstance(Settings.class);
+		return fileChooser(save, extensions, settings.getLastFileChooserFolder());
+	}
+
+	public static String fileChooser(boolean save, ExtensionFilter extensions, String folderPath) {
+		Settings settings = App.easyDI.getInstance(Settings.class);
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(extensions);
 		File file = null;
-		File folder = new File(settings.getLastFileChooserPath());
+		File folder = new File(folderPath);
 		if (folder.isDirectory()) {
 			fileChooser.setInitialDirectory(folder);
 		}
@@ -154,7 +160,7 @@ public class Util {
 		if (file == null) {
 			return "";
 		}
-		settings.setLastFileChooserPath(file.getParent());
+		settings.setLastFileChooserFolder(file.getParent());
 		return file.getAbsolutePath();
 	}
 

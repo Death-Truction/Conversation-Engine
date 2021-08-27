@@ -72,6 +72,8 @@ public class DialoguePane extends Pane {
 		this.dialogueModelDataLayer.setScaleY(1.0);
 		this.dialogueModelDataLayer.setTranslateX(0);
 		this.dialogueModelDataLayer.setTranslateY(0);
+		this.dialogueModelDataLayer.setLayoutX(0);
+		this.dialogueModelDataLayer.setLayoutY(0);
 		for (Node state : this.dialogueModelDataLayer.getChildren()) {
 			Bounds bounds = state.getBoundsInParent();
 			targetX += bounds.getCenterX();
@@ -135,19 +137,9 @@ public class DialoguePane extends Pane {
 					+ this.dragElementData.translateX;
 			double yDifference = (event.getScreenY() - this.dragElementData.mouseY) / scale
 					+ this.dragElementData.translateY;
-			// don't move the edge of the pane inside the current view
-			System.out.println(this.dragElementData.translateX < xDifference);
-			System.out.println(this.dialogueModelDataLayer.getBoundsInParent().getMinX());
-			if (this.dialogueModelDataLayer.getBoundsInParent().getMinX() < 0
-					&& this.dragElementData.translateX < xDifference) {
-				this.dialogueModelDataLayer.setTranslateX(xDifference);
-			}
-//			else if (this.dialogueModelDataLayer.getBoundsInParent().getMaxX() < this.dialogueModelDataLayer
-//					.getWidth() && this.dragElementData.translateX > xDifference) {
-//				this.dialogueModelDataLayer.setTranslateX(xDifference);
-//			}
-
+			this.dialogueModelDataLayer.setTranslateX(xDifference);
 			this.dialogueModelDataLayer.setTranslateY(yDifference);
+
 			event.consume();
 		} else if (this.insertMode.get().equals("addTransition")) {
 			if (this.sourceTransitionState != null) {
@@ -223,8 +215,8 @@ public class DialoguePane extends Pane {
 	// SOURCE:
 	// https://stackoverflow.com/questions/29506156/javafx-8-zooming-relative-to-mouse-pointer/29530135#29530135
 	private void setPivot(double x, double y) {
-		this.dialogueModelDataLayer.setTranslateX(this.dialogueModelDataLayer.getTranslateX() - this.x);
-		this.dialogueModelDataLayer.setTranslateY(this.dialogueModelDataLayer.getTranslateY() - this.y);
+		this.dialogueModelDataLayer.setTranslateX(this.dialogueModelDataLayer.getTranslateX() - x);
+		this.dialogueModelDataLayer.setTranslateY(this.dialogueModelDataLayer.getTranslateY() - y);
 	}
 
 	// SOURCE:

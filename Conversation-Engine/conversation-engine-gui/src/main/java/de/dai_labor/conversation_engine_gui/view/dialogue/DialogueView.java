@@ -20,8 +20,8 @@ public class DialogueView implements FxmlView<DialogueViewModel>, Initializable 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Node view = viewModel.getView();
-		this.mainPane.setCenter(viewModel.getView());
+		Node view = this.viewModel.getView();
+		this.mainPane.setCenter(this.viewModel.getView());
 		view.toBack();
 	}
 

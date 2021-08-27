@@ -18,7 +18,7 @@
         </VBox>
     </left>
     <center>
-    <VBox fx:id="contentArea"></VBox>
+    <VBox fx:id="contentArea" />
     </center>
     <!-- Menu Bar -->
 <top>
