@@ -84,12 +84,12 @@
                               </Label>
                               <HBox alignment="CENTER" maxWidth="400.0" spacing="10.0">
                                  <children>
-                                    <TextField fx:id="nlpComponentPath" prefWidth="340.0" promptText="Enter path">
+                                    <TextField fx:id="nlpComponentPath" editable="false" prefWidth="340.0">
                                        <cursor>
                                           <Cursor fx:constant="TEXT" />
                                        </cursor>
                                     </TextField>
-                                    <Button fx:id="nlpComponentPathButton" mnemonicParsing="false" prefWidth="60.0" text="Open">
+                                    <Button fx:id="nlpComponentPathButton" mnemonicParsing="false" prefWidth="60.0" text="Select">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
@@ -107,12 +107,12 @@
                               </Label>
                               <HBox alignment="CENTER" maxWidth="400.0" spacing="10.0">
                                  <children>
-                                    <TextField fx:id="skillFilePath" prefWidth="340.0" promptText="Enter path">
+                                    <TextField fx:id="skillFilePath" editable="false" prefWidth="340.0">
                                        <cursor>
                                           <Cursor fx:constant="TEXT" />
                                        </cursor>
                                     </TextField>
-                                    <Button fx:id="selectSkillFilePath" mnemonicParsing="false" prefWidth="60.0" text="Open">
+                                    <Button fx:id="selectSkillFilePath" mnemonicParsing="false" prefWidth="60.0" text="Select">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>

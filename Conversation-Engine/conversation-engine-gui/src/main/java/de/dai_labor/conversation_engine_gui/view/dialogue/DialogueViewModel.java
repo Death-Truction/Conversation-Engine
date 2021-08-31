@@ -31,7 +31,8 @@ import javafx.scene.layout.Pane;
 public class DialogueViewModel implements ViewModel {
 	private static final int DIAGRAM_ELEMENT_LAYER_SIZE = 50000;
 	private final DialoguePane dialoguePane;
-	private final Pane diagramElementsLayer = new Pane();
+	private final SimpleObjectProperty<Node> viewProperty = new SimpleObjectProperty<>();
+	private final Pane dialogueElementsLayer = new Pane();
 	private final SimpleStringProperty insertMode = new SimpleStringProperty("");
 	private SimpleObjectProperty<State> selectedState = new SimpleObjectProperty<>();
 	private SimpleObjectProperty<Transition> selectedTransition = new SimpleObjectProperty<>();
@@ -45,23 +46,29 @@ public class DialogueViewModel implements ViewModel {
 
 	public DialogueViewModel(Settings settings, MainView mainView) {
 		this.settings = settings;
-		this.dialoguePane = new DialoguePane(this.diagramElementsLayer, this.insertMode, this.selectedState,
+		this.dialoguePane = new DialoguePane(this.dialogueElementsLayer, this.insertMode, this.selectedState,
 				this.selectedTransition, this::addState, this::addTransition, this::removeState,
 				this::removeTransition);
 		Platform.runLater(() -> {
-			this.diagramElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
-			this.diagramElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
-			this.diagramElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
-			this.diagramElementsLayer.toBack();
+			this.dialogueElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
+			this.dialogueElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
+			this.dialogueElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
+			this.dialogueElementsLayer.toBack();
 
 		});
 		this.dialoguePane.toBack();
 		this.subscribe("unload", (ignore, ignore2) -> {
 			this.dialoguePane.unselectAll();
 		});
+		this.dialoguePane.toBack();
+		this.viewProperty.set(this.dialoguePane);
 	}
 
-	public Node getView() {
+	public SimpleObjectProperty<Node> getViewProperty() {
+		return this.viewProperty;
+	}
+
+	public DialoguePane getView() {
 		return this.dialoguePane;
 	}
 
@@ -92,7 +99,7 @@ public class DialogueViewModel implements ViewModel {
 		newState.getTextArea().textProperty().addListener((s, y, z) -> this.dataHasChanged = true);
 		this.states.put(id, newState);
 		this.dataHasChanged = true;
-		this.diagramElementsLayer.getChildren().add(newState);
+		this.dialogueElementsLayer.getChildren().add(newState);
 		if (this.toggleButton != null) {
 			this.toggleButton.setSelected(false);
 		}
@@ -145,10 +152,10 @@ public class DialogueViewModel implements ViewModel {
 			final Transition transition = iterator.next();
 			if (transition.getSource().equals(state) || transition.getTarget().equals(state)) {
 				iterator.remove();
-				this.diagramElementsLayer.getChildren().remove(transition);
+				this.dialogueElementsLayer.getChildren().remove(transition);
 			}
 		}
-		this.diagramElementsLayer.getChildren().remove(this.states.remove(state.getStateId()));
+		this.dialogueElementsLayer.getChildren().remove(this.states.remove(state.getStateId()));
 		if (this.startState != null && this.startState.equals(state)) {
 			this.startState = null;
 		} else if (this.endState != null && this.endState.equals(state)) {
@@ -158,7 +165,7 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void removeTransition(Transition transition) {
-		this.diagramElementsLayer.getChildren().remove(transition);
+		this.dialogueElementsLayer.getChildren().remove(transition);
 		this.transitions.remove(transition);
 		this.dataHasChanged = true;
 	}
@@ -174,7 +181,7 @@ public class DialogueViewModel implements ViewModel {
 			newTransition.getTriggerTextField().textProperty().addListener((s, y, z) -> this.dataHasChanged = true);
 			this.transitions.add(newTransition);
 			this.dataHasChanged = true;
-			this.diagramElementsLayer.getChildren().add(newTransition);
+			this.dialogueElementsLayer.getChildren().add(newTransition);
 			newTransition.toBack();
 		}
 		if (this.toggleButton != null) {
@@ -199,7 +206,7 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	public void resetData() {
-		this.diagramElementsLayer.getChildren().clear();
+		this.dialogueElementsLayer.getChildren().clear();
 		this.transitions.clear();
 		this.states.clear();
 		this.dataHasChanged = false;
@@ -222,9 +229,9 @@ public class DialogueViewModel implements ViewModel {
 			final double locationY = dialogueModelDataObject.optDouble("locationY", -5000);
 			final double scale = dialogueModelDataObject.optDouble("scale", 1.0);
 			this.setDiagramScale(1);
-			this.diagramElementsLayer.setTranslateX(0);
-			this.diagramElementsLayer.setTranslateY(0);
-			this.diagramElementsLayer.relocate(locationX, locationY);
+			this.dialogueElementsLayer.setTranslateX(0);
+			this.dialogueElementsLayer.setTranslateY(0);
+			this.dialogueElementsLayer.relocate(locationX, locationY);
 			this.setDiagramScale(scale);
 			this.setStatesGUIData(newStates);
 			this.setTransitionsGUIData(newTransitions);
@@ -237,12 +244,12 @@ public class DialogueViewModel implements ViewModel {
 
 	public JSONObject getGUIData() {
 		final JSONObject data = new JSONObject();
-		final double scale = this.diagramElementsLayer.getScaleX();
+		final double scale = this.dialogueElementsLayer.getScaleX();
 		this.setDiagramScale(1);
 		data.put("states", this.getStatesGUIData());
 		data.put("transitions", this.getTransitionsGUIData());
-		data.put("locationX", this.diagramElementsLayer.getBoundsInParent().getMinX());
-		data.put("locationY", this.diagramElementsLayer.getBoundsInParent().getMinY());
+		data.put("locationX", this.dialogueElementsLayer.getBoundsInParent().getMinX());
+		data.put("locationY", this.dialogueElementsLayer.getBoundsInParent().getMinY());
 		data.put("scale", scale);
 		this.setDiagramScale(scale);
 		return data;
@@ -317,8 +324,8 @@ public class DialogueViewModel implements ViewModel {
 	}
 
 	private void setDiagramScale(double scale) {
-		this.diagramElementsLayer.setScaleX(scale);
-		this.diagramElementsLayer.setScaleY(scale);
+		this.dialogueElementsLayer.setScaleX(scale);
+		this.dialogueElementsLayer.setScaleY(scale);
 	}
 
 	private State getStateByName(String stateName) {

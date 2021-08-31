@@ -37,8 +37,8 @@ public class SimulationSettingsView implements Initializable, FxmlView<Simulatio
 		this.language.valueProperty().bindBidirectional(this.viewModel.getSelectedLanguageProperty());
 		this.conversationInputs.textProperty().bindBidirectional(this.viewModel.getConversationInputProperty());
 		this.skillFilePath.textProperty().bindBidirectional(this.viewModel.getSkillFilePathProperty());
-		this.nlpComponentPath.textProperty().bindBidirectional(this.viewModel.getNLPComponentPathProperty());
-		this.nlpComponentPathButton.setOnAction(event -> this.viewModel.pickNLPComponentFilePath());
+		this.nlpComponentPath.textProperty().bindBidirectional(this.viewModel.getSelectedNLPComponentProperty());
+		this.nlpComponentPathButton.setOnAction(event -> this.viewModel.pickNLPComponentFile());
 		this.selectSkillFilePath.setOnAction(event -> this.viewModel.pickSkillFilePath());
 		this.startButton.setOnAction(event -> this.viewModel.startSimulation());
 	}

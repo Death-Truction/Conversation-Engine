@@ -39,11 +39,11 @@ public class DialoguePane extends Pane {
 	private SimpleObjectProperty<Transition> selectedTransition;
 	private Arrow dragArrow;
 
-	public DialoguePane(Pane dialogModelDataLayer, SimpleStringProperty insertMode,
+	public DialoguePane(Pane dialogueModelDataLayer, SimpleStringProperty insertMode,
 			SimpleObjectProperty<State> selectedState, SimpleObjectProperty<Transition> selectedTransition,
 			BiConsumer<Double, Double> addState, BiConsumer<State, State> addTransition, Consumer<State> removeState,
 			Consumer<Transition> removeTransition) {
-		this.dialogueModelDataLayer = dialogModelDataLayer;
+		this.dialogueModelDataLayer = dialogueModelDataLayer;
 		this.addState = addState;
 		this.addTransition = addTransition;
 		this.removeState = removeState;

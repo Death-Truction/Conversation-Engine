@@ -26,7 +26,7 @@ public class Settings {
 	private static final String TRANSITION_SELECTED_COLOR = "transition_selected_color";
 
 	private String lastOpenedFile = "";
-	private String lastFileChooserFolder;
+	private SimpleStringProperty lastFileChooserFolderProperty;
 	private SimpleIntegerProperty stateSizeProperty;
 	private SimpleIntegerProperty stateFontSizeProperty;
 	private SimpleObjectProperty<Color> stateFontColorProperty;
@@ -54,12 +54,8 @@ public class Settings {
 		this.lastOpenedFile = filePath;
 	}
 
-	public String getLastFileChooserFolder() {
-		return this.lastFileChooserFolder;
-	}
-
-	public void setLastFileChooserFolder(String filePath) {
-		this.lastFileChooserFolder = filePath;
+	public SimpleStringProperty getLastFileChooserFolderProperty() {
+		return this.lastFileChooserFolderProperty;
 	}
 
 	public SimpleIntegerProperty getStateSizeProperty() {
@@ -107,7 +103,7 @@ public class Settings {
 	}
 
 	public void savePrefs() {
-		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserFolder);
+		this.prefs.put(LAST_FILE_CHOOSER_PATH, this.lastFileChooserFolderProperty.get());
 		this.prefs.putInt(STATE_SIZE, this.stateSizeProperty.get());
 		this.prefs.putInt(STATE_FONT_SIZE, this.stateFontSizeProperty.get());
 		this.prefs.put(STATE_FONT_COLOR, this.stateFontColorProperty.get().toString());
@@ -122,7 +118,7 @@ public class Settings {
 	}
 
 	private void loadPrefs() {
-		this.lastFileChooserFolder = this.prefs.get(LAST_FILE_CHOOSER_PATH, "");
+		this.lastFileChooserFolderProperty = new SimpleStringProperty(this.prefs.get(LAST_FILE_CHOOSER_PATH, ""));
 		this.stateSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_SIZE, 40));
 		this.stateFontSizeProperty = new SimpleIntegerProperty(this.prefs.getInt(STATE_FONT_SIZE, 12));
 		this.stateFontColorProperty = new SimpleObjectProperty<>(

@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 public class SimulationStage {
 	private final Stage simulationStage = new Stage();
 	private Stage mainStage;
+	private ViewTuple<SimulationView, SimulationViewModel> viewTuple;
 	private DialogueViewModel dialogueViewModel;
 	private DialogueDataViewModel dialogueDataViewModel;
 	private SimulationSettingsViewModel simulationSettingsViewModel;
@@ -33,6 +34,13 @@ public class SimulationStage {
 		this.dialogueDataViewModel = dialogueDataViewModel;
 		this.simulationSettingsViewModel = simulationSettingsViewModel;
 		this.start();
+		this.dialogueViewModel.getViewProperty().set(null);
+		this.simulationStage.setOnCloseRequest(event -> {
+			this.viewTuple.getViewModel().unload();
+			dialogueViewModel.getViewProperty().set(dialogueViewModel.getView());
+			App.mainStage.show();
+		});
+		App.mainStage.hide();
 	}
 
 	private void start() {
@@ -41,10 +49,8 @@ public class SimulationStage {
 			Util.showError("Invalid Data", String.join("\n", this.errorMessages));
 			return;
 		}
-
 		this.showStage();
-		this.simulationStage.setOnCloseRequest(event -> App.mainStage.show());
-		App.mainStage.hide();
+
 	}
 
 	private void validSimulationData() {
@@ -81,7 +87,7 @@ public class SimulationStage {
 				}
 			}
 		}
-		String nlpComponentPath = this.simulationSettingsViewModel.getNLPComponentPathProperty().get();
+		String nlpComponentPath = this.simulationSettingsViewModel.getSelectedNLPComponentProperty().get();
 		if (nlpComponentPath == null || nlpComponentPath.isBlank()) {
 			this.addErrorMessage("You must select a NLP-Component");
 		} else {
@@ -100,10 +106,14 @@ public class SimulationStage {
 	}
 
 	private void showStage() {
-		ViewTuple<SimulationView, SimulationViewModel> viewTuple = FluentViewLoader.fxmlView(SimulationView.class)
-				.load();
-		// TODO: add stage/view settings like window size
-		this.simulationStage.setScene(new Scene(viewTuple.getView()));
+		this.viewTuple = FluentViewLoader.fxmlView(SimulationView.class).load();
+		this.simulationStage.getIcons().add(Util.getIcon());
+		this.viewTuple.getView().getStylesheets().add(Util.getStyleSheetPath());
+		this.simulationStage.minHeightProperty().set(480.0);
+		this.simulationStage.minWidthProperty().set(640.0);
+		this.simulationStage.setHeight(720);
+		this.simulationStage.setWidth(1280);
+		this.simulationStage.setScene(new Scene(this.viewTuple.getView()));
 		this.simulationStage.show();
 	}
 

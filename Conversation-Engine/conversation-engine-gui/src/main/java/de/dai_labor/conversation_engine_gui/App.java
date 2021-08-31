@@ -31,7 +31,7 @@ public class App extends Application {
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
 		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
-		final Image icon = new Image(this.getClass().getResource("images/Icon.png").toExternalForm());
+		final Image icon = Util.getIcon();
 		stage.getIcons().add(icon);
 		stage.minHeightProperty().set(480.0);
 		stage.minWidthProperty().set(640.0);
@@ -39,7 +39,7 @@ public class App extends Application {
 		stage.setWidth(1280);
 		final ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
 		final Parent mainScene = viewTuple.getView();
-		mainScene.getStylesheets().add(this.getClass().getResource("styles/style.css").toExternalForm());
+		mainScene.getStylesheets().add(Util.getStyleSheetPath());
 		stage.setScene(new Scene(mainScene));
 		stage.show();
 	}

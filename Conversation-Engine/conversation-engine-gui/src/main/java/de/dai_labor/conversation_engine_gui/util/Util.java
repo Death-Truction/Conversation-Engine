@@ -3,9 +3,14 @@ package de.dai_labor.conversation_engine_gui.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +22,7 @@ import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import de.dai_labor.conversation_engine_gui.view.simulation.SimulationSettingsViewModel;
 import eu.lestard.easydi.EasyDI;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar;
@@ -117,8 +123,7 @@ public class Util {
 		saveBeforeExitConfirmation.setHeaderText("Save unsaved changes");
 		saveBeforeExitConfirmation.setTitle("Unsaved changes");
 		saveBeforeExitConfirmation.initModality(Modality.APPLICATION_MODAL);
-		((Stage) saveBeforeExitConfirmation.getDialogPane().getScene().getWindow()).getIcons()
-				.add(new Image(App.class.getResource("images/Icon.png").toExternalForm()));
+		((Stage) saveBeforeExitConfirmation.getDialogPane().getScene().getWindow()).getIcons().add(getIcon());
 		ButtonType yesButton = new ButtonType("Yes");
 		ButtonType noButton = new ButtonType("No");
 		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -138,15 +143,14 @@ public class Util {
 
 	public static String fileChooser(boolean save, ExtensionFilter extensions) {
 		Settings settings = App.easyDI.getInstance(Settings.class);
-		return fileChooser(save, extensions, settings.getLastFileChooserFolder());
+		return fileChooser(save, extensions, settings.getLastFileChooserFolderProperty());
 	}
 
-	public static String fileChooser(boolean save, ExtensionFilter extensions, String folderPath) {
-		Settings settings = App.easyDI.getInstance(Settings.class);
+	public static String fileChooser(boolean save, ExtensionFilter extensions, StringProperty folderPath) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(extensions);
 		File file = null;
-		File folder = new File(folderPath);
+		File folder = new File(folderPath.get());
 		if (folder.isDirectory()) {
 			fileChooser.setInitialDirectory(folder);
 		}
@@ -160,7 +164,7 @@ public class Util {
 		if (file == null) {
 			return "";
 		}
-		settings.setLastFileChooserFolder(file.getParent());
+		folderPath.set(file.getParent());
 		return file.getAbsolutePath();
 	}
 
@@ -172,6 +176,35 @@ public class Util {
 			// TODO alert that there was an error?
 		}
 
+	}
+
+	public static Image getIcon() {
+		return new Image(App.class.getResource("images/Icon.png").toExternalForm());
+	}
+
+	public static String getStyleSheetPath() {
+		return App.class.getResource("styles/style.css").toExternalForm();
+	}
+
+	public static Set<Class<?>> getClassesFromJarFile(File jarFile) throws IOException {
+		Set<Class<?>> classNames = new HashSet<>();
+		try (JarFile loadedJarFile = new JarFile(jarFile)) {
+			URL[] urls = { new URL(String.format("jar:file:%s!/", jarFile.getAbsolutePath())) };
+			try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
+				loadedJarFile.stream().forEach(entry -> {
+					if (entry.getName().endsWith(".class")) {
+						try {
+							classNames
+									.add(cl.loadClass(entry.getName().substring(0, entry.getName().lastIndexOf("."))));
+						} catch (ClassNotFoundException e) {
+							// TODO alert error? this should never happen
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		}
+		return classNames;
 	}
 
 	private static JSONObject getToSavedData(DialogueViewModel dialogueViewModel,
