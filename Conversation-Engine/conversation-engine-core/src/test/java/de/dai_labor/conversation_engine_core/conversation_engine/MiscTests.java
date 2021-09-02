@@ -12,10 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import ch.qos.logback.classic.Level;
-import de.dai_labor.conversation_engine_core.conversation_engine.GenerateSkillStateMachine;
-import de.dai_labor.conversation_engine_core.conversation_engine.I18n;
-import de.dai_labor.conversation_engine_core.conversation_engine.Logging;
-import de.dai_labor.conversation_engine_core.conversation_engine.UserOutput;
 
 @DisplayName("Multiple Tests for code coverage")
 class MiscTests {

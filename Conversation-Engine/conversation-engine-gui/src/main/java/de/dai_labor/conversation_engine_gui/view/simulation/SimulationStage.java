@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 
 public class SimulationStage {
 	private final Stage simulationStage = new Stage();
-	private Stage mainStage;
 	private ViewTuple<SimulationView, SimulationViewModel> viewTuple;
 	private DialogueViewModel dialogueViewModel;
 	private DialogueDataViewModel dialogueDataViewModel;
@@ -29,7 +28,6 @@ public class SimulationStage {
 
 	public SimulationStage(DialogueViewModel dialogueViewModel, DialogueDataViewModel dialogueDataViewModel,
 			SimulationSettingsViewModel simulationSettingsViewModel) {
-		this.mainStage = App.mainStage;
 		this.dialogueViewModel = dialogueViewModel;
 		this.dialogueDataViewModel = dialogueDataViewModel;
 		this.simulationSettingsViewModel = simulationSettingsViewModel;
@@ -107,6 +105,10 @@ public class SimulationStage {
 
 	private void showStage() {
 		this.viewTuple = FluentViewLoader.fxmlView(SimulationView.class).load();
+		this.viewTuple.getViewModel().subscribe("SimulationViewCloseRequest", (t, observe) -> {
+			App.mainStage.show();
+			this.simulationStage.close();
+		});
 		this.simulationStage.getIcons().add(Util.getIcon());
 		this.viewTuple.getView().getStylesheets().add(Util.getStyleSheetPath());
 		this.simulationStage.minHeightProperty().set(480.0);

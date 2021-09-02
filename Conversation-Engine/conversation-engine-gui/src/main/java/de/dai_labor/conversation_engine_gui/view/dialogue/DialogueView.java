@@ -20,6 +20,7 @@ public class DialogueView implements FxmlView<DialogueViewModel>, Initializable 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.mainPane.centerProperty().bindBidirectional(this.viewModel.getViewProperty());
+		this.mainPane.getCenter().toBack();
 	}
 
 }

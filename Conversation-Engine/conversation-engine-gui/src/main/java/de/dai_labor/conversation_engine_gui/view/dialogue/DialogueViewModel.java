@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import de.dai_labor.conversation_engine_gui.gui_components.DialoguePane;
 import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.gui_components.Transition;
+import de.dai_labor.conversation_engine_gui.interfaces.IStorableGuiData;
 import de.dai_labor.conversation_engine_gui.models.Settings;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
@@ -28,7 +29,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
 
 @Singleton
-public class DialogueViewModel implements ViewModel {
+public class DialogueViewModel implements ViewModel, IStorableGuiData {
 	private static final int DIAGRAM_ELEMENT_LAYER_SIZE = 50000;
 	private final DialoguePane dialoguePane;
 	private final SimpleObjectProperty<Node> viewProperty = new SimpleObjectProperty<>();
@@ -53,13 +54,9 @@ public class DialogueViewModel implements ViewModel {
 			this.dialogueElementsLayer.setMinWidth(DIAGRAM_ELEMENT_LAYER_SIZE);
 			this.dialogueElementsLayer.setMinHeight(DIAGRAM_ELEMENT_LAYER_SIZE);
 			this.dialogueElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
-			this.dialogueElementsLayer.toBack();
-
 		});
 		this.dialoguePane.toBack();
-		this.subscribe("unload", (ignore, ignore2) -> {
-			this.dialoguePane.unselectAll();
-		});
+		this.subscribe("unload", (ignore, ignore2) -> this.dialoguePane.unselectAll());
 		this.dialoguePane.toBack();
 		this.viewProperty.set(this.dialoguePane);
 	}
@@ -205,6 +202,7 @@ public class DialogueViewModel implements ViewModel {
 		return this.transitions;
 	}
 
+	@Override
 	public void resetData() {
 		this.dialogueElementsLayer.getChildren().clear();
 		this.transitions.clear();
@@ -212,14 +210,17 @@ public class DialogueViewModel implements ViewModel {
 		this.dataHasChanged = false;
 	}
 
+	@Override
 	public boolean hasChanged() {
 		return this.dataHasChanged;
 	}
 
+	@Override
 	public void setUnchanged() {
 		this.dataHasChanged = false;
 	}
 
+	@Override
 	public void setGUIData(JSONObject dialogueModelDataObject) {
 		this.resetData();
 		try {
@@ -242,6 +243,7 @@ public class DialogueViewModel implements ViewModel {
 		this.setUnchanged();
 	}
 
+	@Override
 	public JSONObject getGUIData() {
 		final JSONObject data = new JSONObject();
 		final double scale = this.dialogueElementsLayer.getScaleX();

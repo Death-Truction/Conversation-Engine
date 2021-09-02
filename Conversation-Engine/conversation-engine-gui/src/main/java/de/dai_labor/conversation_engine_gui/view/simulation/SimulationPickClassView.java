@@ -18,12 +18,15 @@ public class SimulationPickClassView implements FxmlView<SimulationPickClassView
 	private ListView<Class<?>> listView;
 	@FXML
 	private Button okButton;
+	@FXML
+	private Button cancelButton;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.listView.setItems(this.viewModel.getAllClassNames());
 		this.viewModel.getSelectedClassProperty().bind(this.listView.getSelectionModel().selectedItemProperty());
 		this.okButton.setOnAction(event -> this.viewModel.okButtonPressed());
+		this.cancelButton.setOnAction(event -> this.viewModel.cancelButtonPressed());
 	}
 
 }

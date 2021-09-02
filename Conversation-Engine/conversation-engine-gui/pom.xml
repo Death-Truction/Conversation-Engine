@@ -86,6 +86,11 @@
 			<artifactId>conversation-engine-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.reflections</groupId>
+		    <artifactId>reflections</artifactId>
+		    <version>0.9.12</version>
+		</dependency>
     </dependencies>
     <build>
         <plugins>

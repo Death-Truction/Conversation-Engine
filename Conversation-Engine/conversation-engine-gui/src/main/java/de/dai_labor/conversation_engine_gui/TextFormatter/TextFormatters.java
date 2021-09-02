@@ -21,5 +21,4 @@ public class TextFormatters {
 			return c;
 		});
 	}
-
 }

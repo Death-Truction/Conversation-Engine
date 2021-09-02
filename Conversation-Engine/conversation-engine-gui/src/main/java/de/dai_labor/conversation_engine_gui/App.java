@@ -2,8 +2,8 @@ package de.dai_labor.conversation_engine_gui;
 
 import java.io.IOException;
 
+import de.dai_labor.conversation_engine_gui.models.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.models.Settings;
-import de.dai_labor.conversation_engine_gui.util.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.main.MainView;
 import de.dai_labor.conversation_engine_gui.view.main.MainViewModel;
@@ -29,7 +29,6 @@ public class App extends Application {
 		App.mainStage = stage;
 		App.mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
-		// configure stage
 		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
 		final Image icon = Util.getIcon();
 		stage.getIcons().add(icon);

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import org.json.JSONObject;
 
 import de.dai_labor.conversation_engine_gui.gui_components.State;
+import de.dai_labor.conversation_engine_gui.interfaces.IStorableGuiData;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,7 +19,7 @@ import javafx.collections.ObservableMap;
 import javafx.scene.input.MouseEvent;
 
 @Singleton
-public class DialogueDataViewModel implements ViewModel {
+public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 
 	private ObservableMap<Integer, State> allStates;
 	private SimpleStringProperty skillNameProperty = new SimpleStringProperty();
@@ -93,6 +94,7 @@ public class DialogueDataViewModel implements ViewModel {
 		this.availableStates.addAll(allStateNames);
 	}
 
+	@Override
 	public void resetData() {
 		this.skillNameProperty.set("");
 		this.intentsProperty.set("");
@@ -102,6 +104,7 @@ public class DialogueDataViewModel implements ViewModel {
 		this.dataHasChanged = false;
 	}
 
+	@Override
 	public JSONObject getGUIData() {
 		JSONObject data = new JSONObject();
 		data.put("skillName", this.skillNameProperty.get());
@@ -112,6 +115,7 @@ public class DialogueDataViewModel implements ViewModel {
 		return data;
 	}
 
+	@Override
 	public void setGUIData(JSONObject data) {
 		this.skillNameProperty.set(data.optString("skillName"));
 		this.intentsProperty.set(data.optString("intents", ""));
@@ -121,6 +125,7 @@ public class DialogueDataViewModel implements ViewModel {
 		this.dataHasChanged = false;
 	}
 
+	@Override
 	public boolean hasChanged() {
 		return this.dataHasChanged;
 	}
@@ -131,6 +136,7 @@ public class DialogueDataViewModel implements ViewModel {
 		}
 	}
 
+	@Override
 	public void setUnchanged() {
 		this.dataHasChanged = false;
 

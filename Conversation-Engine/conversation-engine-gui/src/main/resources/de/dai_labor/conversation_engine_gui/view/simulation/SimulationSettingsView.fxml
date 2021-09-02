@@ -77,19 +77,27 @@
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                            <children>
-                              <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Path to the NLP-Component">
+                              <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="NLP-Component">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
+                                 <padding>
+                                    <Insets right="120.0" />
+                                 </padding>
                               </Label>
-                              <HBox alignment="CENTER" maxWidth="400.0" spacing="10.0">
+                              <HBox alignment="CENTER" spacing="10.0">
                                  <children>
-                                    <TextField fx:id="nlpComponentPath" editable="false" prefWidth="340.0">
+                                    <TextField fx:id="nlpComponent" editable="false" prefWidth="340.0">
                                        <cursor>
                                           <Cursor fx:constant="TEXT" />
                                        </cursor>
                                     </TextField>
-                                    <Button fx:id="nlpComponentPathButton" mnemonicParsing="false" prefWidth="60.0" text="Select">
+                                    <Button fx:id="selectNLPComponentButton" mnemonicParsing="false" prefWidth="60.0" text="Select">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                    <Button fx:id="removeNLPComponentButton" mnemonicParsing="false" prefWidth="60.0" text="Remove">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
@@ -100,19 +108,27 @@
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Label text="Path to the skill file">
+                              <Label text="Skill">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
+                                 <padding>
+                                    <Insets right="120.0" />
+                                 </padding>
                               </Label>
-                              <HBox alignment="CENTER" maxWidth="400.0" spacing="10.0">
+                              <HBox alignment="CENTER" spacing="10.0">
                                  <children>
-                                    <TextField fx:id="skillFilePath" editable="false" prefWidth="340.0">
+                                    <TextField fx:id="skill" editable="false" prefWidth="340.0">
                                        <cursor>
                                           <Cursor fx:constant="TEXT" />
                                        </cursor>
                                     </TextField>
-                                    <Button fx:id="selectSkillFilePath" mnemonicParsing="false" prefWidth="60.0" text="Select">
+                                    <Button fx:id="selectSkillButton" mnemonicParsing="false" prefWidth="60.0" text="Select">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                    <Button fx:id="removeSkillButton" mnemonicParsing="false" prefWidth="60.0" text="Remove">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>

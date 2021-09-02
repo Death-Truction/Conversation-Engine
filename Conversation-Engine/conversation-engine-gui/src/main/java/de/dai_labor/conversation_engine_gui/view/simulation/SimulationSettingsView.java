@@ -23,24 +23,42 @@ public class SimulationSettingsView implements Initializable, FxmlView<Simulatio
 	@FXML
 	private Button startButton;
 	@FXML
-	private TextField nlpComponentPath;
+	private TextField nlpComponent;
 	@FXML
-	private Button nlpComponentPathButton;
+	private Button selectNLPComponentButton;
 	@FXML
-	private Button selectSkillFilePath;
+	private Button removeNLPComponentButton;
 	@FXML
-	private TextField skillFilePath;
+	private TextField skill;
+	@FXML
+	private Button selectSkillButton;
+	@FXML
+	private Button removeSkillButton;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.language.setItems(this.viewModel.getAvailableLanguages());
 		this.language.valueProperty().bindBidirectional(this.viewModel.getSelectedLanguageProperty());
+
 		this.conversationInputs.textProperty().bindBidirectional(this.viewModel.getConversationInputProperty());
-		this.skillFilePath.textProperty().bindBidirectional(this.viewModel.getSkillFilePathProperty());
-		this.nlpComponentPath.textProperty().bindBidirectional(this.viewModel.getSelectedNLPComponentProperty());
-		this.nlpComponentPathButton.setOnAction(event -> this.viewModel.pickNLPComponentFile());
-		this.selectSkillFilePath.setOnAction(event -> this.viewModel.pickSkillFilePath());
+
+		this.nlpComponent.textProperty().bindBidirectional(this.viewModel.getSelectedNLPComponentProperty());
+		this.nlpComponent.textProperty().addListener(change -> this.moveCaretToEnd(this.nlpComponent));
+		this.nlpComponent.focusedProperty().addListener(change -> this.moveCaretToEnd(this.nlpComponent));
+		this.selectNLPComponentButton.setOnAction(event -> this.viewModel.pickNLPComponentFile());
+		this.removeNLPComponentButton.setOnAction(event -> this.viewModel.removeNLPComponent());
+
+		this.skill.textProperty().bindBidirectional(this.viewModel.getSelectedSkillProperty());
+		this.skill.textProperty().addListener(change -> this.moveCaretToEnd(this.skill));
+		this.skill.focusedProperty().addListener(change -> this.moveCaretToEnd(this.skill));
+		this.selectSkillButton.setOnAction(event -> this.viewModel.pickSkillFile());
+		this.removeSkillButton.setOnAction(event -> this.viewModel.removeSkill());
+
 		this.startButton.setOnAction(event -> this.viewModel.startSimulation());
+	}
+
+	private void moveCaretToEnd(TextField target) {
+		target.end();
 	}
 
 }

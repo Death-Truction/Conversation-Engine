@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.dai_labor.conversation_engine_gui.App;
+import de.dai_labor.conversation_engine_gui.models.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.models.Settings;
-import de.dai_labor.conversation_engine_gui.util.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataView;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;

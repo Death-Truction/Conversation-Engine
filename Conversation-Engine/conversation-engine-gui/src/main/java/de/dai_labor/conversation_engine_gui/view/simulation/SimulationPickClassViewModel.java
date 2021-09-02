@@ -2,6 +2,7 @@ package de.dai_labor.conversation_engine_gui.view.simulation;
 
 import java.util.Set;
 
+import de.dai_labor.conversation_engine_gui.util.Util;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +17,7 @@ public class SimulationPickClassViewModel implements ViewModel {
 		return this.classNames;
 	}
 
-	public SimpleObjectProperty getSelectedClassProperty() {
+	public SimpleObjectProperty<Class<?>> getSelectedClassProperty() {
 		return this.selectedClassProperty;
 	}
 
@@ -30,8 +31,19 @@ public class SimulationPickClassViewModel implements ViewModel {
 
 	public void okButtonPressed() {
 		this.selectedClass = this.selectedClassProperty.get();
-		// TODO check value not null, else raise error and keep the selection open
-		this.publish("pickClassCloseRequest", null);
+		if (this.selectedClass == null) {
+			Util.showError("No class selected", "Please select a class from the list or cancel the process.");
+			return;
+		}
+		this.closeStage();
+	}
+
+	public void cancelButtonPressed() {
+		this.closeStage();
+	}
+
+	private void closeStage() {
+		this.publish("pickClassCloseRequest");
 	}
 
 }

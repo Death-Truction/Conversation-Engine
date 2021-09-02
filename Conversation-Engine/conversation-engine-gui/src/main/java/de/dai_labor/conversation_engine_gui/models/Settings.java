@@ -13,7 +13,8 @@ import javafx.scene.paint.Color;
 public class Settings {
 
 	private static final String LAST_FILE_CHOOSER_PATH = "last_file_chooser_path";
-	private static final String LAST_NLP_COMPONENT_FOLDER_PATH = "nlp_component_path";
+	private static final String LAST_NLP_COMPONENT_FOLDER_PATH = "nlp_component_folder_path";
+	private static final String LAST_SKILL_FOLDER_PATH = "skill_folder_path";
 	private static final String STATE_SIZE = "state_size";
 	private static final String STATE_FONT_SIZE = "state_font_size";
 	private static final String STATE_FONT_COLOR = "state_font_color";
@@ -37,7 +38,8 @@ public class Settings {
 	private SimpleObjectProperty<Color> transitionFontColorProperty;
 	private SimpleObjectProperty<Color> transitionNormalColorProperty;
 	private SimpleObjectProperty<Color> transitionSelectedColorProperty;
-	private SimpleStringProperty lastNLPComponentFolderPath;
+	private SimpleStringProperty lastNLPComponentFolderPathProperty;
+	private SimpleStringProperty lastSkillFolderPathProperty;
 
 	Preferences prefs;
 
@@ -98,8 +100,12 @@ public class Settings {
 		return this.transitionSelectedColorProperty;
 	}
 
-	public SimpleStringProperty getLastNLPComponentFolderPath() {
-		return this.lastNLPComponentFolderPath;
+	public SimpleStringProperty getLastNLPComponentFolderPathProperty() {
+		return this.lastNLPComponentFolderPathProperty;
+	}
+
+	public SimpleStringProperty getLastSkillFolderPathProperty() {
+		return this.lastSkillFolderPathProperty;
 	}
 
 	public void savePrefs() {
@@ -114,7 +120,8 @@ public class Settings {
 		this.prefs.put(TRANSITION_FONT_COLOR, this.transitionFontColorProperty.get().toString());
 		this.prefs.put(TRANSITION_NORMAL_COLOR, this.transitionNormalColorProperty.get().toString());
 		this.prefs.put(TRANSITION_SELECTED_COLOR, this.transitionSelectedColorProperty.get().toString());
-		this.prefs.put(LAST_NLP_COMPONENT_FOLDER_PATH, this.lastNLPComponentFolderPath.get());
+		this.prefs.put(LAST_NLP_COMPONENT_FOLDER_PATH, this.lastNLPComponentFolderPathProperty.get());
+		this.prefs.put(LAST_SKILL_FOLDER_PATH, this.lastSkillFolderPathProperty.get());
 	}
 
 	private void loadPrefs() {
@@ -135,7 +142,8 @@ public class Settings {
 				Color.valueOf(this.prefs.get(TRANSITION_NORMAL_COLOR, "BLACK")));
 		this.transitionSelectedColorProperty = new SimpleObjectProperty<>(
 				Color.valueOf(this.prefs.get(TRANSITION_SELECTED_COLOR, "GREEN")));
-		this.lastNLPComponentFolderPath = new SimpleStringProperty(this.prefs.get(LAST_NLP_COMPONENT_FOLDER_PATH, ""));
+		this.lastNLPComponentFolderPathProperty = new SimpleStringProperty(
+				this.prefs.get(LAST_NLP_COMPONENT_FOLDER_PATH, ""));
+		this.lastSkillFolderPathProperty = new SimpleStringProperty(this.prefs.get(LAST_SKILL_FOLDER_PATH, ""));
 	}
-
 }

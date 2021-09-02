@@ -7,20 +7,24 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.reflections.Reflections;
 
 import de.dai_labor.conversation_engine_gui.App;
+import de.dai_labor.conversation_engine_gui.interfaces.IStorableGuiData;
+import de.dai_labor.conversation_engine_gui.models.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.models.Settings;
-import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;
-import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
-import de.dai_labor.conversation_engine_gui.view.simulation.SimulationSettingsViewModel;
 import eu.lestard.easydi.EasyDI;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
@@ -34,16 +38,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Util {
-	private Util() {
+	private Util() throws IllegalStateException {
+		throw new IllegalStateException("Utility class");
 	}
 
 	public static SaveStateEnum saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
 		EasyDI easyDI = App.easyDI;
-		DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
-		DialogueDataViewModel dialogueDataViewModel = easyDI.getInstance(DialogueDataViewModel.class);
-		SimulationSettingsViewModel simulationSettingsViewModel = easyDI.getInstance(SimulationSettingsViewModel.class);
 		Settings settings = easyDI.getInstance(Settings.class);
-		boolean dataHasChanged = hasDataChanged(dialogueViewModel, dialogueDataViewModel, simulationSettingsViewModel);
+		boolean dataHasChanged = hasGUIDataChanged();
 
 		if (!saveToNewFile && !dataHasChanged && !forceSave) {
 			return SaveStateEnum.NO;
@@ -54,27 +56,24 @@ public class Util {
 		}
 		// ask user if he wants to save the unsaved changes
 		if (askFirst) {
-			SaveStateEnum saveState = Util.saveDataBeforeExitConfirmation();
+			SaveStateEnum saveState = saveDataBeforeExitConfirmation();
 			if (saveState != SaveStateEnum.YES) {
 				return saveState;
 			}
 		}
 		// if the file has not been saved before -> ask for a save location
 		if (filepath.isBlank()) {
-			filepath = Util.fileChooser(true, new ExtensionFilter("CEGUI File", "*.cegui", "*.CEGUI"));
+			filepath = fileChooser(true, new ExtensionFilter("CEGUI File", "*.cegui", "*.CEGUI"));
 		}
 		// if the user picked a file
 		if (!filepath.isBlank()) {
 			if (!filepath.endsWith(".cegui")) {
 				filepath += ".cegui";
 			}
-			String data = getToSavedData(dialogueViewModel, dialogueDataViewModel, simulationSettingsViewModel)
-					.toString();
+			String data = getToSavedData().toString();
 			settings.setLastOpenedFile(filepath);
-			Util.saveJSONStringToFile(filepath, data);
-			dialogueViewModel.setUnchanged();
-			dialogueDataViewModel.setUnchanged();
-			simulationSettingsViewModel.setUnchanged();
+			saveJSONStringToFile(filepath, data);
+			setGUIDataUnchanged();
 			return SaveStateEnum.YES;
 		}
 		// if the user pressed cancel on the fileChooser
@@ -91,10 +90,12 @@ public class Util {
 		if (jsonString.isBlank()) {
 			return;
 		}
-		JSONObject guiData = new JSONObject(jsonString);
-		// TODO: display error on json exception?
-		if (guiData != null) {
+		try {
+			JSONObject guiData = new JSONObject(jsonString);
 			setLoadedData(guiData);
+		} catch (JSONException e) {
+			showError(MessageFormat.format("Error loading the file {0}", new File(filepath).getName()),
+					e.getLocalizedMessage());
 		}
 	}
 
@@ -104,7 +105,8 @@ public class Util {
 			data = lines.collect(Collectors.joining("\n"));
 
 		} catch (IOException e) {
-			// TODO alert that an error occurred?
+			showError(MessageFormat.format("Error loading the file {0}", new File(filepath).getName()),
+					e.getLocalizedMessage());
 		}
 		return data;
 	}
@@ -173,7 +175,7 @@ public class Util {
 			fileWriter.write(data);
 			fileWriter.flush();
 		} catch (IOException e) {
-			// TODO alert that there was an error?
+			showError("Error while saving the file", e.getLocalizedMessage());
 		}
 
 	}
@@ -186,60 +188,66 @@ public class Util {
 		return App.class.getResource("styles/style.css").toExternalForm();
 	}
 
-	public static Set<Class<?>> getClassesFromJarFile(File jarFile) throws IOException {
+	public static Set<Class<?>> getClassesFromJarFile(File jarFile)
+			throws IOException, ClassNotFoundException, NoClassDefFoundError {
 		Set<Class<?>> classNames = new HashSet<>();
 		try (JarFile loadedJarFile = new JarFile(jarFile)) {
 			URL[] urls = { new URL(String.format("jar:file:%s!/", jarFile.getAbsolutePath())) };
 			try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
-				loadedJarFile.stream().forEach(entry -> {
+				Enumeration<JarEntry> iterator = loadedJarFile.entries();
+				while (iterator.hasMoreElements()) {
+					JarEntry entry = iterator.nextElement();
 					if (entry.getName().endsWith(".class")) {
-						try {
-							classNames
-									.add(cl.loadClass(entry.getName().substring(0, entry.getName().lastIndexOf("."))));
-						} catch (ClassNotFoundException e) {
-							// TODO alert error? this should never happen
-							e.printStackTrace();
-						}
+						Class<?> foundClass = cl.loadClass(
+								entry.getName().substring(0, entry.getName().lastIndexOf(".")).replace("/", "."));
+						classNames.add(foundClass);
 					}
-				});
+				}
 			}
 		}
 		return classNames;
 	}
 
-	private static JSONObject getToSavedData(DialogueViewModel dialogueViewModel,
-			DialogueDataViewModel dialogueDataViewModel, SimulationSettingsViewModel simulationSettingsViewModel) {
-
+	private static JSONObject getToSavedData() {
 		JSONObject savedData = new JSONObject();
-		savedData.put("dialogueView", dialogueViewModel.getGUIData());
-		savedData.put("dialogueData", dialogueDataViewModel.getGUIData());
-		savedData.put("simulationSettings", simulationSettingsViewModel.getGUIData());
+		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
+			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
+			savedData.put(storableGuiDataClass.getSimpleName(), storableGuiData.getGUIData());
+
+		}
 		return savedData;
 	}
 
 	private static void setLoadedData(JSONObject guiData) {
-		EasyDI easyDI = App.easyDI;
-		JSONObject dialogueView = guiData.optJSONObject("dialogueView");
-		if (dialogueView != null) {
-			DialogueViewModel dialogueViewModel = easyDI.getInstance(DialogueViewModel.class);
-			dialogueViewModel.setGUIData(dialogueView);
-		}
-		JSONObject dialogueViewData = guiData.optJSONObject("dialogueData");
-		if (dialogueViewData != null) {
-			DialogueDataViewModel dialogueViewModel = easyDI.getInstance(DialogueDataViewModel.class);
-			dialogueViewModel.setGUIData(dialogueViewData);
-		}
-		JSONObject simulationSettings = guiData.optJSONObject("simulationSettings");
-		if (simulationSettings != null) {
-			SimulationSettingsViewModel simulationSettingsViewModel = easyDI
-					.getInstance(SimulationSettingsViewModel.class);
-			simulationSettingsViewModel.setGUIData(simulationSettings);
+		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
+			JSONObject data = guiData.optJSONObject(storableGuiDataClass.getSimpleName());
+			if (data != null) {
+				IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
+				storableGuiData.setGUIData(data);
+			}
 		}
 	}
 
-	private static boolean hasDataChanged(DialogueViewModel dialogueViewModel,
-			DialogueDataViewModel dialogueDataViewModel, SimulationSettingsViewModel simulationSettingsViewModel) {
-		return dialogueViewModel.hasChanged() || dialogueDataViewModel.hasChanged()
-				|| simulationSettingsViewModel.hasChanged();
+	private static boolean hasGUIDataChanged() {
+		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
+			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
+			if (storableGuiData.hasChanged()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void setGUIDataUnchanged() {
+		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
+			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
+			storableGuiData.setUnchanged();
+		}
+	}
+
+	private static Set<Class<? extends IStorableGuiData>> getIStorableGuiDataClasses() {
+		Reflections reflections = new Reflections("de.dai_labor.conversation_engine_gui");
+
+		return reflections.getSubTypesOf(IStorableGuiData.class);
 	}
 }
