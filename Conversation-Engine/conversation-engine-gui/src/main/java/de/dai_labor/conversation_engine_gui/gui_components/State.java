@@ -107,6 +107,90 @@ public class State extends StackPane {
 		}
 	}
 
+	public void selectStatus(State newVal) {
+		if (newVal != null && newVal.equals(this)) {
+			this.stateShape.fillProperty().bind(this.settings.getStateSelectedColorProperty());
+		} else {
+			this.nameTextArea.deselect();
+			this.requestFocus();
+			this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
+		}
+	}
+
+	public void select() {
+		this.selectStatus(this);
+	}
+
+	public void deselect() {
+		this.selectStatus(null);
+	}
+
+	public TextArea getTextArea() {
+		return this.nameTextArea;
+	}
+
+	public String getName() {
+		return this.nameTextArea.getText();
+	}
+
+	public int getStateId() {
+		return this.stateID;
+	}
+
+	public void setStartState() {
+		this.specialEndShape.setVisible(false);
+		this.specialStartShape.setVisible(true);
+	}
+
+	public void setEndState() {
+		this.specialStartShape.setVisible(false);
+		this.specialEndShape.setVisible(true);
+	}
+
+	public void setNormalState() {
+		this.specialStartShape.setVisible(false);
+		this.specialEndShape.setVisible(false);
+	}
+
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
+	private void focusLabel() {
+		this.nameTextArea.requestFocus();
+		this.nameTextArea.selectAll();
+	}
+
+	private void initFocusRequest() {
+		Platform.runLater(() -> {
+			if (this.selectedState.get().equals(this)) {
+				this.focusLabel();
+			}
+		});
+	}
+
+	private void addDynamicEventListeners() {
+		this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
+		this.nameTextArea.maxHeightProperty().bind(this.settings.getStateSizeProperty().multiply(2));
+		this.nameTextArea.maxWidthProperty().bind(this.settings.getStateSizeProperty().multiply(2));
+		this.stateShape.radiusProperty().bind(this.settings.getStateSizeProperty());
+		this.nameTextArea.fontProperty()
+				.bind(Bindings.createObjectBinding(() -> new Font(this.settings.getStateFontSizeProperty().get()),
+						this.settings.getStateFontSizeProperty()));
+		this.nameTextArea.styleProperty().bind(Bindings.createObjectBinding(
+				() -> "-fx-text-fill: " + this.settings.getStateFontColorProperty().get().toString().replace("0x", "#"),
+				this.settings.getStateFontColorProperty()));
+
+	}
+
+	private void addDraggingEventHandlers() {
+		this.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this.mouseDraggedEventHandler);
+		this.addEventHandler(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventHandler);
+		this.nameTextArea.addEventHandler(KeyEvent.KEY_PRESSED, this.labelKeyEvent);
+	}
+
 	private void createSpecialShapes() {
 		this.createSpecialStartShape();
 		this.createSpecialEndShape();
@@ -151,77 +235,6 @@ public class State extends StackPane {
 		this.specialEndShape.getChildren().addAll(line1, line2);
 		this.specialEndShape.setVisible(false);
 		this.specialEndShape.setMouseTransparent(true);
-	}
-
-	public void selectStatus(State newVal) {
-		if (newVal != null && newVal.equals(this)) {
-			this.stateShape.fillProperty().bind(this.settings.getStateSelectedColorProperty());
-		} else {
-			this.nameTextArea.deselect();
-			this.requestFocus();
-			this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
-		}
-	}
-
-	public TextArea getTextArea() {
-		return this.nameTextArea;
-	}
-
-	public String getName() {
-		return this.nameTextArea.getText();
-	}
-
-	public int getStateId() {
-		return this.stateID;
-	}
-
-	public void setStartState() {
-		this.specialEndShape.setVisible(false);
-		this.specialStartShape.setVisible(true);
-	}
-
-	public void setEndState() {
-		this.specialStartShape.setVisible(false);
-		this.specialEndShape.setVisible(true);
-	}
-
-	public void setNormalState() {
-		this.specialStartShape.setVisible(false);
-		this.specialEndShape.setVisible(false);
-	}
-
-	private void focusLabel() {
-		this.nameTextArea.requestFocus();
-		this.nameTextArea.selectAll();
-	}
-
-	private void initFocusRequest() {
-		Platform.runLater(() -> {
-			if (this.selectedState.get().equals(this)) {
-				this.focusLabel();
-			}
-		});
-	}
-
-	private void addDynamicEventListeners() {
-		this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
-		this.nameTextArea.maxHeightProperty().bind(this.settings.getStateSizeProperty().multiply(2));
-		this.nameTextArea.maxWidthProperty().bind(this.settings.getStateSizeProperty().multiply(2));
-		this.stateShape.radiusProperty().bind(this.settings.getStateSizeProperty());
-		this.nameTextArea.fontProperty()
-				.bind(Bindings.createObjectBinding(() -> new Font(this.settings.getStateFontSizeProperty().get()),
-						this.settings.getStateFontSizeProperty()));
-		this.nameTextArea.styleProperty().bind(Bindings.createObjectBinding(
-				() -> "-fx-text-fill: " + this.settings.getStateFontColorProperty().get().toString().replace("0x", "#"),
-				this.settings.getStateFontColorProperty()));
-
-	}
-
-	private void addDraggingEventHandlers() {
-		this.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
-		this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this.mouseDraggedEventHandler);
-		this.addEventHandler(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventHandler);
-		this.nameTextArea.addEventHandler(KeyEvent.KEY_PRESSED, this.labelKeyEvent);
 	}
 
 }

@@ -17,14 +17,18 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import de.dai_labor.conversation_engine_gui.App;
+import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.interfaces.IStorableGuiData;
 import de.dai_labor.conversation_engine_gui.models.SaveStateEnum;
 import de.dai_labor.conversation_engine_gui.models.Settings;
+import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueDataViewModel;
+import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import eu.lestard.easydi.EasyDI;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
@@ -206,6 +210,52 @@ public class Util {
 			}
 		}
 		return classNames;
+	}
+
+	public static JSONObject getSkillStateMachineData() {
+		JSONObject data = new JSONObject();
+		DialogueDataViewModel dialogueDataViewModel = App.easyDI.getInstance(DialogueDataViewModel.class);
+		DialogueViewModel dialogueViewModel = App.easyDI.getInstance(DialogueViewModel.class);
+		data.put("name", dialogueDataViewModel.getSkillNameProperty().get());
+		data.put("startAt", dialogueDataViewModel.getSelectedStartStateProperty().get());
+		data.put("endAt", dialogueDataViewModel.getSelectedEndStateProperty().get());
+		JSONArray entities = new JSONArray();
+		for (String entity : dialogueDataViewModel.getEntitiesProperty().get().split("\n")) {
+			entities.put(entity);
+		}
+		data.put("usedEntities", entities);
+		JSONArray intents = new JSONArray();
+		for (String intent : dialogueDataViewModel.getIntentsProperty().get().split("\n")) {
+			entities.put(intent);
+		}
+		data.put("usedIntents", intents);
+
+		JSONArray states = new JSONArray();
+		dialogueViewModel.getStates().forEach((key, state) -> {
+			JSONObject stateObject = new JSONObject();
+			stateObject.put("name", state.getName());
+			states.put(stateObject);
+		});
+		data.put("states", states);
+
+		JSONArray transitions = new JSONArray();
+		for (Transition transition : dialogueViewModel.getTransitions()) {
+			JSONObject transitionObject = new JSONObject();
+			transitionObject.put("source", transition.getSource().getName());
+			transitionObject.put("target", transition.getTarget().getName());
+			transitionObject.put("trigger", transition.getTriggerTextField().getText());
+			transitions.put(transitionObject);
+		}
+		data.put("transitions", transitions);
+		return data;
+	}
+
+	public static void resetGUIData() {
+		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
+			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
+			storableGuiData.resetData();
+
+		}
 	}
 
 	private static JSONObject getToSavedData() {

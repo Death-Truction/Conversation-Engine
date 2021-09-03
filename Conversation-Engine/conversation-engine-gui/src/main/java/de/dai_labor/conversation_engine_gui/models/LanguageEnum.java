@@ -15,4 +15,10 @@ public enum LanguageEnum {
 	public Locale getLocale() {
 		return this.locale;
 	}
+
+	@Override
+	public String toString() {
+		// Capitalize first letter, lower case everything else
+		return this.name().substring(0, 1).toUpperCase() + this.name().substring(1).toLowerCase();
+	}
 }

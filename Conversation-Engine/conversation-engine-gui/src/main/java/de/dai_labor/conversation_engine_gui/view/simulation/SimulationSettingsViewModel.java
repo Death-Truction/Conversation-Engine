@@ -43,12 +43,12 @@ public class SimulationSettingsViewModel implements ViewModel, IStorableGuiData 
 	private ObservableList<String> availableLanguages = FXCollections.observableArrayList();
 	private Settings settings;
 	private boolean dataHasChanged = false;
-	private static final String DEFAULT_LANGUAGE = LanguageEnum.GERMAN.name();
+	private static final String DEFAULT_LANGUAGE = LanguageEnum.GERMAN.toString();
 
 	public SimulationSettingsViewModel(Settings settings) {
 		this.settings = settings;
 		for (LanguageEnum language : LanguageEnum.values()) {
-			this.availableLanguages.add(language.name());
+			this.availableLanguages.add(language.toString());
 		}
 		this.selectedLanguageProperty.set(DEFAULT_LANGUAGE);
 		this.addChangedListener(this.selectedLanguageProperty, this.conversationInputProperty,

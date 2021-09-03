@@ -25,7 +25,7 @@ class Logging {
 	 * @param message the message to be logged
 	 */
 	static void userInput(String message) {
-		conversationLogger.info("Input:  {}", message);
+		conversationLogger.info("Input: {}", message);
 	}
 
 	/**

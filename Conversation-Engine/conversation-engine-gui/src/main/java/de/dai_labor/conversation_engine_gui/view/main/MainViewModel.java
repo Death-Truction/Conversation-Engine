@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainViewModel implements ViewModel {
 
@@ -53,9 +54,7 @@ public class MainViewModel implements ViewModel {
 	public void newFile(ActionEvent event) {
 		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
 			App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
-			App.easyDI.getInstance(DialogueViewModel.class).resetData();
-			App.easyDI.getInstance(DialogueDataViewModel.class).resetData();
-			App.easyDI.getInstance(SimulationSettingsViewModel.class).resetData();
+			Util.resetGUIData();
 		}
 	}
 
@@ -74,7 +73,8 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void exportFile(ActionEvent event) {
-
+		String exportData = Util.getSkillStateMachineData().toString();
+		String filePath = Util.fileChooser(false, new ExtensionFilter("JSON-Files", "*.json"));
 	}
 
 	public void closeApplication(ActionEvent event) {

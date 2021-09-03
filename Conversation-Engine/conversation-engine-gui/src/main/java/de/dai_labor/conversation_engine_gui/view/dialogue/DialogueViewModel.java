@@ -187,15 +187,16 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 	}
 
 	public boolean transitionExists(State source, State target) {
-		if (source == target) {
-			return true;
-		}
+		return this.getTransition(source, target) != null;
+	}
+
+	public Transition getTransition(State source, State target) {
 		for (final Transition transition : this.transitions) {
 			if (transition.getSource().equals(source) && transition.getTarget().equals(target)) {
-				return true;
+				return transition;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	public List<Transition> getTransitions() {
@@ -256,6 +257,15 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 		this.setDiagramScale(scale);
 		return data;
 
+	}
+
+	public State getStateByName(String stateName) {
+		for (State state : this.states.values()) {
+			if (state.getName().equals(stateName)) {
+				return state;
+			}
+		}
+		return null;
 	}
 
 	private int getFirstEmptyStateId() {
@@ -329,14 +339,4 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 		this.dialogueElementsLayer.setScaleX(scale);
 		this.dialogueElementsLayer.setScaleY(scale);
 	}
-
-	private State getStateByName(String stateName) {
-		for (State state : this.states.values()) {
-			if (state.getName().equals(stateName)) {
-				return state;
-			}
-		}
-		return null;
-	}
-
 }

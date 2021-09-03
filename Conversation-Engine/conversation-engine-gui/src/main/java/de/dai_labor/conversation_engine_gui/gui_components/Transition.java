@@ -40,6 +40,14 @@ public class Transition extends StackPane {
 		return this.transition.getTriggerTextField();
 	}
 
+	public void select() {
+		this.transition.select();
+	}
+
+	public void deselect() {
+		this.transition.deselect();
+	}
+
 	@Override
 	public String toString() {
 		return this.source.getName() + " -> " + this.target.getName();

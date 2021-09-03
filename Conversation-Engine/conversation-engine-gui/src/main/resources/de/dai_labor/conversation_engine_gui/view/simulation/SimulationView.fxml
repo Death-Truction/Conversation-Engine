@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dai_labor.conversation_engine_gui.view.simulation.SimulationView">
    <children>
@@ -12,15 +17,49 @@
          <top>
             <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="50.0" prefWidth="350.0" spacing="8.0" style="-fx-background-color: LIGHTGRAY;" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" text="&lt;&lt;-" />
-                  <Button mnemonicParsing="false" text="&lt;-" />
-                  <Button mnemonicParsing="false" text="Play/Pause" />
-                  <Button mnemonicParsing="false" text="-&gt;" />
-                  <Button mnemonicParsing="false" text="-&gt;&gt;" />
-                  <TextField alignment="CENTER" prefHeight="25.0" prefWidth="58.0" promptText="Speed" />
+                  <Button fx:id="startButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="&lt;&lt;-" />
+                  <Button fx:id="stepBackButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="&lt;-" />
+                  <Button fx:id="playPauseButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Play" />
+                  <Button fx:id="stepForwardButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="-&gt;" />
+                  <Button fx:id="endButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="-&gt;&gt;" />
+                  <TextField fx:id="speedTextField" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="Speed" />
                </children>
             </HBox>
          </top>
+         <bottom>
+            <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Conversation">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                           <content>
+                              <VBox fx:id="conversationVBox" alignment="CENTER" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Logging">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                           <content>
+                              <VBox fx:id="loggingVBox" alignment="CENTER" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>

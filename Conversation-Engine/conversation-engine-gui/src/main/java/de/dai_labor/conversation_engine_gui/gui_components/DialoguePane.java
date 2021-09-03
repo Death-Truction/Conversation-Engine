@@ -1,5 +1,7 @@
 package de.dai_labor.conversation_engine_gui.gui_components;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -15,7 +17,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -74,16 +75,27 @@ public class DialoguePane extends Pane {
 		this.dialogueModelDataLayer.setTranslateY(0);
 		this.dialogueModelDataLayer.setLayoutX(0);
 		this.dialogueModelDataLayer.setLayoutY(0);
-		for (Node state : this.dialogueModelDataLayer.getChildren()) {
+		List<State> allStates = this.getAllStates();
+		for (State state : allStates) {
 			Bounds bounds = state.getBoundsInParent();
 			targetX += bounds.getCenterX();
 			targetY += bounds.getCenterY();
 		}
-		targetX /= this.dialogueModelDataLayer.getChildren().size();
-		targetY /= this.dialogueModelDataLayer.getChildren().size();
+		targetX /= allStates.size();
+		targetY /= allStates.size();
 		targetX = this.getWidth() / 2 + this.getScene().getWidth() / 2 - targetX;
 		targetY = this.getHeight() / 2 + this.getScene().getHeight() / 2 - targetY;
 		this.dialogueModelDataLayer.relocate(targetX, targetY);
+	}
+
+	private List<State> getAllStates() {
+		List<State> allStates = new ArrayList<>();
+		for (Node element : this.dialogueModelDataLayer.getChildren()) {
+			if (element instanceof State) {
+				allStates.add((State) element);
+			}
+		}
+		return allStates;
 	}
 
 	// filter all MouseEvent types
@@ -159,10 +171,10 @@ public class DialoguePane extends Pane {
 
 	private EventHandler<MouseEvent> mouseReleasedEventFilter = event -> {
 		this.dialogueModelDataLayer.getChildren().remove(this.dragArrow);
-		if (event.getButton() == MouseButton.SECONDARY) {
+		if (event.isSecondaryButtonDown()) {
 			this.setCursor(Cursor.DEFAULT);
 			event.consume();
-		} else if (event.getButton() == MouseButton.PRIMARY) {
+		} else if (event.isPrimaryButtonDown()) {
 			if (this.insertMode.get().equals("addState")) {
 				Double scale = this.dialogueModelDataLayer.getScaleX();
 				double x = (event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX()) / scale;
