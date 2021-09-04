@@ -8,13 +8,21 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import de.dai_labor.conversation_engine_core.conversation_engine.ConversationEngine;
 import de.dai_labor.conversation_engine_core.interfaces.INLPComponent;
 import de.dai_labor.conversation_engine_core.interfaces.ISkill;
 import de.dai_labor.conversation_engine_gui.gui_components.DialoguePane;
 import de.dai_labor.conversation_engine_gui.gui_components.State;
 import de.dai_labor.conversation_engine_gui.gui_components.Transition;
+import de.dai_labor.conversation_engine_gui.models.DebugColorEnum;
 import de.dai_labor.conversation_engine_gui.models.LanguageEnum;
+import de.dai_labor.conversation_engine_gui.models.MemoryLogger;
 import de.dai_labor.conversation_engine_gui.models.SimulationStep;
 import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
@@ -37,6 +45,7 @@ public class SimulationViewModel implements ViewModel {
 	private DialogueViewModel dialogueViewModel;
 	private List<SimulationStep> simulationSteps = new ArrayList<>();
 	private ObservableList<Node> conversationMessages;
+	private ObservableList<Node> loggingMessages;
 	private int simulationStepIndex = 0;
 	private double simulationSpeed;
 	private Timer timer = new Timer();
@@ -100,15 +109,17 @@ public class SimulationViewModel implements ViewModel {
 		}
 		this.simulationStepIndex--;
 		SimulationStep step = this.simulationSteps.get(this.simulationStepIndex);
-		step.getTarget().deselect();
-		step.getSource().select();
-		step.getTransition().deselect();
+		if (step.getSource() != null && step.getTarget() != null && step.getTransition() != null) {
+			step.getTarget().deselect();
+			step.getSource().select();
+			step.getTransition().deselect();
+		}
 		if (this.simulationStepIndex > 0) {
 			this.simulationSteps.get(this.simulationStepIndex - 1).getTransition().select();
 		}
-		int numOfRemovingMessages = step.getOutput().size() + 1; // +1 for input message
-		int newEndIndex = this.conversationMessages.size() - numOfRemovingMessages;
-		this.conversationMessages.remove(newEndIndex, this.conversationMessages.size());
+		this.removeConversationMessages(step);
+		this.removeLoggingMessages(step);
+
 	}
 
 	public void playPause() {
@@ -134,11 +145,14 @@ public class SimulationViewModel implements ViewModel {
 		}
 		SimulationStep step = this.simulationSteps.get(this.simulationStepIndex);
 		this.addConversationMessages(step);
-		step.getSource().deselect();
-		step.getTarget().select();
-		step.getTransition().select();
+		this.addLoggingMessages(step);
 		if (this.simulationStepIndex > 0) {
 			this.simulationSteps.get(this.simulationStepIndex - 1).getTransition().deselect();
+		}
+		if (step.getSource() != null && step.getTarget() != null && step.getTransition() != null) {
+			step.getSource().deselect();
+			step.getTarget().select();
+			step.getTransition().select();
 		}
 		this.simulationStepIndex++;
 	}
@@ -151,6 +165,11 @@ public class SimulationViewModel implements ViewModel {
 
 	public void setConversationVBoxChildren(ObservableList<Node> children) {
 		this.conversationMessages = children;
+
+	}
+
+	public void setLoggingVBoxChildren(ObservableList<Node> children) {
+		this.loggingMessages = children;
 
 	}
 
@@ -181,6 +200,13 @@ public class SimulationViewModel implements ViewModel {
 	}
 
 	private void simulateConversationEngineProcess(ConversationEngine ce, String[] inputs) {
+		Logger logger = (Logger) LoggerFactory.getLogger("DeveloperLogger");
+		MemoryLogger logs = new MemoryLogger();
+		logs.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
+		// TODO: set logging level based on settings
+		logger.setLevel(Level.ALL);
+		logger.addAppender(logs);
+		logs.start();
 		for (int i = 0; i < inputs.length; i++) {
 			String input = inputs[i];
 			State source;
@@ -197,7 +223,13 @@ public class SimulationViewModel implements ViewModel {
 				target = this.dialogueViewModel.getStateByName(ce.getState());
 			}
 			Transition transition = this.dialogueViewModel.getTransition(source, target);
-			this.simulationSteps.add(new SimulationStep(source, target, transition, input, outputs));
+			this.simulationSteps
+					.add(new SimulationStep(source, target, transition, input, outputs, logs.getMessagesCopy()));
+			// if any error occurred within the CE -> stop
+			if (logs.contains(Level.ERROR)) {
+				break;
+			}
+			logs.reset();
 		}
 	}
 
@@ -249,6 +281,29 @@ public class SimulationViewModel implements ViewModel {
 		for (String message : step.getOutput()) {
 			this.addConversationMessageToView(Pos.CENTER_LEFT, message);
 		}
+	}
+
+	private void removeConversationMessages(SimulationStep step) {
+		int numOfRemovingMessages = step.getOutput().size() + 1; // +1 for input message
+		int newEndIndex = this.conversationMessages.size() - numOfRemovingMessages;
+		this.conversationMessages.remove(newEndIndex, this.conversationMessages.size());
+	}
+
+	private void addLoggingMessages(SimulationStep step) {
+		for (ILoggingEvent event : step.getLoggingOutputs()) {
+			Label errorLevel = new Label(event.getLevel().levelStr);
+			errorLevel.setTextFill(DebugColorEnum.valueOf(event.getLevel().levelStr).getColor());
+			Label logMessage = new Label(" - " + event.getFormattedMessage());
+			HBox messageBox = new HBox(errorLevel, logMessage);
+			messageBox.setAlignment(Pos.CENTER_LEFT);
+			this.loggingMessages.add(messageBox);
+		}
+	}
+
+	private void removeLoggingMessages(SimulationStep step) {
+		int numOfRemovingMessages = step.getLoggingOutputs().size();
+		int newEndIndex = this.loggingMessages.size() - numOfRemovingMessages;
+		this.loggingMessages.remove(newEndIndex, this.loggingMessages.size());
 	}
 
 }

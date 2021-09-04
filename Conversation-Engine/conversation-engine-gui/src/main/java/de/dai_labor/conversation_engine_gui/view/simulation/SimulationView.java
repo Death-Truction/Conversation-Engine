@@ -52,6 +52,7 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 		this.stepForwardButton.setOnAction(event -> this.viewModel.stepForward());
 		this.endButton.setOnAction(event -> this.viewModel.toEnd());
 		this.viewModel.setConversationVBoxChildren(this.conversationVBox.getChildren());
+		this.viewModel.setLoggingVBoxChildren(this.loggingVBox.getChildren());
 	}
 
 	private void setDisablePropertyBindings() {
