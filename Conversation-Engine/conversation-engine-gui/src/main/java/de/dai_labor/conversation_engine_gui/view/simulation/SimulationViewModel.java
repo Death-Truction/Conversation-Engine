@@ -180,6 +180,8 @@ public class SimulationViewModel implements ViewModel {
 	public void unload() {
 		Pane dialogueElementsLayer = (Pane) this.dialogueView.getChildren().get(0);
 		dialogueElementsLayer.setDisable(false);
+		this.dialogueViewModel.getStates().forEach((index, state) -> state.deselect());
+		this.dialogueViewModel.getTransitions().stream().forEach(Transition::deselect);
 	}
 
 	private void closeRequest() {

@@ -192,7 +192,8 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 
 	public Transition getTransition(State source, State target) {
 		for (final Transition transition : this.transitions) {
-			if (transition.getSource().equals(source) && transition.getTarget().equals(target)) {
+			if (transition.getSource().equals(source) && transition.getTarget().equals(target)
+					|| transition.getSource().equals(target) && transition.getTarget().equals(source)) {
 				return transition;
 			}
 		}

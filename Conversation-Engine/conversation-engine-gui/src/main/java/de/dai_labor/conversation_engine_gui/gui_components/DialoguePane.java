@@ -17,6 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -39,6 +40,7 @@ public class DialoguePane extends Pane {
 	private SimpleObjectProperty<State> selectedState;
 	private SimpleObjectProperty<Transition> selectedTransition;
 	private Arrow dragArrow;
+	private boolean mouseIsPressed = false;
 
 	public DialoguePane(Pane dialogueModelDataLayer, SimpleStringProperty insertMode,
 			SimpleObjectProperty<State> selectedState, SimpleObjectProperty<Transition> selectedTransition,
@@ -122,11 +124,11 @@ public class DialoguePane extends Pane {
 	};
 
 	private EventHandler<MouseEvent> mousePressedEventFilter = event -> {
-		if (event.isPrimaryButtonDown()) {
-			this.requestFocus();
-			this.unselectAll();
-		}
+		this.mouseIsPressed = true;
+		this.requestFocus();
+		this.unselectAll();
 		if (event.isSecondaryButtonDown()) {
+			this.setCursor(Cursor.MOVE);
 			this.dragElementData.mouseX = event.getScreenX();
 			this.dragElementData.mouseY = event.getScreenY();
 			this.dragElementData.translateX = this.dialogueModelDataLayer.getTranslateX();
@@ -143,7 +145,6 @@ public class DialoguePane extends Pane {
 
 	private EventHandler<MouseEvent> mouseDraggedEventFilter = event -> {
 		if (event.isSecondaryButtonDown()) {
-			this.setCursor(Cursor.MOVE);
 			double scale = 1.0;
 			double xDifference = (event.getScreenX() - this.dragElementData.mouseX) / scale
 					+ this.dragElementData.translateX;
@@ -156,12 +157,17 @@ public class DialoguePane extends Pane {
 		} else if (this.insertMode.get().equals("addTransition")) {
 			if (this.sourceTransitionState != null) {
 				this.dialogueModelDataLayer.getChildren().remove(this.dragArrow);
-				Double scale = this.dialogueModelDataLayer.getScaleX();
-				StackPane tmpPane = new StackPane();
-				tmpPane.setTranslateX(event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX());
-				tmpPane.setTranslateY(event.getY() - this.dialogueModelDataLayer.getBoundsInParent().getMinY());
-				this.dragArrow = new Arrow(this.sourceTransitionState, tmpPane,
-						this.dialogueModelDataLayer.getScaleX());
+				if (event.getPickResult().getIntersectedNode() == this.sourceTransitionState) {
+					this.dragArrow = new Arrow(this.sourceTransitionState, this.sourceTransitionState,
+							this.dialogueModelDataLayer.getScaleX());
+				} else {
+					Double scale = this.dialogueModelDataLayer.getScaleX();
+					StackPane tmpPane = new StackPane();
+					tmpPane.setTranslateX(event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX());
+					tmpPane.setTranslateY(event.getY() - this.dialogueModelDataLayer.getBoundsInParent().getMinY());
+					this.dragArrow = new Arrow(this.sourceTransitionState, tmpPane,
+							this.dialogueModelDataLayer.getScaleX());
+				}
 				this.dragArrow.setMouseTransparent(true);
 				this.dialogueModelDataLayer.getChildren().add(this.dragArrow);
 			}
@@ -171,10 +177,10 @@ public class DialoguePane extends Pane {
 
 	private EventHandler<MouseEvent> mouseReleasedEventFilter = event -> {
 		this.dialogueModelDataLayer.getChildren().remove(this.dragArrow);
-		if (event.isSecondaryButtonDown()) {
+		if (event.getButton() == MouseButton.SECONDARY) {
 			this.setCursor(Cursor.DEFAULT);
 			event.consume();
-		} else if (event.isPrimaryButtonDown()) {
+		} else if (event.getButton() == MouseButton.PRIMARY) {
 			if (this.insertMode.get().equals("addState")) {
 				Double scale = this.dialogueModelDataLayer.getScaleX();
 				double x = (event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX()) / scale;
@@ -189,11 +195,15 @@ public class DialoguePane extends Pane {
 				event.consume();
 			}
 		}
+		this.mouseIsPressed = false;
 	};
 
 	// SOURCE:
 	// https://stackoverflow.com/questions/29506156/javafx-8-zooming-relative-to-mouse-pointer/29530135#29530135
 	private EventHandler<ScrollEvent> mouseScrollEventFilter = event -> {
+		if (this.mouseIsPressed) {
+			return;
+		}
 		double zoomFactor = 1.2;
 
 		double scale = this.dialogueModelDataLayer.scaleXProperty().get();

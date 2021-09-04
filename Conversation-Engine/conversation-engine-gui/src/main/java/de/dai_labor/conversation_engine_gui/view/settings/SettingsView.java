@@ -42,25 +42,56 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable 
 	public void initialize(URL location, ResourceBundle resources) {
 		// Converters
 		StringConverter<? extends Number> converter = new IntegerStringConverter();
-		this.stateSize.setTextFormatter(TextFormatters.getIntegerTextFormatter(10, 200));
+
+		this.stateSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
 		this.stateSize.textProperty().bindBidirectional(this.viewModel.getStateSizeProperty(),
 				(StringConverter<Number>) converter);
-		this.stateFontSize.setTextFormatter(TextFormatters.getIntegerTextFormatter(0, 72));
+		this.addinputBoundsValidator(10, 200, this.stateSize);
+
+		this.stateFontSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
 		this.stateFontSize.textProperty().bindBidirectional(this.viewModel.getStateFontSizeProperty(),
 				(StringConverter<Number>) converter);
+		this.addinputBoundsValidator(8, 72, this.stateFontSize);
+
 		this.stateFontColor.valueProperty().bindBidirectional(this.viewModel.getStateFontColorProperty());
+
 		this.stateNormalColor.valueProperty().bindBidirectional(this.viewModel.getStateNormalColorProperty());
+
 		this.stateSelectedColor.valueProperty().bindBidirectional(this.viewModel.getStateSelectedColorProperty());
-		this.transitionSize.setTextFormatter(TextFormatters.getIntegerTextFormatter(0, 25));
+
+		this.transitionSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
 		this.transitionSize.textProperty().bindBidirectional(this.viewModel.getTransitionSizeProperty(),
 				(StringConverter<Number>) converter);
-		this.transitionFontSize.setTextFormatter(TextFormatters.getIntegerTextFormatter(0, 72));
+		this.addinputBoundsValidator(2, 30, this.transitionSize);
+
+		this.transitionFontSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());
 		this.transitionFontSize.textProperty().bindBidirectional(this.viewModel.getTransitionFontSizeProperty(),
 				(StringConverter<Number>) converter);
+		this.addinputBoundsValidator(8, 72, this.transitionFontSize);
+
 		this.transitionFontColor.valueProperty().bindBidirectional(this.viewModel.getTransitionFontColorProperty());
+
 		this.transitionNormalColor.valueProperty().bindBidirectional(this.viewModel.getTransitionNormalColorProperty());
+
 		this.transitionSelectedColor.valueProperty()
 				.bindBidirectional(this.viewModel.getTransitionSelectedColorProperty());
+	}
+
+	private void addinputBoundsValidator(int minValue, int maxValue, TextField textField) {
+		textField.focusedProperty().addListener(change -> {
+			if (!textField.isFocused()) {
+				String text = textField.getText();
+				if (text == null || text.isBlank()) {
+					textField.setText("" + minValue);
+				}
+				Double value = Double.parseDouble(textField.getText());
+				if (value < minValue) {
+					textField.setText("" + minValue);
+				} else if (value > maxValue) {
+					textField.setText("" + maxValue);
+				}
+			}
+		});
 	}
 
 }

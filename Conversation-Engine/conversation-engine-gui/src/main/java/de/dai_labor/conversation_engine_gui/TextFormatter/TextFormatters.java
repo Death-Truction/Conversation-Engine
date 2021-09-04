@@ -4,20 +4,16 @@ import javafx.scene.control.TextFormatter;
 
 public class TextFormatters {
 
-	public static TextFormatter<Integer> getIntegerTextFormatter(int minValue, int maxValue) {
+	public static TextFormatter<Integer> getPositiveIntegerTextFormatter() {
 		return new TextFormatter<>(c -> {
-			if (c.getControlNewText().isEmpty()) {
+			if (c.getControlNewText().isEmpty() || c.isDeleted()) {
 				return c;
 			}
 
 			try {
 				final int value = Integer.parseInt(c.getControlNewText());
-				if (value < minValue) {
-					c.setRange(0, c.getControlText().length());
-					c.setText("" + minValue);
-				} else if (value > maxValue) {
-					c.setRange(0, c.getControlText().length());
-					c.setText("" + maxValue);
+				if (value < 0) {
+					return null;
 				}
 			} catch (final NumberFormatException nfe) {
 				return null;
@@ -26,7 +22,7 @@ public class TextFormatters {
 		});
 	}
 
-	public static TextFormatter<Double> getDoubleTextFormatter(double minValue, double maxValue) {
+	public static TextFormatter<Double> getDoubleTextFormatter() {
 		return new TextFormatter<>(c -> {
 			if (c.getControlNewText().isEmpty()) {
 				return c;
@@ -34,12 +30,8 @@ public class TextFormatters {
 
 			try {
 				final double value = Double.parseDouble(c.getControlNewText());
-				if (value < minValue) {
-					c.setRange(0, c.getControlText().length());
-					c.setText("" + minValue);
-				} else if (value > maxValue) {
-					c.setRange(0, c.getControlText().length());
-					c.setText("" + maxValue);
+				if (value < 0) {
+					return null;
 				}
 			} catch (final NumberFormatException nfe) {
 				return null;

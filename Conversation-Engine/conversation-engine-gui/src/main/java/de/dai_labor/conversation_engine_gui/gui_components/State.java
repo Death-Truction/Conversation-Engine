@@ -100,7 +100,6 @@ public class State extends StackPane {
 		this.addDynamicEventListeners();
 		this.addDraggingEventHandlers();
 		this.relocate(x, y);
-		this.setFocusTraversable(true);
 		if (requestFocus) {
 			this.initFocusRequest();
 			this.selectedState.set(this);

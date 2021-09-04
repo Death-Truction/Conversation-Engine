@@ -43,7 +43,7 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 		this.mainView.getChildren().add(view);
 		view.toBack();
 		this.setDisablePropertyBindings();
-		this.speedTextField.setTextFormatter(TextFormatters.getDoubleTextFormatter(0.1, 10.0));
+		this.speedTextField.setTextFormatter(TextFormatters.getDoubleTextFormatter());
 		this.speedTextField.textProperty().bindBidirectional(this.viewModel.getSimulationSpeedProperty());
 		this.playPauseButton.textProperty().bindBidirectional(this.viewModel.getPlayPauseButtonTextProperty());
 		this.startButton.setOnAction(event -> this.viewModel.toStart());
