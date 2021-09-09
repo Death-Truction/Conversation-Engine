@@ -40,7 +40,6 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// Converters
 		StringConverter<? extends Number> converter = new IntegerStringConverter();
 
 		this.stateSize.setTextFormatter(TextFormatters.getPositiveIntegerTextFormatter());

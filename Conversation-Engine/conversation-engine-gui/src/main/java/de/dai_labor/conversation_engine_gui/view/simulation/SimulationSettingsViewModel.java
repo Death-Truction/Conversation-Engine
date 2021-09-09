@@ -258,7 +258,7 @@ public class SimulationSettingsViewModel implements ViewModel, IStorableGuiData 
 		Set<Class<?>> classNames = null;
 		try {
 			classNames = Util.getClassesFromJarFile(jarFile);
-		} catch (ClassNotFoundException | NoClassDefFoundError | IOException e) {
+		} catch (IOException e) {
 			Util.showError(MessageFormat.format("Error loading Jar File {0}", jarFile.getAbsoluteFile()),
 					e.getLocalizedMessage());
 			e.printStackTrace();

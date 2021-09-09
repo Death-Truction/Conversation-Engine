@@ -20,24 +20,42 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 
+/**
+ * The State class represents a State visually
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class State extends StackPane {
 
 	private final Circle stateShape;
 	private Arc specialStartShape;
 	private StackPane specialEndShape;
 	private TextArea nameTextArea = null;
-	private final DragElementData dragElementData = new DragElementData();
+	private DragElementData dragElementData;
 	private final int stateID;
 	private final Settings settings;
 	private SimpleObjectProperty<State> selectedState;
 
-	private final EventHandler<KeyEvent> labelKeyEvent = event -> {
+	/**
+	 * EventHandler that handles the key released event.
+	 *
+	 * It removes the focus of the {@link State}'s {@link #nameTextArea}
+	 */
+	private final EventHandler<KeyEvent> keyReleasedEventHandler = event -> {
 		if (event.getCode().equals(KeyCode.ENTER)) {
 			this.requestFocus();
 			event.consume();
 		}
 	};
 
+	/**
+	 * EventHandler that handles the mouse pressed event.
+	 *
+	 * It visually selects this {@link State} and focuses the {@link #nameTextArea}
+	 * on a double click. It also saves the required variables for the
+	 * {@link #mouseDraggedEventHandler mouse dragging event}
+	 */
 	private final EventHandler<MouseEvent> mousePressedEventHandler = event -> {
 		if (!event.isPrimaryButtonDown()) {
 			return;
@@ -48,28 +66,37 @@ public class State extends StackPane {
 			this.focusLabel();
 			event.consume();
 		}
-		this.dragElementData.mouseX = event.getScreenX();
-		this.dragElementData.mouseY = event.getScreenY();
-		this.dragElementData.translateX = this.getTranslateX();
-		this.dragElementData.translateY = this.getTranslateY();
+		this.dragElementData = new DragElementData(event.getScreenX(), event.getScreenY(), this.getTranslateX(),
+				this.getTranslateY());
 		event.consume();
 	};
 
+	/**
+	 * EventHandler that handles the mouse dragged event.
+	 *
+	 * It calculates the new Position of the {@link State} to enable a dragging
+	 * feature
+	 */
 	private final EventHandler<MouseEvent> mouseDraggedEventHandler = event -> {
 		if (!event.isPrimaryButtonDown()) {
 			return;
 		}
 		this.setCursor(Cursor.MOVE);
 		final double scale = this.getParent().getScaleX();
-		final double xDifference = (event.getScreenX() - this.dragElementData.mouseX) / scale
-				+ this.dragElementData.translateX;
-		final double yDifference = (event.getScreenY() - this.dragElementData.mouseY) / scale
-				+ this.dragElementData.translateY;
+		final double xDifference = (event.getScreenX() - this.dragElementData.getMouseX()) / scale
+				+ this.dragElementData.getTranslateX();
+		final double yDifference = (event.getScreenY() - this.dragElementData.getMouseY()) / scale
+				+ this.dragElementData.getTranslateY();
 		this.setTranslateX(xDifference);
 		this.setTranslateY(yDifference);
 		event.consume();
 	};
 
+	/**
+	 * EventHandler that handles the mouse released event.
+	 *
+	 * It resets the mouse cursor
+	 */
 	private final EventHandler<MouseEvent> mouseReleasedEventHandler = event -> {
 		if (!event.isStillSincePress()) {
 			this.setCursor(Cursor.DEFAULT);
@@ -77,12 +104,31 @@ public class State extends StackPane {
 		event.consume();
 	};
 
+	/**
+	 * Creates a new {@link State}
+	 *
+	 * @param stateID       The ID of the {@link State}
+	 * @param name          The name of the {@link State}
+	 * @param x             The x-coordinate of the new {@link State}
+	 * @param y             The y-coordinate of the new {@link State}
+	 * @param settings      The Instance of the Settings object
+	 * @param selectedState The {@link SimpleObjectProperty} of the currently
+	 *                      selected {@link State}
+	 * @param requestFocus  Whether the new {@link State} should be selected after
+	 *                      creating it
+	 */
 	public State(int stateID, String name, double x, double y, Settings settings,
 			SimpleObjectProperty<State> selectedState, boolean requestFocus) {
 		this.settings = settings;
 		this.stateID = stateID;
 		this.selectedState = selectedState;
-		this.selectedState.addListener((observable, oldVal, newVal) -> this.selectStatus(newVal));
+		this.selectedState.addListener((observable, oldVal, newVal) -> {
+			if (newVal != null && newVal.equals(this)) {
+				this.setSelectedProperties();
+			} else {
+				this.removeSelectedProperties();
+			}
+		});
 		int stateSize = settings.getStateSizeProperty().get();
 		int stateFontSize = settings.getStateFontSizeProperty().get();
 		Color stateFontColor = settings.getStateFontColorProperty().get();
@@ -106,46 +152,67 @@ public class State extends StackPane {
 		}
 	}
 
-	public void selectStatus(State newVal) {
-		if (newVal != null && newVal.equals(this)) {
-			this.stateShape.fillProperty().bind(this.settings.getStateSelectedColorProperty());
-		} else {
-			this.nameTextArea.deselect();
-			this.requestFocus();
-			this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
-		}
-	}
-
+	/**
+	 * Selects this {@link State}
+	 */
 	public void select() {
-		this.selectStatus(this);
+		this.selectedState.set(this);
 	}
 
+	/**
+	 * Deselects this {@link State}
+	 */
 	public void deselect() {
-		this.selectStatus(null);
+		this.selectedState.set(this);
 	}
 
+	/**
+	 * Gets the TextArea of the {@link State} that displays the {@link State}'s name
+	 *
+	 * @return the TextArea of the {@link State} that displays the {@link State}'s
+	 *         name
+	 */
 	public TextArea getTextArea() {
 		return this.nameTextArea;
 	}
 
+	/**
+	 * Gets the name of the {@link State}
+	 *
+	 * @return the name of the {@link State}
+	 */
 	public String getName() {
 		return this.nameTextArea.getText();
 	}
 
+	/**
+	 * Gets the ID of the {@link State}
+	 *
+	 * @return the ID of the {@link State}
+	 */
 	public int getStateId() {
 		return this.stateID;
 	}
 
+	/**
+	 * Sets this {@link State} to be the start state
+	 */
 	public void setStartState() {
 		this.specialEndShape.setVisible(false);
 		this.specialStartShape.setVisible(true);
 	}
 
+	/**
+	 * Sets this {@link State} to be the end state
+	 */
 	public void setEndState() {
 		this.specialStartShape.setVisible(false);
 		this.specialEndShape.setVisible(true);
 	}
 
+	/**
+	 * Sets this {@link State} to be a normal state
+	 */
 	public void setNormalState() {
 		this.specialStartShape.setVisible(false);
 		this.specialEndShape.setVisible(false);
@@ -156,11 +223,35 @@ public class State extends StackPane {
 		return this.getName();
 	}
 
+	/**
+	 * Changes the color of the {@link State} to the defined
+	 * {@link Settings#getStateSelectedColorProperty() Color}
+	 */
+	private void setSelectedProperties() {
+		this.stateShape.fillProperty().bind(this.settings.getStateSelectedColorProperty());
+	}
+
+	/**
+	 * Removes the {@link #setSelectedProperties() selected properties} of this
+	 * {@link State} and removes the focus of the {@link #nameTextArea}
+	 */
+	private void removeSelectedProperties() {
+		this.nameTextArea.deselect();
+		this.requestFocus();
+		this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
+	}
+
+	/**
+	 * Focuses the {@link #nameTextArea}
+	 */
 	private void focusLabel() {
 		this.nameTextArea.requestFocus();
 		this.nameTextArea.selectAll();
 	}
 
+	/**
+	 * Focuses this {@link State} if it is still the selected State in the next tick
+	 */
 	private void initFocusRequest() {
 		Platform.runLater(() -> {
 			if (this.selectedState.get().equals(this)) {
@@ -169,6 +260,10 @@ public class State extends StackPane {
 		});
 	}
 
+	/**
+	 * Adds the Properties to the {@link State} elements, defined inside the
+	 * {@link Settings}
+	 */
 	private void addDynamicEventListeners() {
 		this.stateShape.fillProperty().bind(this.settings.getStateNormalColorProperty());
 		this.nameTextArea.maxHeightProperty().bind(this.settings.getStateSizeProperty().multiply(2));
@@ -183,18 +278,29 @@ public class State extends StackPane {
 
 	}
 
+	/**
+	 * Adds the EventHanlders for the user input events
+	 */
 	private void addDraggingEventHandlers() {
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this.mouseDraggedEventHandler);
 		this.addEventHandler(MouseEvent.MOUSE_RELEASED, this.mouseReleasedEventHandler);
-		this.nameTextArea.addEventHandler(KeyEvent.KEY_PRESSED, this.labelKeyEvent);
+		this.nameTextArea.addEventHandler(KeyEvent.KEY_RELEASED, this.keyReleasedEventHandler);
 	}
 
+	/**
+	 * Creates the start and end Shapes for the {@link State} that are shown, when
+	 * the state will be set as the start/end state
+	 */
 	private void createSpecialShapes() {
 		this.createSpecialStartShape();
 		this.createSpecialEndShape();
 	}
 
+	/**
+	 * Creates an {@link Arc} to visually display the {@link State} as the start
+	 * state
+	 */
 	private void createSpecialStartShape() {
 		this.specialStartShape = new Arc(0, 0, 0, 0, 0, 360);
 		this.specialStartShape.radiusXProperty().bind(
@@ -215,6 +321,10 @@ public class State extends StackPane {
 		this.specialStartShape.setMouseTransparent(true);
 	}
 
+	/**
+	 * Creates a cross with two {@link Line Lines} to visually display the
+	 * {@link State} as the end state
+	 */
 	private void createSpecialEndShape() {
 		Line line1 = new Line();
 		line1.setStroke(Color.WHITE);

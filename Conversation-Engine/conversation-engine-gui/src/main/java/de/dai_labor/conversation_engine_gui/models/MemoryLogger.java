@@ -15,14 +15,29 @@ import ch.qos.logback.core.read.ListAppender;
  */
 public class MemoryLogger extends ListAppender<ILoggingEvent> {
 
+	/**
+	 * Resets the logging list
+	 */
 	public void reset() {
 		this.list.clear();
 	}
 
+	/**
+	 * Gets a copy of the current logging list
+	 *
+	 * @return a copy of the current logging list
+	 */
 	public List<ILoggingEvent> getMessagesCopy() {
 		return new ArrayList<>(this.list);
 	}
 
+	/**
+	 * Checks whether the logging list contains a logged message of the given
+	 * logging level or not
+	 *
+	 * @param level The logging level to check
+	 * @return true if the list contains a message with the given logging level
+	 */
 	public boolean contains(Level level) {
 		for (ILoggingEvent event : this.list) {
 			if (event.getLevel().equals(level)) {

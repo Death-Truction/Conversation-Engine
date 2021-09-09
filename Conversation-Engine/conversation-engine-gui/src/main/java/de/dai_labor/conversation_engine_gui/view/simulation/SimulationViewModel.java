@@ -292,7 +292,7 @@ public class SimulationViewModel implements ViewModel {
 	}
 
 	private void addLoggingMessages(SimulationStep step) {
-		for (ILoggingEvent event : step.getLoggingOutputs()) {
+		for (ILoggingEvent event : step.getLoggingOutput()) {
 			Label errorLevel = new Label(event.getLevel().levelStr);
 			errorLevel.setTextFill(DebugColorEnum.valueOf(event.getLevel().levelStr).getColor());
 			Label logMessage = new Label(" - " + event.getFormattedMessage());
@@ -303,7 +303,7 @@ public class SimulationViewModel implements ViewModel {
 	}
 
 	private void removeLoggingMessages(SimulationStep step) {
-		int numOfRemovingMessages = step.getLoggingOutputs().size();
+		int numOfRemovingMessages = step.getLoggingOutput().size();
 		int newEndIndex = this.loggingMessages.size() - numOfRemovingMessages;
 		this.loggingMessages.remove(newEndIndex, this.loggingMessages.size());
 	}

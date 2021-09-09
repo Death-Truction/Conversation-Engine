@@ -19,9 +19,21 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+/**
+ * The GUI Application entry point class
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class App extends Application {
 
-	public static EasyDI easyDI = new EasyDI();
+	/**
+	 * the global {@link EasyDI} dependency injection object
+	 */
+	public static final EasyDI easyDI = new EasyDI();
+	/**
+	 * the main {@link Stage} of the application
+	 */
 	public static Stage mainStage;
 
 	@Override
@@ -43,8 +55,13 @@ public class App extends Application {
 		stage.show();
 	}
 
+	/**
+	 * {@link EventHandler} for the onCloseRequest event <br>
+	 * It checks for unsaved changes and prompts the user to save or discard them
+	 * The close request will be canceled if the user cancels the saving progress
+	 */
 	private final EventHandler<WindowEvent> saveBeforeExitConfirmationEventHandler = event -> {
-		if (Util.saveGUIDataToFile(true, false, false) == SaveStateEnum.CANCEL) {
+		if (Util.saveGUIDataToFile(true, false) == SaveStateEnum.CANCEL) {
 			event.consume();
 		}
 		easyDI.getInstance(Settings.class).savePrefs();

@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -39,11 +40,9 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Node view = this.viewModel.getDialoguePane();
-		this.mainView.getChildren().add(view);
-		view.toBack();
+		TextFormatter<Double> positiveDoubleTextFormatter = TextFormatters.getPositiveDoubleTextFormatter();
 		this.setDisablePropertyBindings();
-		this.speedTextField.setTextFormatter(TextFormatters.getDoubleTextFormatter());
+		this.speedTextField.setTextFormatter(positiveDoubleTextFormatter);
 		this.speedTextField.textProperty().bindBidirectional(this.viewModel.getSimulationSpeedProperty());
 		this.playPauseButton.textProperty().bindBidirectional(this.viewModel.getPlayPauseButtonTextProperty());
 		this.startButton.setOnAction(event -> this.viewModel.toStart());
@@ -53,6 +52,9 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 		this.endButton.setOnAction(event -> this.viewModel.toEnd());
 		this.viewModel.setConversationVBoxChildren(this.conversationVBox.getChildren());
 		this.viewModel.setLoggingVBoxChildren(this.loggingVBox.getChildren());
+		Node view = this.viewModel.getDialoguePane();
+		this.mainView.getChildren().add(view);
+		view.toBack();
 	}
 
 	private void setDisablePropertyBindings() {

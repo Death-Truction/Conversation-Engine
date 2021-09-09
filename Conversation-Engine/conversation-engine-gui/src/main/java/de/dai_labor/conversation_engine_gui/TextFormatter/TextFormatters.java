@@ -2,8 +2,19 @@ package de.dai_labor.conversation_engine_gui.TextFormatter;
 
 import javafx.scene.control.TextFormatter;
 
+/**
+ * Static class to create new {@link TextFormatter Textformatters}
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class TextFormatters {
 
+	/**
+	 * Gets a new TextFormatter that only allows positive {@link Integer} values
+	 *
+	 * @return a new TextFormatter that only allows positive {@link Integer} values
+	 */
 	public static TextFormatter<Integer> getPositiveIntegerTextFormatter() {
 		return new TextFormatter<>(c -> {
 			if (c.getControlNewText().isEmpty() || c.isDeleted()) {
@@ -22,7 +33,13 @@ public class TextFormatters {
 		});
 	}
 
-	public static TextFormatter<Double> getDoubleTextFormatter() {
+	/**
+	 * Gets a new TextFormatter that only allows positive {@link Double} values
+	 *
+	 * @return a new TextFormatter that only allows positive {@link Double} values
+	 */
+
+	public static TextFormatter<Double> getPositiveDoubleTextFormatter() {
 		return new TextFormatter<>(c -> {
 			if (c.getControlNewText().isEmpty()) {
 				return c;

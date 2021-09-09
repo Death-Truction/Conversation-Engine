@@ -7,6 +7,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -18,78 +19,119 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 
-//Source:
-// https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201
-public class Arrow extends Pane {
-	double sceneX, sceneY, layoutX, layoutY;
+/**
+ * A Pane that displays the {@link Transition} between two {@link State States}
+ * or a self {@link Transition} to the same {@link State} as an arrow
+ *
+ * @author Marcel Engelmann
+ *
+ */
+public class TransitionArrow extends Pane {
 	private TextField triggerTextField;
-	private Line line;
-	private Arc arc;
-	private StackPane arrow;
-	private static final double DEFAULT_ARROW_SIZE = 12; // Arrow size
+	private Shape line;
+	private StackPane arrowHead;
 	private Runnable setSelectedTransition;
 	private Settings settings;
 
-	public Arrow(State source, State target, String triggerName, Runnable setSelectedTransition, Settings settings) {
+	/**
+	 * Event Handler for the mouse pressed event. Selects the this transition
+	 * visually and focuses the {@link #triggerTextField} on a double click
+	 */
+	private EventHandler<MouseEvent> mousePressedEventHandler = event -> {
+		if (event.isPrimaryButtonDown()) {
+			this.setSelectedTransition.run();
+			if (event.getClickCount() == 2) {
+				this.focusTriggerTextField();
+			}
+		}
+		event.consume();
+	};
+
+	/**
+	 * EventHanlder for the key released event. Removes the focus of the
+	 * {@link #triggerTextField} when the Enter key has been released.
+	 */
+	private EventHandler<KeyEvent> keyReleasedEventHandler = event -> {
+		if (event.getCode().equals(KeyCode.ENTER)) {
+			this.requestFocus();
+		}
+		event.consume();
+	};
+
+	/**
+	 * Create a new {@link TransitionArrow} object
+	 *
+	 * @param source                the source {@link State} of the arrow
+	 * @param target                the target {@link State} of the arrow
+	 * @param triggerName           the name of the trigger that will be displayed
+	 *                              on top of the center of the transition arrow
+	 * @param setSelectedTransition the runnable function, called to select this
+	 *                              arrow's {@link Transition}
+	 * @param settings              the instance of the {@link Settings} object
+	 */
+	public TransitionArrow(State source, State target, String triggerName, Runnable setSelectedTransition,
+			Settings settings) {
 		this.setSelectedTransition = setSelectedTransition;
 		this.settings = settings;
+		this.triggerTextField = new TextField(triggerName);
 		if (source == target) {
-			this.arc = this.getArc(source, 1.0);
-			this.triggerTextField = new TextField();
-			this.arrow = this.getArrow(this.arc);
-			this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-			this.triggerTextField = new TextField(triggerName);
-			this.setTextFieldProperties(this.arc);
-			this.getChildren().addAll(this.arc, this.arrow, this.triggerTextField);
+			this.createSelfTransition(source, 1.0);
 		} else {
-			this.line = this.getLine(source, target, 1.0);
-			this.arrow = this.getArrow(this.line, source, target);
-			this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-			this.triggerTextField = new TextField(triggerName);
-			this.setTextFieldProperties(this.line);
-			this.getChildren().addAll(this.line, this.arrow, this.triggerTextField);
+			this.createTransition(source, target, 1.0);
 		}
+		this.getChildren().addAll(this.line, this.arrowHead, this.triggerTextField);
 		this.addEventListeners();
 		this.addSettingsChangeListeners();
-		Platform.runLater(this::deselect);
 		this.setPickOnBounds(false);
 		// small hack to force recalculating the bindings for the arrow head (otherwise
 		// it only gets displayed correctly after any interaction with the transition
 		// arrow)
+		Platform.runLater(this::deselect);
 	}
 
-	// display temporally dragging arrow
-	public Arrow(State source, StackPane target, double scale) {
+	/**
+	 * And arrow to display a temporally transition for the dragging event
+	 *
+	 * @param source the source {@link State} of the arrow
+	 * @param target the target {@link State} of the arrow
+	 * @param scale  the current scale of the parent
+	 */
+	public TransitionArrow(State source, StackPane target, double scale) {
 		this.settings = App.easyDI.getInstance(Settings.class);
+		this.triggerTextField = new TextField();
 		if (source == target) {
-			this.arc = this.getArc(source, scale);
-			this.arrow = this.getArrow(this.arc);
-			this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-			this.getChildren().add(this.arc);
+			this.createSelfTransition(source, 1.0);
 		} else {
-			this.line = this.getLine(source, target, scale);
-			this.arrow = this.getArrow(this.line, source, target);
-			this.arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
-			this.getChildren().addAll(this.line, this.arrow);
+			this.createTransition(source, target, 1.0);
 		}
+		this.getChildren().addAll(this.line, this.arrowHead);
+		this.arrowHead.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
+
 		this.addSettingsChangeListeners();
 	}
 
+	/**
+	 * Gets the {@link TextField} for the trigger
+	 *
+	 * @return the {@link TextField} for the trigger
+	 */
 	public TextField getTriggerTextField() {
 		return this.triggerTextField;
 	}
 
+	/**
+	 * Visually selects this arrow by setting the Color to the
+	 * {@link Settings#getTransitionSelectedColorProperty() Transition's selected
+	 * color}
+	 */
 	public void select() {
-		if (this.line != null) {
-			this.line.strokeProperty().bind(this.settings.getTransitionSelectedColorProperty());
-		} else {
-			this.arc.strokeProperty().bind(this.settings.getTransitionSelectedColorProperty());
-		}
-		this.arrow.backgroundProperty()
+		this.line.strokeProperty().bind(this.settings.getTransitionSelectedColorProperty());
+		this.arrowHead.backgroundProperty()
 				.bind(Bindings.createObjectBinding(
 						() -> new Background(
 								new BackgroundFill(this.settings.getTransitionSelectedColorProperty().get(),
@@ -97,13 +139,13 @@ public class Arrow extends Pane {
 						this.settings.getTransitionSelectedColorProperty()));
 	}
 
+	/**
+	 * Visually deselects this arrow by setting the Color to the
+	 * {@link Settings#getTransitionNormalColorProperty() Transition's normal color}
+	 */
 	public void deselect() {
-		if (this.line != null) {
-			this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
-		} else {
-			this.arc.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
-		}
-		this.arrow.backgroundProperty()
+		this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
+		this.arrowHead.backgroundProperty()
 				.bind(Bindings
 						.createObjectBinding(
 								() -> new Background(
@@ -113,33 +155,35 @@ public class Arrow extends Pane {
 		this.triggerTextField.deselect();
 	}
 
+	/**
+	 * Selects the {@link Transition}'s {@link TextField} with the trigger name
+	 */
+	public void focusTriggerTextField() {
+		this.triggerTextField.requestFocus();
+		this.triggerTextField.selectAll();
+	}
+
+	/**
+	 * Adds all the Event Listeners for the {@link Arrow} instance
+	 */
 	private void addEventListeners() {
-		if (this.line != null) {
-			this.line.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
-		} else {
-			this.arc.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
-		}
-		this.arrow.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.line.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
+		this.arrowHead.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
 		this.triggerTextField.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
 		this.triggerTextField.addEventFilter(KeyEvent.KEY_RELEASED, this.keyReleasedEventHandler);
 	}
 
+	/**
+	 * Binds the {@link Arrow}'s elements to the defined settings. Therefore if the
+	 * settings change, the arrow's elements will do so as well
+	 */
 	private void addSettingsChangeListeners() {
-		if (this.line != null) {
-			this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
-			this.line.strokeWidthProperty()
-					.bind(Bindings.createDoubleBinding(
-							() -> (this.settings.getTransitionSizeProperty().get() <= 8 ? 1.0
-									: this.settings.getTransitionSizeProperty().get() / 8.0),
-							this.settings.getTransitionSizeProperty()));
-		} else {
-			this.arc.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
-			this.arc.strokeWidthProperty()
-					.bind(Bindings.createDoubleBinding(
-							() -> (this.settings.getTransitionSizeProperty().get() <= 8 ? 1.0
-									: this.settings.getTransitionSizeProperty().get() / 8.0),
-							this.settings.getTransitionSizeProperty()));
-		}
+		this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
+		this.line.strokeWidthProperty()
+				.bind(Bindings.createDoubleBinding(
+						() -> (this.settings.getTransitionSizeProperty().get() <= 8 ? 1.0
+								: this.settings.getTransitionSizeProperty().get() / 8.0),
+						this.settings.getTransitionSizeProperty()));
 		if (this.triggerTextField != null) {
 			this.triggerTextField.fontProperty()
 					.bind(Bindings.createObjectBinding(
@@ -150,56 +194,83 @@ public class Arrow extends Pane {
 							+ this.settings.getTransitionFontColorProperty().get().toString().replace("0x", "#"),
 					this.settings.getTransitionFontColorProperty()));
 		}
-		if (this.arrow != null) {
-			this.arrow.minHeightProperty().bind(this.settings.getTransitionSizeProperty());
-			this.arrow.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
-			this.arrow.maxHeightProperty().bind(this.settings.getTransitionSizeProperty());
-			this.arrow.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
+		if (this.arrowHead != null) {
+			this.arrowHead.minHeightProperty().bind(this.settings.getTransitionSizeProperty());
+			this.arrowHead.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
+			this.arrowHead.maxHeightProperty().bind(this.settings.getTransitionSizeProperty());
+			this.arrowHead.minWidthProperty().bind(this.settings.getTransitionSizeProperty());
 		}
-	}
-
-	private EventHandler<MouseEvent> mousePressedEventHandler = event -> {
-		if (event.isPrimaryButtonDown()) {
-			this.setSelectedTransition.run();
-			if (event.getClickCount() == 2) {
-				this.focusTriggerTextField();
-			}
-		}
-		event.consume();
-	};
-	private EventHandler<KeyEvent> keyReleasedEventHandler = event -> {
-		if (event.getCode().equals(KeyCode.ENTER)) {
-			this.requestFocus();
-		}
-		event.consume();
-	};
-
-	public void focusTriggerTextField() {
-		this.triggerTextField.requestFocus();
-		this.triggerTextField.selectAll();
 	}
 
 	/**
-	 * Builds a line between the provided start and end panes center point.
+	 * Sets this TransitionArrow to be a self transition. A self transition is a
+	 * transition where the source and target {@link State} is the same
+	 *
+	 * @param source the {@link State} for the self transition
+	 * @param scale  the current scale of the Parent Pane to adjust the new Element
+	 *               to that scale.
+	 */
+	private void createSelfTransition(StackPane source, double scale) {
+		Arc transitionLine = this.getArc(source, scale);
+		StackPane arrow = this.getArrow(transitionLine);
+		this.setTextFieldProperties(transitionLine);
+		this.line = transitionLine;
+		this.arrowHead = arrow;
+	}
+
+	/**
+	 * Sets this TransitionArrow to be a transition between two {@link State
+	 * states}.
+	 *
+	 * @param source the source of the transition
+	 * @param target the target of the transition
+	 * @param scale  the current scale of the Parent Pane to adjust the new Element
+	 *               to that scale.
+	 */
+	private void createTransition(StackPane source, StackPane target, double scale) {
+		Line transitionLine = this.getLine(source, target, scale);
+		StackPane arrow = this.getArrow(transitionLine, target);
+		this.setTextFieldProperties(transitionLine);
+		this.line = transitionLine;
+		this.arrowHead = arrow;
+	}
+
+	/**
+	 * Builds a {@link Line} between the provided start and end pane's center point.
+	 *
+	 * This method has been (partly) taken from this <a href=
+	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
 	 *
 	 * @param startDot Pane for considering start point
 	 * @param endDot   Pane for considering end point
-	 * @return Line joining the layout center points of the provided panes.
+	 * @param scale    the current scale of the {@link Parent}
+	 * @return the new created {@link Line}
 	 */
 	private Line getLine(StackPane startDot, StackPane endDot, double scale) {
-		final Line line = new Line();
-		line.startXProperty().bind(startDot.layoutXProperty().add(startDot.translateXProperty().divide(scale))
+		Line newLine = new Line();
+		newLine.startXProperty().bind(startDot.layoutXProperty().add(startDot.translateXProperty().divide(scale))
 				.add(startDot.widthProperty().divide(2)));
-		line.startYProperty().bind(startDot.layoutYProperty().add(startDot.translateYProperty().divide(scale))
+		newLine.startYProperty().bind(startDot.layoutYProperty().add(startDot.translateYProperty().divide(scale))
 				.add(startDot.heightProperty().divide(2)));
-		line.endXProperty().bind(endDot.layoutXProperty().add(endDot.translateXProperty().divide(scale))
+		newLine.endXProperty().bind(endDot.layoutXProperty().add(endDot.translateXProperty().divide(scale))
 				.add(endDot.widthProperty().divide(2)));
-		line.endYProperty().bind(endDot.layoutYProperty().add(endDot.translateYProperty().divide(scale))
+		newLine.endYProperty().bind(endDot.layoutYProperty().add(endDot.translateYProperty().divide(scale))
 				.add(endDot.heightProperty().divide(2)));
-		return line;
+		return newLine;
 	}
 
-	private Arc getArc(State element, double scale) {
+	/**
+	 * Builds an 270 degree long {@link Arc} from the center of the element
+	 *
+	 * This method has been (partly) taken from this <a href=
+	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
+	 *
+	 * @param startDot Pane for considering start point
+	 * @param endDot   Pane for considering end point
+	 * @param scale    the current scale of the {@link Parent}
+	 * @return the new created {@link Line}
+	 */
+	private Arc getArc(StackPane element, double scale) {
 		Arc donutArc = new Arc();
 		donutArc.setStartAngle(0);
 		donutArc.setLength(270);
@@ -218,25 +289,35 @@ public class Arrow extends Pane {
 		return donutArc;
 	}
 
+	/**
+	 * Builds an arrow head for the given {@link Arc}
+	 *
+	 * @param arc the {@link Arc} that requires the arrow head
+	 * @return an arrow head for the given {@link Arc}
+	 */
 	private StackPane getArrow(Arc arc) {
 		final StackPane arrow = new StackPane();
 		arrow.layoutXProperty().bind(arc.centerXProperty().subtract(arrow.widthProperty()));
 		arrow.layoutYProperty().bind(arc.centerYProperty().add(arc.radiusYProperty())
 				.subtract(arrow.heightProperty().divide(2)).add(arc.strokeWidthProperty().divide(2)));
+		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
 		return arrow;
 	}
 
 	/**
 	 * Builds an arrow on the provided line pointing towards the specified pane.
 	 *
+	 * This method has been (partly) taken from this <a href=
+	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
+	 *
 	 * @param toLineEnd Specifies whether the arrow to point towards end pane or
 	 *                  start pane.
-	 * @param line      Line joining the layout center points of the provided panes.
-	 * @param startDot  Pane which is considered as start point of line
-	 * @param endDot    Pane which is considered as end point of line
-	 * @return Arrow towards the specified pane.
+	 * @param line      The {@link Line} joining the layout center points of the
+	 *                  provided panes.
+	 * @param startDot  The {@link Pane} which is considered as start point of line
+	 * @param endDot    The {@link Pane} which is considered as end point of line
 	 */
-	private StackPane getArrow(Line line, StackPane startDot, StackPane endDot) {
+	private StackPane getArrow(Line line, StackPane endDot) {
 		final StackPane arrow = new StackPane();
 
 		// Determining the x point on the line which is at a certain distance.
@@ -280,15 +361,19 @@ public class Arrow extends Pane {
 			return angle;
 		}, line.startXProperty(), line.endXProperty(), line.startYProperty(), line.endYProperty());
 		arrow.rotateProperty().bind(endArrowAngle);
-
+		arrow.setStyle("-fx-shape: \"M0,-4L4,0L0,4Z\"");
 		return arrow;
 	}
 
 	/**
-	 * Builds a pane at the center of the provided line.
+	 * Places the {@link #triggerTextField} at the center of the arrow's
+	 * {@link Line}
 	 *
-	 * @param line Line on which the pane need to be set.
-	 * @return Pane located at the center of the provided line.
+	 * This method has been partly taken from this <a href=
+	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
+	 *
+	 * @param line The {@link Line} on which the {@link #triggerTextField} needs to
+	 *             be set.
 	 */
 	private void setTextFieldProperties(Line line) {
 		this.triggerTextField.getStyleClass().add("transitionTextField");
@@ -304,6 +389,12 @@ public class Arrow extends Pane {
 				.bind(line.startYProperty().add(lineYHalfLength.subtract(wgtSqrHalfHeight)));
 	}
 
+	/**
+	 * Places the {@link #triggerTextField} at the center of the arrow's {@link Arc}
+	 *
+	 * @param arc The {@link Arc} on which the {@link #triggerTextField} needs to be
+	 *            set.
+	 */
 	private void setTextFieldProperties(Arc arc) {
 		this.triggerTextField.getStyleClass().add("transitionTextField");
 

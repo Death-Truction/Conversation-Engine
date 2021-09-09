@@ -3,8 +3,21 @@ package de.dai_labor.conversation_engine_gui.models;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * An enum that maps a language name to a {@link Locale}
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public enum LanguageEnum {
-	GERMAN(new Locale("de", "DE")), ENGLISH(new Locale("en", "US"));
+	/**
+	 * The locale de_DE
+	 */
+	GERMAN(new Locale("de", "DE")),
+	/**
+	 * the locale en_US
+	 */
+	ENGLISH(new Locale("en", "US"));
 
 	private final Locale locale;
 
@@ -12,6 +25,11 @@ public enum LanguageEnum {
 		this.locale = Objects.requireNonNull(locale);
 	}
 
+	/**
+	 * Gets the Locale for this enum
+	 *
+	 * @return the Locale for this enum
+	 */
 	public Locale getLocale() {
 		return this.locale;
 	}

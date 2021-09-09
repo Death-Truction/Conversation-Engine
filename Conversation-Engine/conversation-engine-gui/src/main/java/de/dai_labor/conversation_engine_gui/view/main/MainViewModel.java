@@ -23,7 +23,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainViewModel implements ViewModel {
 
@@ -52,33 +51,32 @@ public class MainViewModel implements ViewModel {
 	}
 
 	public void newFile(ActionEvent event) {
-		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+		if (Util.saveGUIDataToFile(true, false) != SaveStateEnum.CANCEL) {
 			App.easyDI.getInstance(Settings.class).setLastOpenedFile("");
 			Util.resetGUIData();
 		}
 	}
 
 	public void openFile(ActionEvent event) {
-		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+		if (Util.saveGUIDataToFile(true, false) != SaveStateEnum.CANCEL) {
 			Util.loadGUIDataFromFile();
 		}
 	}
 
 	public void saveFile(ActionEvent event) {
-		Util.saveGUIDataToFile(false, false, true);
+		Util.saveGUIDataToFile(false, false);
 	}
 
 	public void saveAsFile(ActionEvent event) {
-		Util.saveGUIDataToFile(false, true, true);
+		Util.saveGUIDataToFile(false, true);
 	}
 
 	public void exportFile(ActionEvent event) {
-		String exportData = Util.getSkillStateMachineData().toString();
-		String filePath = Util.fileChooser(false, new ExtensionFilter("JSON-Files", "*.json"));
+		Util.exportData();
 	}
 
 	public void closeApplication(ActionEvent event) {
-		if (Util.saveGUIDataToFile(true, false, false) != SaveStateEnum.CANCEL) {
+		if (Util.saveGUIDataToFile(true, false) != SaveStateEnum.CANCEL) {
 			Platform.exit();
 		}
 	}

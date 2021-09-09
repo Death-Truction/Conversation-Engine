@@ -22,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.reflections.Reflections;
 
+import de.dai_labor.conversation_engine_core.conversation_engine.ConversationEngine;
+import de.dai_labor.conversation_engine_core.interfaces.ISkill;
 import de.dai_labor.conversation_engine_gui.App;
 import de.dai_labor.conversation_engine_gui.gui_components.Transition;
 import de.dai_labor.conversation_engine_gui.interfaces.IStorableGuiData;
@@ -41,17 +43,37 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Static utility class
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class Util {
 	private Util() throws IllegalStateException {
 		throw new IllegalStateException("Utility class");
 	}
 
-	public static SaveStateEnum saveGUIDataToFile(boolean askFirst, boolean saveToNewFile, boolean forceSave) {
+	/**
+	 * Saves the GUI data of all classes implementing the {@link IStorableGuiData}
+	 * interface to a file. The target file path will be selected by the user.
+	 *
+	 * @param askFirst      Whether to user should be asked first before opening the
+	 *                      {@link FileChooser} the set the target path
+	 * @param saveToNewFile Whether the GUI data should be saved to a new file and
+	 *                      not to the currently opened one. If there is currently
+	 *                      an opened file.
+	 * @return {@link SaveStateEnum#YES} if the user picked a target file to save
+	 *         the data to. {@link SaveStateEnum#NO} if the user does not want to
+	 *         save the file. {@link SaveStateEnum#CANCEL} if the user canceled the
+	 *         saving process
+	 */
+	public static SaveStateEnum saveGUIDataToFile(boolean askFirst, boolean saveToNewFile) {
 		EasyDI easyDI = App.easyDI;
 		Settings settings = easyDI.getInstance(Settings.class);
 		boolean dataHasChanged = hasGUIDataChanged();
 
-		if (!saveToNewFile && !dataHasChanged && !forceSave) {
+		if (!saveToNewFile && !dataHasChanged && askFirst) {
 			return SaveStateEnum.NO;
 		}
 		String filepath = "";
@@ -76,7 +98,7 @@ public class Util {
 			}
 			String data = getToSavedData().toString();
 			settings.setLastOpenedFile(filepath);
-			saveJSONStringToFile(filepath, data);
+			saveStringToFile(filepath, data);
 			setGUIDataUnchanged();
 			return SaveStateEnum.YES;
 		}
@@ -84,6 +106,11 @@ public class Util {
 		return SaveStateEnum.CANCEL;
 	}
 
+	/**
+	 * Let's the user pick a file to load the GUI data from and loads them, by
+	 * passing the data to each class implementing the {@link IStorableGuiData}
+	 * interface.
+	 */
 	public static void loadGUIDataFromFile() {
 
 		EasyDI easyDI = App.easyDI;
@@ -103,6 +130,12 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Reads the content of the file as a {@link String}
+	 *
+	 * @param filepath The file path of the file to be red
+	 * @return the content of the file
+	 */
 	public static String loadStringFromFile(String filepath) {
 		String data = "";
 		try (Stream<String> lines = Files.lines(Paths.get(filepath))) {
@@ -115,43 +148,51 @@ public class Util {
 		return data;
 	}
 
-	public static void showError(String title, String content) {
+	/**
+	 * Displays an {@link Alert} window with the given title and error message
+	 *
+	 * @param title        The title of the {@link Alert} window
+	 * @param errorMessage The error message
+	 */
+	public static void showError(String title, String errorMessage) {
 		Alert errorAlert = new Alert(AlertType.ERROR);
 		errorAlert.setHeaderText(title);
-		errorAlert.setContentText(content);
+		errorAlert.setContentText(errorMessage);
 		errorAlert.showAndWait();
 	}
 
-	public static SaveStateEnum saveDataBeforeExitConfirmation() {
-
-		Alert saveBeforeExitConfirmation = new Alert(Alert.AlertType.CONFIRMATION,
-				"You have unsaved changes.\nWould you like to save them now?");
-		saveBeforeExitConfirmation.setHeaderText("Save unsaved changes");
-		saveBeforeExitConfirmation.setTitle("Unsaved changes");
-		saveBeforeExitConfirmation.initModality(Modality.APPLICATION_MODAL);
-		((Stage) saveBeforeExitConfirmation.getDialogPane().getScene().getWindow()).getIcons().add(getIcon());
-		ButtonType yesButton = new ButtonType("Yes");
-		ButtonType noButton = new ButtonType("No");
-		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-		saveBeforeExitConfirmation.getButtonTypes().clear();
-		saveBeforeExitConfirmation.getButtonTypes().addAll(yesButton, noButton, cancelButton);
-		Optional<ButtonType> response = saveBeforeExitConfirmation.showAndWait();
-		if (response.isPresent()) {
-			if (response.get() == yesButton) {
-				return SaveStateEnum.YES;
-			}
-			if (response.get() == noButton) {
-				return SaveStateEnum.NO;
-			}
+	/**
+	 * Exports the GUI data to a JSON file picked by the user
+	 */
+	public static void exportData() {
+		String exportData = Util.getSkillStateMachineData().toString();
+		String filePath = Util.fileChooser(true, new ExtensionFilter("JSON-Files", "*.json"));
+		if (filePath != null && !filePath.isBlank()) {
+			Util.saveStringToFile(filePath, exportData);
 		}
-		return SaveStateEnum.CANCEL;
 	}
 
+	/**
+	 * Opens a {@link FileChooser} to select a target file
+	 *
+	 * @param save       Whether select a file for a saving or opening action
+	 * @param extensions The allowed file extension to pick
+	 * @return The file path to the selected target file
+	 */
 	public static String fileChooser(boolean save, ExtensionFilter extensions) {
 		Settings settings = App.easyDI.getInstance(Settings.class);
 		return fileChooser(save, extensions, settings.getLastFileChooserFolderProperty());
 	}
 
+	/**
+	 * Opens a {@link FileChooser} to select a target file
+	 *
+	 * @param save       Whether select a file for a saving or opening action
+	 * @param extensions The allowed file extension to pick
+	 * @param folderPath The path to the directory that the {@link FileChooser}
+	 *                   should start in
+	 * @return The file path to the selected target file
+	 */
 	public static String fileChooser(boolean save, ExtensionFilter extensions, StringProperty folderPath) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(extensions);
@@ -174,7 +215,13 @@ public class Util {
 		return file.getAbsolutePath();
 	}
 
-	public static void saveJSONStringToFile(String filepath, String data) {
+	/**
+	 * Saves a String to a given file
+	 *
+	 * @param filepath The path to the target file
+	 * @param data     The data to be saved
+	 */
+	public static void saveStringToFile(String filepath, String data) {
 		try (FileWriter fileWriter = new FileWriter(filepath)) {
 			fileWriter.write(data);
 			fileWriter.flush();
@@ -184,16 +231,32 @@ public class Util {
 
 	}
 
+	/**
+	 * Gets the Application's icon
+	 *
+	 * @return The {@link Image} of the icon
+	 */
 	public static Image getIcon() {
 		return new Image(App.class.getResource("images/Icon.png").toExternalForm());
 	}
 
+	/**
+	 * Gets the path to the style sheet file
+	 *
+	 * @return the path to the style sheet file
+	 */
 	public static String getStyleSheetPath() {
 		return App.class.getResource("styles/style.css").toExternalForm();
 	}
 
-	public static Set<Class<?>> getClassesFromJarFile(File jarFile)
-			throws IOException, ClassNotFoundException, NoClassDefFoundError {
+	/**
+	 * Gets a Set of all classes from a jar file
+	 *
+	 * @param jarFile The file path to the jar file
+	 * @return a Set of all classes from a jar file
+	 * @throws IOException when the given file path is invalid
+	 */
+	public static Set<Class<?>> getClassesFromJarFile(File jarFile) throws IOException {
 		Set<Class<?>> classNames = new HashSet<>();
 		try (JarFile loadedJarFile = new JarFile(jarFile)) {
 			URL[] urls = { new URL(String.format("jar:file:%s!/", jarFile.getAbsolutePath())) };
@@ -207,11 +270,21 @@ public class Util {
 						classNames.add(foundClass);
 					}
 				}
+			} catch (ClassNotFoundException e) {
+				// Should never happen, because the class is loaded from the jar file and
+				// directly used
 			}
 		}
 		return classNames;
 	}
 
+	/**
+	 * Gets all the data required to create a {@link ISkill}'s state machine by the
+	 * {@link ConversationEngine}
+	 *
+	 * @return all the data required to create a {@link ISkill}'s state machine by
+	 *         the {@link ConversationEngine}
+	 */
 	public static JSONObject getSkillStateMachineData() {
 		JSONObject data = new JSONObject();
 		DialogueDataViewModel dialogueDataViewModel = App.easyDI.getInstance(DialogueDataViewModel.class);
@@ -243,13 +316,17 @@ public class Util {
 			JSONObject transitionObject = new JSONObject();
 			transitionObject.put("source", transition.getSource().getName());
 			transitionObject.put("target", transition.getTarget().getName());
-			transitionObject.put("trigger", transition.getTriggerTextField().getText());
+			transitionObject.put("trigger", transition.getTrigger());
 			transitions.put(transitionObject);
 		}
 		data.put("transitions", transitions);
 		return data;
 	}
 
+	/**
+	 * Resets all the GUI data by calling each class implementing the
+	 * {@link IStorableGuiData} interface
+	 */
 	public static void resetGUIData() {
 		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
 			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
@@ -258,6 +335,45 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Asks the user whether he wants to save the made changes or not
+	 *
+	 * @return {@link SaveStateEnum#YES} if the user wants to save the changes
+	 *         {@link SaveStateEnum#NO} if the user does not want to save the
+	 *         changes {@link SaveStateEnum#CANCEL} if the user canceled the process
+	 */
+	private static SaveStateEnum saveDataBeforeExitConfirmation() {
+
+		Alert saveBeforeExitConfirmation = new Alert(Alert.AlertType.CONFIRMATION,
+				"You have unsaved changes.\nWould you like to save them now?");
+		saveBeforeExitConfirmation.setHeaderText("Save changes");
+		saveBeforeExitConfirmation.setTitle("Unsaved changes");
+		saveBeforeExitConfirmation.initModality(Modality.APPLICATION_MODAL);
+		((Stage) saveBeforeExitConfirmation.getDialogPane().getScene().getWindow()).getIcons().add(getIcon());
+		ButtonType yesButton = new ButtonType("Yes");
+		ButtonType noButton = new ButtonType("No");
+		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+		saveBeforeExitConfirmation.getButtonTypes().clear();
+		saveBeforeExitConfirmation.getButtonTypes().addAll(yesButton, noButton, cancelButton);
+		Optional<ButtonType> response = saveBeforeExitConfirmation.showAndWait();
+		if (response.isPresent()) {
+			if (response.get() == yesButton) {
+				return SaveStateEnum.YES;
+			}
+			if (response.get() == noButton) {
+				return SaveStateEnum.NO;
+			}
+		}
+		return SaveStateEnum.CANCEL;
+	}
+
+	/**
+	 * Gets all the GUI data from all classes implementing the
+	 * {@link IStorableGuiData} interface
+	 *
+	 * @return all the GUI data from all classes implementing the
+	 *         {@link IStorableGuiData} interface
+	 */
 	private static JSONObject getToSavedData() {
 		JSONObject savedData = new JSONObject();
 		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
@@ -268,6 +384,12 @@ public class Util {
 		return savedData;
 	}
 
+	/**
+	 * Sets the GUI data of all classes implementing the {@link IStorableGuiData}
+	 * interface
+	 *
+	 * @param guiData the GUI data to set
+	 */
 	private static void setLoadedData(JSONObject guiData) {
 		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
 			JSONObject data = guiData.optJSONObject(storableGuiDataClass.getSimpleName());
@@ -278,6 +400,12 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Checks whether any GUI data of the classes implementing the
+	 * {@link IStorableGuiData} interface has been changed
+	 *
+	 * @return true if any GUI data has been changed
+	 */
 	private static boolean hasGUIDataChanged() {
 		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
 			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
@@ -288,6 +416,10 @@ public class Util {
 		return false;
 	}
 
+	/**
+	 * Sets all GUI data of the classes implementing the {@link IStorableGuiData}
+	 * interface to unchanged
+	 */
 	private static void setGUIDataUnchanged() {
 		for (Class<? extends IStorableGuiData> storableGuiDataClass : getIStorableGuiDataClasses()) {
 			IStorableGuiData storableGuiData = App.easyDI.getInstance(storableGuiDataClass);
@@ -295,6 +427,11 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Gets all classes implementing the {@link IStorableGuiData} interface
+	 *
+	 * @return
+	 */
 	private static Set<Class<? extends IStorableGuiData>> getIStorableGuiDataClasses() {
 		Reflections reflections = new Reflections("de.dai_labor.conversation_engine_gui");
 

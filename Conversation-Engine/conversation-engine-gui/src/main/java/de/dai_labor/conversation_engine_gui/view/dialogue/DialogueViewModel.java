@@ -56,7 +56,7 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 			this.dialogueElementsLayer.relocate(DIAGRAM_ELEMENT_LAYER_SIZE / -2.0, DIAGRAM_ELEMENT_LAYER_SIZE / -2.0);
 		});
 		this.dialoguePane.toBack();
-		this.subscribe("unload", (ignore, ignore2) -> this.dialoguePane.unselectAll());
+		this.subscribe("unload", (ignore, ignore2) -> this.dialoguePane.deselectAll());
 		this.dialoguePane.toBack();
 		this.viewProperty.set(this.dialoguePane);
 	}
@@ -70,7 +70,7 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 	}
 
 	public void centerElements() {
-		this.dialoguePane.centerMovingElement();
+		this.dialoguePane.center();
 	}
 
 	public void setMode(Toggle toggleButton) {
@@ -281,8 +281,7 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 	private String getFirstEmptyTransitionName() {
 		for (int i = 1; i <= this.transitions.size(); i++) {
 			String newTransitionName = "Transition" + i;
-			if (this.transitions.stream()
-					.anyMatch(transition -> transition.getTriggerTextField().getText().equals(newTransitionName))) {
+			if (this.transitions.stream().anyMatch(transition -> transition.getTrigger().equals(newTransitionName))) {
 				continue;
 			}
 			return newTransitionName;
@@ -311,7 +310,7 @@ public class DialogueViewModel implements ViewModel, IStorableGuiData {
 			final JSONObject transitionData = new JSONObject();
 			transitionData.put("source", transition.getSource().getStateId());
 			transitionData.put("target", transition.getTarget().getStateId());
-			transitionData.put("trigger", transition.getTriggerTextField().getText());
+			transitionData.put("trigger", transition.getTrigger());
 			transitionsData.put(transitionData);
 		}
 		return transitionsData;
