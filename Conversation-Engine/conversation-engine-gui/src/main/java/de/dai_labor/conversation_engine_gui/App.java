@@ -38,10 +38,10 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
-		App.mainStage = stage;
-		App.mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
+		mainStage = stage;
+		mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
-		stage.setTitle("ConversationEngine - Dialog Modeling Tool");
+		stage.setTitle("ConversationEngine - Dialogue Modeling Tool");
 		final Image icon = Util.getIcon();
 		stage.getIcons().add(icon);
 		stage.minHeightProperty().set(480.0);

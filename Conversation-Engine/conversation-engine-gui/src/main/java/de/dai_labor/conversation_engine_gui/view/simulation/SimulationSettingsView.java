@@ -12,12 +12,21 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+/**
+ * The SimulationSettingsView holds the required data for the simulation of the
+ * skill's state machine
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class SimulationSettingsView implements Initializable, FxmlView<SimulationSettingsViewModel> {
 
 	@InjectViewModel
 	private SimulationSettingsViewModel viewModel;
 	@FXML
 	private ComboBox<String> language;
+	@FXML
+	private ComboBox<String> loggingLevel;
 	@FXML
 	private TextArea conversationInputs;
 	@FXML
@@ -40,6 +49,9 @@ public class SimulationSettingsView implements Initializable, FxmlView<Simulatio
 		this.language.setItems(this.viewModel.getAvailableLanguages());
 		this.language.valueProperty().bindBidirectional(this.viewModel.getSelectedLanguageProperty());
 
+		this.loggingLevel.setItems(this.viewModel.getAvailableLoggingLevels());
+		this.loggingLevel.valueProperty().bindBidirectional(this.viewModel.getSelectedLoggingLevelProperty());
+
 		this.conversationInputs.textProperty().bindBidirectional(this.viewModel.getConversationInputProperty());
 
 		this.nlpComponent.textProperty().bindBidirectional(this.viewModel.getSelectedNLPComponentProperty());
@@ -55,10 +67,16 @@ public class SimulationSettingsView implements Initializable, FxmlView<Simulatio
 		this.removeSkillButton.setOnAction(event -> this.viewModel.removeSkill());
 
 		this.startButton.setOnAction(event -> this.viewModel.startSimulation());
+
 	}
 
-	private void moveCaretToEnd(TextField target) {
-		target.end();
+	/**
+	 * Moves the the caret of the given {@link TextField} to the end.
+	 *
+	 * @param textField The {@link TextField} that's caret is to be moved to the end
+	 */
+	private void moveCaretToEnd(TextField textField) {
+		textField.end();
 	}
 
 }

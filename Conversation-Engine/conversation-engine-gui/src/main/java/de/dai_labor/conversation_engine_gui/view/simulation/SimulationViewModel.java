@@ -28,6 +28,7 @@ import de.dai_labor.conversation_engine_gui.util.Util;
 import de.dai_labor.conversation_engine_gui.view.dialogue.DialogueViewModel;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -37,6 +38,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+/**
+ * The ViewModel for the {@link SimulationView}
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class SimulationViewModel implements ViewModel {
 	private SimpleBooleanProperty simulationIsRunningProperty = new SimpleBooleanProperty(false);
 	private SimpleStringProperty simulationSpeedProperty = new SimpleStringProperty();
@@ -49,8 +56,17 @@ public class SimulationViewModel implements ViewModel {
 	private int simulationStepIndex = 0;
 	private double simulationSpeed;
 	private Timer timer = new Timer();
+	private boolean showLoggingVBox = true;
 	private static final double DEFAULT_SIMULATION_STEP_TIME = 2000.0;
 
+	/**
+	 * Creates a new instance of the {@link SimulationViewModel}
+	 *
+	 * @param dialogueViewModel           The instance of the
+	 *                                    {@link DialogueViewModel}
+	 * @param simulationSettingsViewModel The instance of the
+	 *                                    {@link SimulationSettingsViewModel}
+	 */
 	public SimulationViewModel(DialogueViewModel dialogueViewModel,
 			SimulationSettingsViewModel simulationSettingsViewModel) {
 		this.dialogueViewModel = dialogueViewModel;
@@ -85,24 +101,55 @@ public class SimulationViewModel implements ViewModel {
 
 	}
 
+	/**
+	 * Gets the {@link Property} of the simulation's running status
+	 *
+	 * @return the {@link Property} of the simulation's running status
+	 */
 	public SimpleBooleanProperty getSimulationIsRunningProperty() {
 		return this.simulationIsRunningProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the simulation speed
+	 *
+	 * @return the {@link Property} of the simulation speed
+	 */
 	public SimpleStringProperty getSimulationSpeedProperty() {
 		return this.simulationSpeedProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the play/pause button text
+	 *
+	 * @return the {@link Property} of the play/pause button text
+	 */
 	public SimpleStringProperty getPlayPauseButtonTextProperty() {
 		return this.playPauseButtonTextProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} that determines whether the logging VBox should be
+	 * shown or not
+	 *
+	 * @return the {@link Property} of the showLoggingVBox
+	 */
+	public boolean showLoggingVBox() {
+		return this.showLoggingVBox;
+	}
+
+	/**
+	 * Jumps back to the beginning of the simulation
+	 */
 	public void toStart() {
 		while (this.simulationStepIndex > 0) {
 			this.stepBackwards();
 		}
 	}
 
+	/**
+	 * Goes one step back of the simulation
+	 */
 	public void stepBackwards() {
 		if (this.simulationStepIndex == 0) {
 			return;
@@ -122,6 +169,10 @@ public class SimulationViewModel implements ViewModel {
 
 	}
 
+	/**
+	 * Starts the automatic simulation. The default delay between each step is 2
+	 * seconds which can be modified by the speed parameter
+	 */
 	public void playPause() {
 		boolean isPlaying = this.simulationIsRunningProperty.get();
 		this.simulationIsRunningProperty.set(!isPlaying);
@@ -139,6 +190,9 @@ public class SimulationViewModel implements ViewModel {
 		}
 	}
 
+	/**
+	 * Goes one step forward in the simulation
+	 */
 	public void stepForward() {
 		if (this.simulationStepIndex >= this.simulationSteps.size()) {
 			return;
@@ -157,26 +211,49 @@ public class SimulationViewModel implements ViewModel {
 		this.simulationStepIndex++;
 	}
 
+	/**
+	 * Jumps to the end of the simulation
+	 */
 	public void toEnd() {
 		while (this.simulationStepIndex < this.simulationSteps.size()) {
 			this.stepForward();
 		}
 	}
 
+	/**
+	 * Sets the conversation messages {@link ObservableList}
+	 *
+	 * @param children The {@link ObservableList} to set the conversation messages
+	 *                 to
+	 */
 	public void setConversationVBoxChildren(ObservableList<Node> children) {
 		this.conversationMessages = children;
 
 	}
 
+	/**
+	 * Sets the logging messages {@link ObservableList}
+	 *
+	 * @param children The {@link ObservableList} to set the logging messages to
+	 */
 	public void setLoggingVBoxChildren(ObservableList<Node> children) {
 		this.loggingMessages = children;
 
 	}
 
+	/**
+	 * Gets the Node of the {@link DialoguePane} that holds all the skill's state
+	 * machine visual data
+	 *
+	 * @return the Node of the {@link DialoguePane}
+	 */
 	public Node getDialoguePane() {
 		return this.dialogueView;
 	}
 
+	/**
+	 * Unloads the SimulationView data
+	 */
 	public void unload() {
 		Pane dialogueElementsLayer = (Pane) this.dialogueView.getChildren().get(0);
 		dialogueElementsLayer.setDisable(false);
@@ -184,10 +261,23 @@ public class SimulationViewModel implements ViewModel {
 		this.dialogueViewModel.getTransitions().stream().forEach(Transition::deselect);
 	}
 
+	/**
+	 * Notifies the owner of the window that clsoing the window has been requested
+	 */
 	private void closeRequest() {
 		Platform.runLater(() -> this.publish("SimulationViewCloseRequest"));
 	}
 
+	/**
+	 * Initializes the {@link ConversationEngine} to create all the simulation steps
+	 *
+	 * @param simulationSettingsViewModel The instance of the
+	 *                                    {@link SimulationSettingsViewModel}
+	 * @param nlpComponent                The {@link INLPComponent} used by the
+	 *                                    {@link ConversationEngine}
+	 * @param skill                       The {@link ISkill} used by the
+	 *                                    {@link ConversationEngine}
+	 */
 	private void initializeConversationEngine(SimulationSettingsViewModel simulationSettingsViewModel,
 			INLPComponent nlpComponent, ISkill skill) {
 		String initializedContextObject = "{}";
@@ -198,15 +288,26 @@ public class SimulationViewModel implements ViewModel {
 		String[] inputs = simulationSettingsViewModel.getConversationInputProperty().get().split("\n");
 		ce.addSkill(skill, skillJsonString);
 		this.dialogueViewModel.getStartState().select();
-		this.simulateConversationEngineProcess(ce, inputs);
+		this.simulateConversationEngineProcess(ce, inputs,
+				simulationSettingsViewModel.getSelectedLoggingLevelProperty().get());
 	}
 
-	private void simulateConversationEngineProcess(ConversationEngine ce, String[] inputs) {
+	/**
+	 * Creates the {@link SimulationStep SimulationSteps} for the simulation
+	 *
+	 * @param conversationEngine The instance of the {@link ConversationEngine}
+	 * @param inputs             The user inputs to process
+	 */
+	private void simulateConversationEngineProcess(ConversationEngine conversationEngine, String[] inputs,
+			String loggingLevelValue) {
 		Logger logger = (Logger) LoggerFactory.getLogger("DeveloperLogger");
 		MemoryLogger logs = new MemoryLogger();
 		logs.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
-		// TODO: set logging level based on settings
-		logger.setLevel(Level.ALL);
+		Level loggingLevel = Level.valueOf(loggingLevelValue);
+		logger.setLevel(loggingLevel);
+		if (loggingLevel == Level.OFF) {
+			this.showLoggingVBox = false;
+		}
 		logger.addAppender(logs);
 		logs.start();
 		for (int i = 0; i < inputs.length; i++) {
@@ -215,14 +316,14 @@ public class SimulationViewModel implements ViewModel {
 			if (i == 0) {
 				source = this.dialogueViewModel.getStartState();
 			} else {
-				source = this.dialogueViewModel.getStateByName(ce.getState());
+				source = this.dialogueViewModel.getStateByName(conversationEngine.getState());
 			}
-			List<String> outputs = ce.userInput(input);
+			List<String> outputs = conversationEngine.userInput(input);
 			State target;
-			if (ce.getState().equals("defaultState")) {
+			if (conversationEngine.getState().equals("defaultState")) {
 				target = this.dialogueViewModel.getEndState();
 			} else {
-				target = this.dialogueViewModel.getStateByName(ce.getState());
+				target = this.dialogueViewModel.getStateByName(conversationEngine.getState());
 			}
 			Transition transition = this.dialogueViewModel.getTransition(source, target);
 			this.simulationSteps

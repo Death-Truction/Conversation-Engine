@@ -18,6 +18,12 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The ViewModel for the {@link DialogueDataView}
+ *
+ * @author Marcel Engelmann
+ *
+ */
 @Singleton
 public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 
@@ -30,6 +36,11 @@ public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 	private ObservableList<String> availableStates = FXCollections.observableArrayList();
 	private boolean dataHasChanged = false;
 
+	/**
+	 * Creates a new DialogueDataViewModel
+	 *
+	 * @param dialogueViewModel The {@link DialogueViewModel} instance
+	 */
 	public DialogueDataViewModel(DialogueViewModel dialogueViewModel) {
 		this.allStates = dialogueViewModel.getStates();
 		this.updateAvailableStates(null);
@@ -60,30 +71,65 @@ public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 				this.selectedStartStateProperty, this.skillNameProperty);
 	}
 
+	/**
+	 * Gets the {@link Property} of the intents
+	 *
+	 * @return the {@link Property} of the intents
+	 */
 	public SimpleStringProperty getIntentsProperty() {
 		return this.intentsProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the entities
+	 *
+	 * @return the {@link Property} of the entities
+	 */
 	public SimpleStringProperty getEntitiesProperty() {
 		return this.entitiesProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the selectedStartState
+	 *
+	 * @return the {@link Property} of the selectedStartState
+	 */
 	public SimpleStringProperty getSelectedStartStateProperty() {
 		return this.selectedStartStateProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the selectedEndState
+	 *
+	 * @return the {@link Property} of the selectedEndState
+	 */
 	public SimpleStringProperty getSelectedEndStateProperty() {
 		return this.selectedEndStateProperty;
 	}
 
+	/**
+	 * Gets the {@link Property} of the skillName
+	 *
+	 * @return the {@link Property} of the skillName
+	 */
 	public SimpleStringProperty getSkillNameProperty() {
 		return this.skillNameProperty;
 	}
 
+	/**
+	 * Gets the {@link ObservableList} of all States
+	 *
+	 * @return the {@link ObservableList} of all States
+	 */
 	public ObservableList<String> getAvailableState() {
 		return this.availableStates;
 	}
 
+	/**
+	 * Updates the List of available States
+	 *
+	 * @param e Ignored
+	 */
 	public void updateAvailableStates(MouseEvent e) {
 		List<String> allStateNames = new ArrayList<>();
 		for (State state : this.allStates.values()) {
@@ -130,15 +176,22 @@ public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 		return this.dataHasChanged;
 	}
 
-	private void addChangedListener(Property... properties) {
-		for (Property property : properties) {
-			property.addListener(change -> this.dataHasChanged = true);
-		}
-	}
-
 	@Override
 	public void setUnchanged() {
 		this.dataHasChanged = false;
 
 	}
+
+	/**
+	 * Adds a {@link ChangeListener} to all given properties. On a trigger changed
+	 * event the {@link #dataHasChanged} property will be updated.
+	 *
+	 * @param properties
+	 */
+	private void addChangedListener(Property<?>... properties) {
+		for (Property<?> property : properties) {
+			property.addListener(change -> this.dataHasChanged = true);
+		}
+	}
+
 }

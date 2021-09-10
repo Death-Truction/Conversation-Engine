@@ -10,11 +10,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * The SimulationView displays the simulation for the skill's state machine
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class SimulationView implements FxmlView<SimulationViewModel>, Initializable {
 
 	@InjectViewModel
@@ -37,6 +44,8 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 	private VBox conversationVBox;
 	@FXML
 	private VBox loggingVBox;
+	@FXML
+	private SplitPane messagesSplitPane;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -55,8 +64,15 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 		Node view = this.viewModel.getDialoguePane();
 		this.mainView.getChildren().add(view);
 		view.toBack();
+		if (!this.viewModel.showLoggingVBox()) {
+			this.messagesSplitPane.getItems().remove(1);
+		}
 	}
 
+	/**
+	 * Sets the buttons disabled properties accordingly after the simulation
+	 * play/pause button has been pressed
+	 */
 	private void setDisablePropertyBindings() {
 		this.startButton.disableProperty().bind(this.viewModel.getSimulationIsRunningProperty());
 		this.stepBackButton.disableProperty().bind(this.viewModel.getSimulationIsRunningProperty());

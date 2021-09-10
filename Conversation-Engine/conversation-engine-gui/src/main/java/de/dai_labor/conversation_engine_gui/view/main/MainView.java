@@ -16,6 +16,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+/**
+ * The MainView is used for the navigation between the different view elements
+ *
+ * @author Marcel Engelmann
+ *
+ */
 @Singleton
 public class MainView implements FxmlView<MainViewModel>, Initializable {
 
@@ -60,12 +66,16 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 		this.navButtonDialogueData.setOnAction(this.viewModel::setView);
 		this.navButtonSettings.setOnAction(this.viewModel::setView);
 		this.navButtonSimulation.setOnAction(this.viewModel::setView);
-		this.viewModel.getViewBinding().addListener(event -> this.updateScene());
-		this.updateScene();
+		this.viewModel.getCurrentViewProperty().addListener(event -> this.updateView());
+		this.updateView();
 	}
 
-	private void updateScene() {
-		Node view = this.viewModel.getViewBinding().get();
+	/**
+	 * Updates the {@link contentArea}'s children to the current view. The current
+	 * view is determined by the selected navigation button
+	 */
+	private void updateView() {
+		Node view = this.viewModel.getCurrentViewProperty().get();
 		this.contentArea.getChildren().clear();
 		this.contentArea.getChildren().add(view);
 		VBox.setVgrow(view, Priority.ALWAYS);

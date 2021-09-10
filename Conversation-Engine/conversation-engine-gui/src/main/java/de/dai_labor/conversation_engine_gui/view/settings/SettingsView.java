@@ -13,6 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
+/**
+ * The SettingsView handles all the application settings
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class SettingsView implements FxmlView<SettingsViewModel>, Initializable {
 
 	@InjectViewModel
@@ -38,6 +44,7 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable 
 	@FXML
 	private ColorPicker transitionSelectedColor;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		StringConverter<? extends Number> converter = new IntegerStringConverter();
@@ -76,7 +83,21 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable 
 				.bindBidirectional(this.viewModel.getTransitionSelectedColorProperty());
 	}
 
-	private void addinputBoundsValidator(int minValue, int maxValue, TextField textField) {
+	/**
+	 * * Adds a listener to the {@link TextField} that checks whether the value of
+	 * the {@link TextField} is within the given bounds. If the value is outside of
+	 * the given bounds than the value will be replaced with the nearest bound value
+	 *
+	 * @param minValue  The minimum value bound
+	 * @param maxValue  The maximum value bound
+	 * @param textField The {@link TextField} to add the listener to
+	 * @throws IllegalArgumentException if the minValue is greater than the maxValue
+	 */
+	private void addinputBoundsValidator(int minValue, int maxValue, TextField textField)
+			throws IllegalArgumentException {
+		if (minValue > maxValue) {
+			throw new IllegalArgumentException("The min value must not be greater than the max value");
+		}
 		textField.focusedProperty().addListener(change -> {
 			if (!textField.isFocused()) {
 				String text = textField.getText();

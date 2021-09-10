@@ -12,6 +12,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The DialogueData collects the information required to create the skill's
+ * state machine model
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class DialogueDataView implements FxmlView<DialogueDataViewModel>, Initializable {
 
 	@InjectViewModel
@@ -33,6 +40,9 @@ public class DialogueDataView implements FxmlView<DialogueDataViewModel>, Initia
 		this.addEventListener();
 	}
 
+	/**
+	 * Binds the data of the GUI elements to the ViewModel properties
+	 */
 	private void bindData() {
 		this.startState.setItems(this.viewModel.getAvailableState());
 		this.startState.valueProperty().bindBidirectional(this.viewModel.getSelectedStartStateProperty());
@@ -43,6 +53,9 @@ public class DialogueDataView implements FxmlView<DialogueDataViewModel>, Initia
 		this.skillName.textProperty().bindBidirectional(this.viewModel.getSkillNameProperty());
 	}
 
+	/**
+	 * Sets up the event listeners for the GUI elements
+	 */
 	private void addEventListener() {
 		this.startState.addEventHandler(MouseEvent.MOUSE_RELEASED, this.viewModel::updateAvailableStates);
 		this.endState.addEventHandler(MouseEvent.MOUSE_RELEASED, this.viewModel::updateAvailableStates);
