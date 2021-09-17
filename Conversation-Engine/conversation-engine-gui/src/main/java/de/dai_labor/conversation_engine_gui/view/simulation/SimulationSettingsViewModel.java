@@ -66,10 +66,10 @@ public class SimulationSettingsViewModel implements ViewModel, IStorableGuiData 
 			this.availableLanguages.add(language.toString());
 		}
 		this.selectedLanguageProperty.set(DEFAULT_LANGUAGE);
-		this.addChangedListener(this.selectedLanguageProperty, this.conversationInputProperty,
-				this.selectedSkillProperty, this.selectedNLPComponentProperty, this.selectedLoggingLevelProperty);
 		this.availableLoggingLevels.addAll("ALL", "TRACE", DEFAULT_LOGGING_LEVEL, "INFO", "WARN", "ERROR", "OFF");
 		this.selectedLoggingLevelProperty.set(DEFAULT_LOGGING_LEVEL);
+		this.addChangedListener(this.selectedLanguageProperty, this.conversationInputProperty,
+				this.selectedSkillProperty, this.selectedNLPComponentProperty, this.selectedLoggingLevelProperty);
 	}
 
 	/**

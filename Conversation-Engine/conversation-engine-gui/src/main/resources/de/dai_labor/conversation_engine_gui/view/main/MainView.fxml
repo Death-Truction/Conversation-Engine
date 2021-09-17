@@ -36,11 +36,12 @@
 						    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
 						  </items>
 					</Menu>
-					<Menu mnemonicParsing="false" text="Help">
-						<items>
-							<MenuItem mnemonicParsing="false" text="About" />
-						</items>
-					</Menu>
+                  <Menu mnemonicParsing="false" text="Help">
+                     <items>
+                        <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="Open Help" />
+                        <MenuItem mnemonicParsing="false" text="About" />
+                     </items>
+                  </Menu>
 				</menus>
 			</MenuBar>
 		</center>

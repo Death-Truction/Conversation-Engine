@@ -33,6 +33,11 @@ public class WeatherSkill implements ISkill {
 
 	@Override
 	public ISkillAnswer execute(String intent, JSONObject contextObject, String currentState, Locale language) {
+		try {
+			// simulate a longer process
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+		}
 		List<String> locationNames = this.getLocationNames(contextObject);
 		List<String> answers = new ArrayList<>();
 		if (!locationNames.isEmpty()) {

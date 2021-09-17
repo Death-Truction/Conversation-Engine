@@ -30,6 +30,7 @@ import de.saxsys.mvvmfx.ViewModel;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -48,6 +49,8 @@ public class SimulationViewModel implements ViewModel {
 	private SimpleBooleanProperty simulationIsRunningProperty = new SimpleBooleanProperty(false);
 	private SimpleStringProperty simulationSpeedProperty = new SimpleStringProperty();
 	private SimpleStringProperty playPauseButtonTextProperty = new SimpleStringProperty("Play");
+	private SimpleStringProperty loadingProgressLabelProperty = new SimpleStringProperty();
+	private SimpleDoubleProperty loadingProgressValueProperty = new SimpleDoubleProperty();
 	private DialoguePane dialogueView;
 	private DialogueViewModel dialogueViewModel;
 	private List<SimulationStep> simulationSteps = new ArrayList<>();
@@ -117,6 +120,24 @@ public class SimulationViewModel implements ViewModel {
 	 */
 	public SimpleStringProperty getSimulationSpeedProperty() {
 		return this.simulationSpeedProperty;
+	}
+
+	/**
+	 * Gets the {@link Property} of the play/pause button text
+	 *
+	 * @return the {@link Property} of the play/pause button text
+	 */
+	public SimpleStringProperty getLoadingProgressLabelProperty() {
+		return this.loadingProgressLabelProperty;
+	}
+
+	/**
+	 * Gets the {@link Property} of the play/pause button text
+	 *
+	 * @return the {@link Property} of the play/pause button text
+	 */
+	public SimpleDoubleProperty getLoadingProgressValueProperty() {
+		return this.loadingProgressValueProperty;
 	}
 
 	/**
@@ -288,8 +309,13 @@ public class SimulationViewModel implements ViewModel {
 		String[] inputs = simulationSettingsViewModel.getConversationInputProperty().get().split("\n");
 		ce.addSkill(skill, skillJsonString);
 		this.dialogueViewModel.getStartState().select();
-		this.simulateConversationEngineProcess(ce, inputs,
-				simulationSettingsViewModel.getSelectedLoggingLevelProperty().get());
+		new Thread() {
+			@Override
+			public void run() {
+				SimulationViewModel.this.simulateConversationEngineProcess(ce, inputs,
+						simulationSettingsViewModel.getSelectedLoggingLevelProperty().get());
+			}
+		}.start();
 	}
 
 	/**
@@ -310,6 +336,7 @@ public class SimulationViewModel implements ViewModel {
 		}
 		logger.addAppender(logs);
 		logs.start();
+		int maxSteps = inputs.length;
 		for (int i = 0; i < inputs.length; i++) {
 			String input = inputs[i];
 			State source;
@@ -333,6 +360,11 @@ public class SimulationViewModel implements ViewModel {
 				break;
 			}
 			logs.reset();
+			int step = i + 1;
+			Platform.runLater(() -> {
+				this.loadingProgressValueProperty.set((double) step / maxSteps);
+				this.loadingProgressLabelProperty.set(step + "/" + maxSteps + " Steps");
+			});
 		}
 	}
 

@@ -10,9 +10,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -46,6 +49,12 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 	private VBox loggingVBox;
 	@FXML
 	private SplitPane messagesSplitPane;
+	@FXML
+	private BorderPane loadingScreen;
+	@FXML
+	private Label loadingProgressLabel;
+	@FXML
+	private ProgressBar loadingProgressBar;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -67,6 +76,15 @@ public class SimulationView implements FxmlView<SimulationViewModel>, Initializa
 		if (!this.viewModel.showLoggingVBox()) {
 			this.messagesSplitPane.getItems().remove(1);
 		}
+
+		this.loadingProgressBar.progressProperty().bindBidirectional(this.viewModel.getLoadingProgressValueProperty());
+		this.loadingProgressLabel.textProperty().bindBidirectional(this.viewModel.getLoadingProgressLabelProperty());
+		this.viewModel.getLoadingProgressValueProperty().addListener(change -> {
+			if (this.viewModel.getLoadingProgressValueProperty().get() >= 1) {
+				((AnchorPane) this.loadingScreen.getParent()).getChildren().remove(this.loadingScreen);
+				this.mainView.setVisible(true);
+			}
+		});
 	}
 
 	/**

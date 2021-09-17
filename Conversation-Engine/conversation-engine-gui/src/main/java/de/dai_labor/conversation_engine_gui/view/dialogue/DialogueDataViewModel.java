@@ -44,9 +44,8 @@ public class DialogueDataViewModel implements ViewModel, IStorableGuiData {
 	public DialogueDataViewModel(DialogueViewModel dialogueViewModel) {
 		this.allStates = dialogueViewModel.getStates();
 		this.updateAvailableStates(null);
-		this.allStates.addListener((MapChangeListener.Change<? extends Integer, ? extends State> change) -> {
-			this.updateAvailableStates(null);
-		});
+		this.allStates.addListener((MapChangeListener.Change<? extends Integer, ? extends State> change) -> this
+				.updateAvailableStates(null));
 		this.selectedStartStateProperty.addListener(change -> {
 			if (this.selectedStartStateProperty.get() == null) {
 				return;

@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javax.inject.Singleton;
 
+import de.dai_labor.conversation_engine_gui.view.help.HelpStage;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
@@ -44,6 +45,8 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 	@FXML
 	private MenuItem saveAsMenuItem;
 	@FXML
+	private MenuItem helpMenuItem;
+	@FXML
 	private Button navButtonDialogue;
 	@FXML
 	private Button navButtonDialogueData;
@@ -67,6 +70,7 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 		this.navButtonSettings.setOnAction(this.viewModel::setView);
 		this.navButtonSimulation.setOnAction(this.viewModel::setView);
 		this.viewModel.getCurrentViewProperty().addListener(event -> this.updateView());
+		this.helpMenuItem.setOnAction(event -> new HelpStage());
 		this.updateView();
 	}
 

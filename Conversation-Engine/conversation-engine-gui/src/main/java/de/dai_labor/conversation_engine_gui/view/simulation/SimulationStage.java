@@ -44,14 +44,13 @@ public class SimulationStage {
 			SimulationSettingsViewModel simulationSettingsViewModel) {
 		this.dialogueViewModel = dialogueViewModel;
 		this.simulationSettingsViewModel = simulationSettingsViewModel;
-		this.start();
 		this.dialogueViewModel.getViewProperty().set(null);
+		this.start();
 		this.windowStage.setOnCloseRequest(event -> {
+			App.mainStage.show();
 			this.viewTuple.getViewModel().unload();
 			dialogueViewModel.getViewProperty().set(dialogueViewModel.getView());
-			App.mainStage.show();
 		});
-		App.mainStage.hide();
 	}
 
 	/**
@@ -150,6 +149,7 @@ public class SimulationStage {
 		this.windowStage.setHeight(720);
 		this.windowStage.setWidth(1280);
 		this.windowStage.setScene(new Scene(this.viewTuple.getView()));
+		App.mainStage.hide();
 		this.windowStage.show();
 	}
 
