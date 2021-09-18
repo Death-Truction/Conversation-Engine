@@ -1,6 +1,5 @@
 package de.dai_labor.conversation_engine_gui.view.help;
 
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -10,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebView;
 
 public class HelpView implements FxmlView<HelpViewModel>, Initializable {
 
@@ -19,26 +18,28 @@ public class HelpView implements FxmlView<HelpViewModel>, Initializable {
 	@FXML
 	private TreeView<String> navigationTreeView;
 	@FXML
-	private BorderPane pageView;
+	private WebView pageView;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		TreeItem<String> root = new TreeItem<>();
 		root.setExpanded(true);
 		this.navigationTreeView.setShowRoot(false);
-		try {
-			this.viewModel.createTreeView(root);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.viewModel.createTreeView(root);
 		this.navigationTreeView.setRoot(root);
-		this.pageView.centerProperty().bindBidirectional(this.viewModel.getHelpViewProperty());
 		this.navigationTreeView.getSelectionModel().selectedItemProperty()
 				.addListener((observable, oldValue, newValue) -> {
-					this.viewModel.setCurrentView(newValue);
+					newValue.setExpanded(true);
+					String newContent = this.viewModel.getCurrentView(newValue);
+					if (!newContent.isBlank()) {
+						this.pageView.getEngine().loadContent(newContent);
+					}
 				});
+		this.navigationTreeView.getSelectionModel().select(0);
+	}
 
+	public void selectMenuItem(String name) {
+		this.navigationTreeView.getSelectionModel().select(this.viewModel.getTreeItem(name));
 	}
 
 }

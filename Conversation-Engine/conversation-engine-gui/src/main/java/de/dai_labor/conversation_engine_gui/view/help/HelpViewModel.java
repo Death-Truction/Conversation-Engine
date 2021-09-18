@@ -3,57 +3,99 @@ package de.dai_labor.conversation_engine_gui.view.help;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 
 public class HelpViewModel implements ViewModel {
 
 	// <TreeItem, Node view for the help page>
-	private Map<TreeItem<String>, Node> pageViews = new HashMap<>();
-	private SimpleObjectProperty<Node> currentViewProperty = new SimpleObjectProperty<>();
+	private Map<TreeItem<String>, File> pageViews = new HashMap<>();
 
-	public void createTreeView(TreeItem<String> root) throws URISyntaxException {
-		File pagesFolder = new File(this.getClass().getResource("./pages").toURI());
-		for (File file : pagesFolder.listFiles()) {
-			if (file.isDirectory()) {
-				this.createTreeStructure(file, root);
+	public String getCurrentView(TreeItem<String> treeItem) {
+		File file = this.pageViews.get(treeItem);
+		if (file == null) {
+			return "";
+		}
+		String fileContent = "";
+		try {
+			fileContent = Files.readString(file.toPath());
+		} catch (IOException e) {
+			// should never occur
+			e.printStackTrace();
+		}
+		Parser parser = Parser.builder().build();
+		HtmlRenderer renderer = HtmlRenderer.builder().build();
+		return renderer.render(parser.parse(fileContent));
+	}
+
+	public void createTreeView(TreeItem<String> root) {
+		try {
+			File pagesFolder = new File(this.getClass().getResource("./pages").toURI());
+			for (File file : pagesFolder.listFiles()) {
+				if (file.isDirectory()) {
+					this.createTreeStructure(file, root);
+				}
+			}
+		} catch (URISyntaxException e) {
+			// should never occur
+			e.printStackTrace();
+		}
+	}
+
+	public TreeItem<String> getTreeItem(String name) {
+		for (TreeItem<String> treeItem : this.pageViews.keySet()) {
+			if (treeItem.getValue().equals(name)) {
+				return treeItem;
 			}
 		}
-
-	}
-
-	public SimpleObjectProperty<Node> getHelpViewProperty() {
-		return this.currentViewProperty;
-	}
-
-	public void setCurrentView(TreeItem<String> treeItem) {
-		this.currentViewProperty.set(this.pageViews.get(treeItem));
+		return null;
 	}
 
 	private void createTreeStructure(File filepath, TreeItem<String> parent) {
-		TreeItem<String> newTreeItem = new TreeItem<>();
+		TreeItem<String> newTreeItem;
+		if (this.parseInt(filepath.getName()) == null) {
+			newTreeItem = new TreeItem<>();
+		} else {
+			newTreeItem = parent;
+		}
+
 		if (filepath.isDirectory()) {
 			newTreeItem.setValue(filepath.getName());
 			for (File file : filepath.listFiles()) {
+				if (file.isFile() && filepath.getName().equals(this.removeFileExtension(file))) {
+					this.pageViews.put(newTreeItem, file);
+					continue;
+				}
 				this.createTreeStructure(file, newTreeItem);
 			}
 		} else {
-			newTreeItem.setValue(filepath.getName().substring(0, filepath.getName().lastIndexOf(".")));
-			try {
-				Node view = FXMLLoader.load(Paths.get(filepath.toString()).toUri().toURL());
-				this.pageViews.put(newTreeItem, view);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			newTreeItem.setValue(this.removeFileExtension(filepath));
+			this.pageViews.put(newTreeItem, filepath);
 		}
-		parent.getChildren().add(newTreeItem);
+		// if the folder name is number, then it is used to order the elements, but will
+		// not be added to the tree view
+		if (this.parseInt(filepath.getName()) == null) {
+			parent.getChildren().add(newTreeItem);
+		}
 	}
+
+	private String removeFileExtension(File filename) {
+		return filename.getName().substring(0, filename.getName().lastIndexOf("."));
+	}
+
+	private Integer parseInt(String value) {
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
 }
