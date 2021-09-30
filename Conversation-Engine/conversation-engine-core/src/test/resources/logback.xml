@@ -51,14 +51,18 @@
 	
 	<logger name="ConversationLogger" level="ALL">
 		<appender-ref ref="Conversation-STDOUT"/>
+		<!--
 		<appender-ref ref="Conversation-File"/>
 		<appender-ref ref="All-File"/>
+		 -->
 	</logger>
 	
 	<logger name="DeveloperLogger" level="ALL">
 		<appender-ref ref="Debug-STDOUT"/>
+		<!--
 		<appender-ref ref="Debug-File"/>
 		<appender-ref ref="All-File"/>
+		-->
 	</logger>
 	
   	<root level="ALL">
