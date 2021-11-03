@@ -43,7 +43,7 @@ public class App extends Application {
 		mainStage = stage;
 		mainStage.setOnCloseRequest(this.saveBeforeExitConfirmationEventHandler);
 		MvvmFX.setCustomDependencyInjector(easyDI::getInstance);
-		stage.setTitle("ConversationEngine - Dialogue Modeling Tool");
+		stage.setTitle("Conversation Engine - Dialogue Modeling Tool");
 		final Image icon = Util.getIcon();
 		stage.getIcons().add(icon);
 		stage.minHeightProperty().set(480.0);

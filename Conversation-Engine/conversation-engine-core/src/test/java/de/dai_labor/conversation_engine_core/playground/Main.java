@@ -29,7 +29,7 @@ import de.dai_labor.conversation_engine_core.skills.WeatherSkillEnglish;
 
 public class Main {
 
-	private static final String menuString = "\u001B[36mWelcome to the ConversationEngine''s playground!\u001B[0m\n"
+	private static final String menuString = "\u001B[36mWelcome to the Conversation Engine''s playground!\u001B[0m\n"
 			+ "\u001B[36m\033[3mType the corresponding number to select an action from the menu\033[0m\u001B[0m\n\n"
 			+ "\u001B[36m---- Menu ----\u001B[0m\n"
 			+ "\t\u001B[36m[1] Select language  || currently selected language: {0}\u001B[0m\n"

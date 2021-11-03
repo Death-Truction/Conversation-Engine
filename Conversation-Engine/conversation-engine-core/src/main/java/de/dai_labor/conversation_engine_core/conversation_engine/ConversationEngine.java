@@ -29,7 +29,7 @@ import de.dai_labor.conversation_engine_core.interfaces.ISkillAnswer;
  * <br>
  * The system is based on a finite state machine to create an accessible testing
  * environment.
- * 
+ *
  * @author Marcel Engelmann
  *
  */
@@ -58,7 +58,7 @@ public class ConversationEngine {
 
 	/**
 	 * Creates a new {@link ConversationEngine} object
-	 * 
+	 *
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param timeoutInSeconds  the number of seconds after which the
 	 *                          {@link ConversationEngine} will transition into the
@@ -114,13 +114,13 @@ public class ConversationEngine {
 		triggerIntents.add("no");
 		this.nlpComponent.addUsedIntents(triggerIntents);
 		this.timer = new Timer();
-		scheduleNewTimeoutTask();
+		this.scheduleNewTimeoutTask();
 	}
 
 	/**
 	 * Creates a new {@link ConversationEngine} object with a default timeout of 300
 	 * seconds and an empty context object
-	 * 
+	 *
 	 * @param nlpComponent    the NLPComponent that handles the user input
 	 * @param defaultLanguage the default language to use as backup
 	 */
@@ -130,7 +130,7 @@ public class ConversationEngine {
 
 	/**
 	 * Creates a new {@link ConversationEngine} object with an empty context object
-	 * 
+	 *
 	 * @param nlpComponent     the NLPComponent that handles the user input
 	 * @param timeoutInSeconds the number of seconds after which the
 	 *                         {@link ConversationEngine} will transition into the
@@ -145,7 +145,7 @@ public class ConversationEngine {
 	/**
 	 * Creates a new {@link ConversationEngine} object with a default timeout of 300
 	 * seconds
-	 * 
+	 *
 	 * @param nlpComponent      the NLPComponent that handles the user input
 	 * @param jsonContextObject the contextObject as JSON-String to start the
 	 *                          {@link ConversationEngine} with
@@ -157,22 +157,23 @@ public class ConversationEngine {
 
 	/**
 	 * Returns the state machine's current state
-	 * 
+	 *
 	 * @return the state machine's current state
 	 */
 	public String getState() {
 		if (this.closed) {
-			logIllegalAccess();
+			this.logIllegalAccess();
 			return "";
 		}
-		if (this.currentSkillStateMachine != null && !"sleepState".equalsIgnoreCase(this.currentState.getName()))
+		if (this.currentSkillStateMachine != null && !"sleepState".equalsIgnoreCase(this.currentState.getName())) {
 			return this.currentSkillStateMachine.getCurrentState().getName();
+		}
 		return this.currentState.getName();
 	}
 
 	/**
 	 * Add a new Skill to the {@link ConversationEngine}
-	 * 
+	 *
 	 * @param skill            the skill to add to the {@link ConversationEngine}
 	 * @param jsonStateMachine the skill's state machine in JSON-Format. For the
 	 *                         JSON-Schema please check out the <a href=
@@ -181,47 +182,47 @@ public class ConversationEngine {
 	 */
 	public void addSkill(ISkill skill, String jsonStateMachine) {
 		if (this.closed) {
-			logIllegalAccess();
+			this.logIllegalAccess();
 			return;
 		}
 		if (skill == null) {
-			Logging.error("The skill to add to the ConversationEngine is null");
+			Logging.error("The skill to add to the Conversation Engine is null");
 			return;
 		}
 
 		if (jsonStateMachine.isBlank()) {
-			Logging.error("The JSON-String for the skill to add to the ConversationEngine is blank", skill);
+			Logging.error("The JSON-String for the skill to add to the Conversation Engine is blank", skill);
 			return;
 		}
 		SkillStateMachine newSkillStateMachine = GenerateSkillStateMachine.fromJson(skill, jsonStateMachine,
-				nlpComponent);
+				this.nlpComponent);
 		if (newSkillStateMachine == null) {
 			Logging.error("Could not add the skill from the jsonString {}", jsonStateMachine);
 			return;
 		}
 
-		if (allSkillStateMachines.stream().anyMatch(
+		if (this.allSkillStateMachines.stream().anyMatch(
 				skillStateMachine -> skillStateMachine.getName().equalsIgnoreCase(newSkillStateMachine.getName()))) {
 			Logging.error("The skill {} already exists", newSkillStateMachine.getName());
 			return;
 		}
 
-		allSkillStateMachines.add(newSkillStateMachine);
+		this.allSkillStateMachines.add(newSkillStateMachine);
 	}
 
 	/**
 	 * Shuts this ConversationEngine object down and invokes the given Consumer
 	 * operation with the current context object as a StringBuilder
-	 * 
+	 *
 	 * @param operation the operation to call, with the context object passed as
 	 *                  parameter, after shutting down.
 	 */
 	public void shutdown(Consumer<StringBuilder> operation) {
 		if (this.closed) {
-			logIllegalAccess();
+			this.logIllegalAccess();
 			return;
 		}
-		Logging.debug("Shutting down the ConversationEngine {}", this);
+		Logging.debug("Shutting down the Conversation Engine {}", this);
 		this.timer.cancel();
 		this.closed = true;
 		if (operation == null) {
@@ -236,13 +237,13 @@ public class ConversationEngine {
 
 	/**
 	 * Processes a new input and returns a {@link List} of answers
-	 * 
+	 *
 	 * @param input the input to process
 	 * @return a {@link List} of answers
 	 */
 	public List<String> userInput(String input) {
 		if (this.closed) {
-			logIllegalAccess();
+			this.logIllegalAccess();
 			return new ArrayList<>();
 		}
 		if (input == null || input.isBlank()) {
@@ -251,38 +252,37 @@ public class ConversationEngine {
 			return UserOutput.popNextOutput();
 		}
 		Logging.userInput(input);
-		leaveSleepState();
+		this.leaveSleepState();
 		if (this.wasLastQuestionSkillQuestion) {
-			processSkillQuestion(input);
+			this.processSkillQuestion(input);
 		} else if (this.wasLastQuestionChooseSkill) {
-			processChooseSkillQuestion(input);
+			this.processChooseSkillQuestion(input);
 		} else {
-			processNormalRequest(input);
+			this.processNormalRequest(input);
 		}
-		String currentSkillName = "";
+		String withinCurrentSkill = "";
 		if (this.currentSkillStateMachine != null) {
-			currentSkillName = " within the skill " + this.currentSkillStateMachine.getName();
+			withinCurrentSkill = " within the skill " + this.currentSkillStateMachine.getName();
 		}
-		Logging.debug("The ConversationEngine is currently in the state: {}{}", this.getState(), currentSkillName);
+		Logging.debug("The Conversation Engine is currently in the state: {}{}", this.getState(), withinCurrentSkill);
 		return UserOutput.popNextOutput();
 	}
 
 	/**
-	 * Processes the input normally as a new input not relating to a question asked
+	 * Processes the input normally as a new input not related to a question asked
 	 * previously
-	 * 
+	 *
 	 * @param input the user input
 	 */
 	private void processNormalRequest(String input) {
-		processINLPAnswer(this.nlpComponent.understandInput(input, this.contextObject));
+		this.processINLPAnswer(this.nlpComponent.understandInput(input, this.contextObject));
 
 	}
 
 	/**
-	 * Processes the input normally as a new input not relating to a question asked
-	 * previously
-	 * 
-	 * @param processedInput the {@link INLPAnswer} of a {@link INLPComponent}
+	 * Processes the returned {@link INLPAnswer} of the {@link INLPComponent}
+	 *
+	 * @param processedInput the {@link INLPAnswer} of the {@link INLPComponent}
 	 */
 	private void processINLPAnswer(INLPAnswer processedInput) {
 		if (processedInput == null) {
@@ -294,7 +294,7 @@ public class ConversationEngine {
 		Locale foundLanguage = processedInput.getInputLanguage();
 		boolean addedEntities = processedInput.hasAddedEntities();
 		if (foundLanguage == null) {
-			Logging.error("NLPComponent did not return a language");
+			Logging.warn("NLPComponent did not return a language");
 		} else {
 			I18n.setLanguage(foundLanguage);
 		}
@@ -308,25 +308,25 @@ public class ConversationEngine {
 			Collections.reverse(intents);
 			this.pendingIntents.addAll(intents);
 			if (this.wasLastQuestionAbortQuestion || this.wasLastQuestionReturnToPreviousSkill) {
-				processSpecialQuestion();
+				this.processSpecialQuestion();
 				return;
 			}
 			if ("abort".equalsIgnoreCase(intents.get(0))) {
 				this.pendingIntents.removeLast();
-				abortRequested();
+				this.abortRequested();
 				return;
 			}
 		}
-		evaluateNextAction();
+		this.evaluateNextAction();
 	}
 
 	private void processSpecialQuestion() {
 		if (this.wasLastQuestionAbortQuestion) {
 			this.wasLastQuestionAbortQuestion = false;
-			processAbortQuestion();
-		} else if (wasLastQuestionReturnToPreviousSkill) {
+			this.processAbortQuestion();
+		} else if (this.wasLastQuestionReturnToPreviousSkill) {
 			this.wasLastQuestionReturnToPreviousSkill = false;
-			processReturnToPreviousSkillQuestion();
+			this.processReturnToPreviousSkillQuestion();
 		}
 
 	}
@@ -338,21 +338,21 @@ public class ConversationEngine {
 	 * {@link #currentSkillStateMachine} will be
 	 * {@link #resetCurrentSkillStateMachine reset} and the next action will be
 	 * {@link #evaluateNextAction() evaluated} <br>
-	 * 
+	 *
 	 * If the answer was to abort all skills, then the pipeline will be
 	 * {@link #clearPipeline cleared} <br>
 	 * If the abort question was not answered, the input will be processed
 	 * {@link #processNormalRequest(String)}
-	 * 
+	 *
 	 * @param intent the intent to process
 	 */
 	private void processAbortQuestion() {
 		String intent = this.pendingIntents.peekLast();
 		if ("last".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
-			resetCurrentSkillStateMachine(false);
+			this.resetCurrentSkillStateMachine(false);
 			UserOutput.addOutputMessageFromLocalizationKey("BackToSkill", this.currentSkillStateMachine.getName());
-			evaluateNextAction();
+			this.evaluateNextAction();
 			return;
 		}
 		if ("all".equalsIgnoreCase(intent)) {
@@ -360,47 +360,47 @@ public class ConversationEngine {
 			this.clearPipeline();
 			return;
 		}
-		askAbortQuestion();
+		this.askAbortQuestion();
 	}
 
 	/**
 	 * Tries to process the intent as an answer to the "Return to the previous
 	 * skill" question<br>
 	 * <br>
-	 * 
+	 *
 	 * If the answer was to return to the next skill, then the
 	 * {@link #currentSkillStateMachine} will be
 	 * {@link #resetCurrentSkillStateMachine(boolean) reset}<br>
-	 * 
+	 *
 	 * If the answer was to abort all skills, then the pipeline will be
 	 * {@link #clearPipeline() cleared}<br>
-	 * 
+	 *
 	 * If the abort question was not answered, the input will be processed
 	 * {@link #processNormalRequest normally}
-	 * 
+	 *
 	 * @param intent the intent to process
-	 * 
+	 *
 	 */
 	private void processReturnToPreviousSkillQuestion() {
 		String intent = this.pendingIntents.peekLast();
 		if ("Yes".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
 			UserOutput.addOutputMessageFromLocalizationKey("BackToSkill", this.currentSkillStateMachine.getName());
-			evaluateNextAction();
+			this.evaluateNextAction();
 			return;
 		}
 		if ("No".equalsIgnoreCase(intent)) {
 			this.pendingIntents.removeLast();
-			resetCurrentSkillStateMachine(true);
+			this.resetCurrentSkillStateMachine(true);
 			return;
 		}
-		askContinueLastSkill();
+		this.askContinueLastSkill();
 	}
 
 	/**
 	 * Tries to process the input as an answer to a skill question. If the question
 	 * was not answered, the corresponding skill will have to ask the question again
-	 * 
+	 *
 	 * @param input the input to process
 	 */
 	private void processSkillQuestion(String input) {
@@ -413,7 +413,7 @@ public class ConversationEngine {
 			this.wasLastQuestionSkillQuestion = false;
 			this.pendingSkillQuestions.removeTopQuestionAndEntity(this.currentSkillStateMachine.getName());
 		}
-		processINLPAnswer(processedInput);
+		this.processINLPAnswer(processedInput);
 	}
 
 	/**
@@ -422,7 +422,7 @@ public class ConversationEngine {
 	 * If the input equals to a fitting skill, that skill will be executed and the
 	 * last intent will be processed Otherwise the input will be processed as a
 	 * {@link #processNormalRequest normal request}
-	 * 
+	 *
 	 * @param input the input to process
 	 */
 	private void processChooseSkillQuestion(String input) {
@@ -434,14 +434,13 @@ public class ConversationEngine {
 			Logging.debug(
 					"The question to choose a skill was not answered!\nPossible skills are: {}\nUser input is: {}",
 					this.possibleSkillsForChooseSkillQuestion, input);
-			askChooseSkillQuestion();
+			this.askChooseSkillQuestion();
 		} else {
 			this.wasLastQuestionChooseSkill = false;
-			final String skillName = nextSkill;
-			leaveCurrentSkillStateMachine();
+			this.leaveCurrentSkillStateMachine();
 			this.currentSkillStateMachine = this.allSkillStateMachines.stream()
-					.filter(skill -> skill.getName().equals(skillName)).findFirst().orElse(null);
-			evaluateNextAction();
+					.filter(skill -> skill.getName().equals(nextSkill)).findFirst().orElse(null);
+			this.evaluateNextAction();
 			this.possibleSkillsForChooseSkillQuestion.clear();
 		}
 	}
@@ -451,10 +450,10 @@ public class ConversationEngine {
 	 *
 	 */
 	private void processNextIntent() {
-		String intent = pendingIntents.peekLast();
+		String intent = this.pendingIntents.peekLast();
 		Logging.debug("Processing the intent '{}'", intent);
 		this.lastIntent = intent;
-		SkillStateMachine nextSkillStateMachine = getNextSkillStateMachine(intent);
+		SkillStateMachine nextSkillStateMachine = this.getNextSkillStateMachine(intent);
 		if (nextSkillStateMachine == null) {
 			return;
 		}
@@ -469,16 +468,16 @@ public class ConversationEngine {
 		this.processSkillAnswer(answer);
 		boolean skillMachineEnded = this.hasSkillStateMachineEnded();
 		if (skillMachineEnded && this.currentSkillStateMachine != null) {
-			wasLastQuestionReturnToPreviousSkill = true;
-			askContinueLastSkill();
+			this.wasLastQuestionReturnToPreviousSkill = true;
+			this.askContinueLastSkill();
 			return;
 		}
-		evaluateNextAction();
+		this.evaluateNextAction();
 	}
 
 	/**
 	 * Processes a {@link ISkillAnswer} of a skill
-	 * 
+	 *
 	 * @param skillAnswer the answer of a skill
 	 */
 	private void processSkillAnswer(ISkillAnswer skillAnswer) {
@@ -504,8 +503,9 @@ public class ConversationEngine {
 		}
 		Map<String, String> newQuestions = skillAnswer.requiredQuestionsToBeAnswered();
 		for (Entry<String, String> entry : newQuestions.entrySet()) {
-			this.pendingSkillQuestions.addQuestion(this.currentSkillStateMachine.getName(), entry.getKey(),
-					entry.getValue());
+			String entityName = entry.getKey();
+			String question = entry.getValue();
+			this.pendingSkillQuestions.addQuestion(this.currentSkillStateMachine.getName(), entityName, question);
 		}
 	}
 
@@ -519,29 +519,29 @@ public class ConversationEngine {
 		if (this.currentSkillStateMachine != null && !this.pendingIntents.isEmpty()
 				&& this.lastIntent.equals(this.pendingIntents.peekLast())
 				&& this.pendingSkillQuestions.getNumberOfQuestions(this.currentSkillStateMachine.getName()) > 0) {
-			askNextQuestion();
+			this.askNextQuestion();
 			return;
 
 		}
 
 		if (!this.pendingIntents.isEmpty()) {
-			processNextIntent();
+			this.processNextIntent();
 		}
 	}
 
 	/**
 	 * If {@link #lastUsedSkillStateMachine} is null, then the {@link #clearPipeline
 	 * pipeline will be cleared} <br>
-	 * If not then an abort question will be asked
+	 * If not then an {@link #askAbortQuestion abort question} will be asked
 	 */
 	private void abortRequested() {
-		// can only abort current skillSM
+		// can only abort current skill state machine
 		if (this.lastUsedSkillStateMachine == null) {
 			this.clearPipeline();
 			return;
 		}
 		this.wasLastQuestionAbortQuestion = true;
-		askAbortQuestion();
+		this.askAbortQuestion();
 	}
 
 	/**
@@ -550,15 +550,15 @@ public class ConversationEngine {
 	 */
 	private void clearPipeline() {
 		// reset both, the current and last skillStateMachine
-		resetCurrentSkillStateMachine(true);
+		this.resetCurrentSkillStateMachine(true);
 		this.pendingIntents.clear();
 		this.pendingSkillQuestions.clear();
-		wasLastQuestionChooseSkill = false;
-		wasLastQuestionSkillQuestion = false;
-		wasLastQuestionAbortQuestion = false;
-		wasLastQuestionReturnToPreviousSkill = false;
-		possibleSkillsForChooseSkillQuestion.clear();
-		lastIntent = "";
+		this.wasLastQuestionChooseSkill = false;
+		this.wasLastQuestionSkillQuestion = false;
+		this.wasLastQuestionAbortQuestion = false;
+		this.wasLastQuestionReturnToPreviousSkill = false;
+		this.possibleSkillsForChooseSkillQuestion.clear();
+		this.lastIntent = "";
 	}
 
 	/**
@@ -571,9 +571,9 @@ public class ConversationEngine {
 		TimerTask timerTask = new TimerTask() {
 			@Override
 			public void run() {
-				if ("defaultState".equals(currentState.getName())) {
+				if ("defaultState".equals(ConversationEngine.this.currentState.getName())) {
 					Logging.debug("Entering Sleep State");
-					currentState = currentState.getNextState("SLEEP");
+					ConversationEngine.this.currentState = ConversationEngine.this.currentState.getNextState("SLEEP");
 				}
 			}
 		};
@@ -594,7 +594,7 @@ public class ConversationEngine {
 			UserOutput.addOutputMessageFromLocalizationKey("WelcomeBack");
 		}
 
-		scheduleNewTimeoutTask();
+		this.scheduleNewTimeoutTask();
 	}
 
 	/**
@@ -632,7 +632,7 @@ public class ConversationEngine {
 
 	/**
 	 * Determines the possible skills for a given intent
-	 * 
+	 *
 	 * @param intent the intent thats supposed to be processed by a skill
 	 * @return the {@link SkillStateMachine} to the corresponding skill, that can
 	 *         execute the given intent. Or returns null if no or more than one
@@ -645,7 +645,7 @@ public class ConversationEngine {
 		}
 
 		List<SkillStateMachine> possibleSkills = new ArrayList<>();
-		for (SkillStateMachine ssm : allSkillStateMachines) {
+		for (SkillStateMachine ssm : this.allSkillStateMachines) {
 			if (ssm.canExecute(intent)) {
 				possibleSkills.add(ssm);
 			}
@@ -661,16 +661,15 @@ public class ConversationEngine {
 			for (SkillStateMachine ssm : possibleSkills) {
 				this.possibleSkillsForChooseSkillQuestion.add(ssm.getName());
 			}
-			askChooseSkillQuestion();
+			this.askChooseSkillQuestion();
 			Logging.debug("The intent {} can be processed by multiple skills: {}", intent,
 					this.possibleSkillsForChooseSkillQuestion);
 			this.wasLastQuestionChooseSkill = true;
 			return null;
 		}
 
-		if (this.currentSkillStateMachine != null
-				&& !possibleSkills.get(0).getName().equals(currentSkillStateMachine.getName())) {
-			leaveCurrentSkillStateMachine();
+		if (this.currentSkillStateMachine != null) {
+			this.leaveCurrentSkillStateMachine();
 		}
 		return possibleSkills.get(0);
 
@@ -685,12 +684,13 @@ public class ConversationEngine {
 			Logging.debug("Leaving the skill {}", this.currentSkillStateMachine.getName());
 		}
 		this.lastUsedSkillStateMachine = this.currentSkillStateMachine;
+		this.currentSkillStateMachine = null;
 	}
 
 	/**
 	 * Resets the {@link #currentSkillStateMachine} and removes all pending
 	 * questions relating to the skill
-	 * 
+	 *
 	 * @param alsoResetLastUsedSkillStateMachine if true, then also resets the
 	 *                                           {@link #lastUsedSkillStateMachine}
 	 *                                           and removes all pending questions
@@ -700,13 +700,14 @@ public class ConversationEngine {
 		if (this.currentSkillStateMachine == null) {
 			return;
 		}
-		removeIntentsOfCurrentSkill();
+		this.removeIntentsOfCurrentSkill();
 		this.currentSkillStateMachine.reset();
 		this.pendingSkillQuestions.removeAllSkillQuestions(this.currentSkillStateMachine.getName());
 		this.wasLastQuestionSkillQuestion = false;
 		this.currentSkillStateMachine = this.lastUsedSkillStateMachine;
+		this.lastUsedSkillStateMachine = null;
 		if (alsoResetLastUsedSkillStateMachine) {
-			resetCurrentSkillStateMachine(false);
+			this.resetCurrentSkillStateMachine(false);
 		}
 	}
 
@@ -726,16 +727,14 @@ public class ConversationEngine {
 
 	/**
 	 * Checks whether the {@link #currentSkillStateMachine} has ended or not
-	 * 
+	 *
 	 * @return true if the {@link #currentSkillStateMachine} has ended
 	 */
 	private boolean hasSkillStateMachineEnded() {
 		boolean currentSkillStateMachineEnded = this.currentSkillStateMachine.hasEnded();
 		if (currentSkillStateMachineEnded) {
 			Logging.debug("The Skill {} Ended", this.currentSkillStateMachine.getName());
-			resetCurrentSkillStateMachine(false);
-			this.currentSkillStateMachine = this.lastUsedSkillStateMachine;
-			this.lastUsedSkillStateMachine = null;
+			this.resetCurrentSkillStateMachine(false);
 		}
 
 		return currentSkillStateMachineEnded;
@@ -745,7 +744,7 @@ public class ConversationEngine {
 	 * Logs that a method on this object was called after it has been shut down
 	 */
 	private void logIllegalAccess() {
-		Logging.error("The ConversationEngine was invoked after it has been shut down");
+		Logging.error("The Conversation Engine was invoked after it has been shut down");
 	}
 
 	private void defaultErrorUserOuput() {
