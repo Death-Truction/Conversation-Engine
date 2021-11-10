@@ -74,6 +74,7 @@ public class SimulationViewModel implements ViewModel {
 			SimulationSettingsViewModel simulationSettingsViewModel) {
 		this.dialogueViewModel = dialogueViewModel;
 		this.dialogueView = dialogueViewModel.getView();
+		this.dialogueView.setSimulationMode(true);
 		Pane dialogueElementsLayer = (Pane) this.dialogueView.getChildren().get(0);
 		dialogueElementsLayer.setDisable(true);
 		Class<?> nlpClass = simulationSettingsViewModel.getNLPComponent().getSelectedClass();
@@ -280,6 +281,7 @@ public class SimulationViewModel implements ViewModel {
 		dialogueElementsLayer.setDisable(false);
 		this.dialogueViewModel.getStates().forEach((index, state) -> state.deselect());
 		this.dialogueViewModel.getTransitions().stream().forEach(Transition::deselect);
+		this.dialogueView.setSimulationMode(false);
 	}
 
 	/**
@@ -401,6 +403,7 @@ public class SimulationViewModel implements ViewModel {
 
 	private void addConversationMessageToView(Pos alignment, String message) {
 		Label messageLabel = new Label(message);
+		messageLabel.setWrapText(true);
 		if (alignment == Pos.CENTER_LEFT) {
 			messageLabel.setStyle("-fx-background-color: Green; -fx-text-fill: WHITE");
 		} else {

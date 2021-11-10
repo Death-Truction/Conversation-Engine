@@ -49,6 +49,7 @@ public class DialoguePane extends Pane {
 	private SimpleObjectProperty<Transition> selectedTransition;
 	private TransitionArrow dragArrow;
 	private boolean mouseIsPressed = false;
+	private boolean simulationMode = false;
 
 	/**
 	 * EventHandler that filters all mouse events
@@ -88,7 +89,9 @@ public class DialoguePane extends Pane {
 	private EventHandler<MouseEvent> mousePressedEventFilter = event -> {
 		this.mouseIsPressed = true;
 		this.requestFocus();
-		this.deselectAll();
+		if (!this.simulationMode) {
+			this.deselectAll();
+		}
 		if (event.isSecondaryButtonDown()) {
 			this.setCursor(Cursor.MOVE);
 			this.dragElementData = new DragElementData(event.getScreenX(), event.getScreenY(),
@@ -286,6 +289,10 @@ public class DialoguePane extends Pane {
 		targetX = this.getWidth() / 2 + this.getScene().getWidth() / 2 - targetX;
 		targetY = this.getHeight() / 2 + this.getScene().getHeight() / 2 - targetY;
 		this.dialogueModelDataLayer.relocate(targetX, targetY);
+	}
+
+	public void setSimulationMode(boolean value) {
+		this.simulationMode = value;
 	}
 
 	/**
