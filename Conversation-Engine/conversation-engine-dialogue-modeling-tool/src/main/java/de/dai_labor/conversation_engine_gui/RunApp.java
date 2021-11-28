@@ -3,7 +3,7 @@ package de.dai_labor.conversation_engine_gui;
 import javafx.application.Application;
 
 /**
- * Entry Point for the Application Required for IDEs
+ * Entry Point for the Application Required for some IDEs
  *
  * @author Marcel Engelmann
  *

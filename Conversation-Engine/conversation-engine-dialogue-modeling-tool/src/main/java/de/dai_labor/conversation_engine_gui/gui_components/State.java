@@ -63,7 +63,7 @@ public class State extends StackPane {
 		this.selectedState.set(this);
 		this.toFront();
 		if (event.getClickCount() == 2) {
-			this.focusLabel();
+			this.focusNameTextArea();
 			event.consume();
 		}
 		this.dragElementData = new DragElementData(event.getScreenX(), event.getScreenY(), this.getTranslateX(),
@@ -244,7 +244,7 @@ public class State extends StackPane {
 	/**
 	 * Focuses the {@link #nameTextArea}
 	 */
-	private void focusLabel() {
+	private void focusNameTextArea() {
 		this.nameTextArea.requestFocus();
 		this.nameTextArea.selectAll();
 	}
@@ -255,7 +255,7 @@ public class State extends StackPane {
 	private void initFocusRequest() {
 		Platform.runLater(() -> {
 			if (this.selectedState.get().equals(this)) {
-				this.focusLabel();
+				this.focusNameTextArea();
 			}
 		});
 	}

@@ -43,8 +43,8 @@ public class DialoguePane extends Pane {
 	private Consumer<State> removeState;
 	private Consumer<Transition> removeTransition;
 	private SimpleStringProperty insertMode;
-	private State sourceTransitionState;
-	private State targetTransitionState;
+	private State transitionDragSourceState;
+	private State transitionDragTargetState;
 	private SimpleObjectProperty<State> selectedState;
 	private SimpleObjectProperty<Transition> selectedTransition;
 	private TransitionArrow dragArrow;
@@ -98,7 +98,7 @@ public class DialoguePane extends Pane {
 					this.dialogueModelDataLayer.getTranslateX(), this.dialogueModelDataLayer.getTranslateY());
 			event.consume();
 		} else if (this.insertMode.get().equals("addTransition") && this.isStateTarget(event)) {
-			this.sourceTransitionState = (State) event.getPickResult().getIntersectedNode();
+			this.transitionDragSourceState = (State) event.getPickResult().getIntersectedNode();
 			event.consume();
 		} else if (!this.insertMode.get().isBlank()) {
 			event.consume();
@@ -110,7 +110,7 @@ public class DialoguePane extends Pane {
 	 * EventHandler that handles the mouse dragged event. It will move the
 	 * {@link #dialogueModelDataLayer} if the secondary mouse button is pressed
 	 * while dragging. If the addTransition toggle button is active, it will create
-	 * a temporally {@link TransitionArrow} from the {@link #sourceTransitionState
+	 * a temporally {@link TransitionArrow} from the {@link #transitionDragSourceState
 	 * source state} to the mouse pointer
 	 */
 	private EventHandler<MouseEvent> mouseDraggedEventFilter = event -> {
@@ -125,17 +125,17 @@ public class DialoguePane extends Pane {
 
 			event.consume();
 		} else if (this.insertMode.get().equals("addTransition")) {
-			if (this.sourceTransitionState != null) {
+			if (this.transitionDragSourceState != null) {
 				this.dialogueModelDataLayer.getChildren().remove(this.dragArrow);
-				if (event.getPickResult().getIntersectedNode() == this.sourceTransitionState) {
-					this.dragArrow = new TransitionArrow(this.sourceTransitionState, this.sourceTransitionState,
+				if (event.getPickResult().getIntersectedNode() == this.transitionDragSourceState) {
+					this.dragArrow = new TransitionArrow(this.transitionDragSourceState, this.transitionDragSourceState,
 							this.dialogueModelDataLayer.getScaleX());
 				} else {
 					Double scale = this.dialogueModelDataLayer.getScaleX();
 					StackPane tmpPane = new StackPane();
 					tmpPane.setTranslateX(event.getX() - this.dialogueModelDataLayer.getBoundsInParent().getMinX());
 					tmpPane.setTranslateY(event.getY() - this.dialogueModelDataLayer.getBoundsInParent().getMinY());
-					this.dragArrow = new TransitionArrow(this.sourceTransitionState, tmpPane, scale);
+					this.dragArrow = new TransitionArrow(this.transitionDragSourceState, tmpPane, scale);
 				}
 				this.dragArrow.setMouseTransparent(true);
 				this.dialogueModelDataLayer.getChildren().add(this.dragArrow);
@@ -163,10 +163,10 @@ public class DialoguePane extends Pane {
 				this.addState.accept(x, y);
 				event.consume();
 			} else if (this.insertMode.get().equals("addTransition") && this.isStateTarget(event)) {
-				this.targetTransitionState = (State) event.getPickResult().getIntersectedNode();
-				this.addTransition.accept(this.sourceTransitionState, this.targetTransitionState);
-				this.sourceTransitionState = null;
-				this.targetTransitionState = null;
+				this.transitionDragTargetState = (State) event.getPickResult().getIntersectedNode();
+				this.addTransition.accept(this.transitionDragSourceState, this.transitionDragTargetState);
+				this.transitionDragSourceState = null;
+				this.transitionDragTargetState = null;
 				event.consume();
 			}
 		}
