@@ -756,8 +756,8 @@ public class ConversationEngine {
 			}
 		} else {
 			// Get all possible requests from all skills
-			List<String> allPossibleRequests = new ArrayList<>();
-			List<String> selectedPossibleRequests = new ArrayList<>();
+			List<String> allPossibleRequests = new ArrayList<>(this.allSkillStateMachines.size());
+			List<String> selectedPossibleRequests = new ArrayList<>(3);
 			for (SkillStateMachine skill : this.allSkillStateMachines) {
 				allPossibleRequests.addAll(skill.getExampleRequests(I18n.getLanguage()));
 			}

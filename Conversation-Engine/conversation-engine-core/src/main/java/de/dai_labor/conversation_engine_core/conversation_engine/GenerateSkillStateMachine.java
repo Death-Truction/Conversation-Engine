@@ -16,7 +16,7 @@ import de.dai_labor.conversation_engine_core.interfaces.ISkill;
 
 /**
  * Utility class for generating {@link SkillStateMachine SkillStateMachines}
- * 
+ *
  * @author Marcel Engelmann
  *
  */
@@ -28,7 +28,7 @@ class GenerateSkillStateMachine {
 
 	/**
 	 * Generate a new skill state machine from a JSON file
-	 * 
+	 *
 	 * @param skill                 new skill to generate a state machine for
 	 * @param jsonSkillStateMachine the JSON-String for the skill's state machine.
 	 *                              For the correct syntax check out the <a href=
@@ -95,7 +95,7 @@ class GenerateSkillStateMachine {
 
 	/**
 	 * Get the skill's used entities from the skill's {@link JSONObject}
-	 * 
+	 *
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
 	 * @return a list of entities
@@ -111,7 +111,7 @@ class GenerateSkillStateMachine {
 
 	/**
 	 * Get the skill's used intents from the skill's {@link JSONObject}
-	 * 
+	 *
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
 	 * @return a list of intents
@@ -128,14 +128,14 @@ class GenerateSkillStateMachine {
 	/**
 	 * Tries to add all defined transitions to the correct states of the skill's new
 	 * state machine
-	 * 
+	 *
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
 	 * @param states            the list of {@link State States} found in the
 	 *                          skill's {@link JSONObject}
 	 * @return true if all transitions were added successfully
 	 */
-	private static boolean successfullyAddedTransitions(JSONObject skillStateMachine, List<State> states) {
+	private static boolean successfullyAddedTransitions(JSONObject skillStateMachine, Iterable<State> states) {
 		int index = 0;
 		boolean noErrors = true;
 		for (Object t : skillStateMachine.getJSONArray("transitions")) {
@@ -164,7 +164,7 @@ class GenerateSkillStateMachine {
 	/**
 	 * Returns the list of {@link State States} found in the skill's
 	 * {@link JSONObject}
-	 * 
+	 *
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
 	 * @return the list of {@link State States} found in the skill's
@@ -183,7 +183,7 @@ class GenerateSkillStateMachine {
 
 	/**
 	 * Finds a {@link State} in a given list by a given name
-	 * 
+	 *
 	 * @param name   the name of the state to be found
 	 * @param states the list of {@link State States} to search for the wanted
 	 *               {@link State}
@@ -202,7 +202,7 @@ class GenerateSkillStateMachine {
 	/**
 	 * Validates the {@link JSONObject} of the skill's new state machine with this
 	 * <a href= "file:../../resources/SkillStateMachine_Schema.json">JSON-Schema</a>
-	 * 
+	 *
 	 * @param skillStateMachine the {@link JSONObject} of the skill's new state
 	 *                          machine
 	 * @throws ValidationException if the JSON-Object is invalid
@@ -222,7 +222,7 @@ class GenerateSkillStateMachine {
 	/**
 	 * Creates a String with the exception message of all nested
 	 * {@link ValidationException ValidationExceptions}
-	 * 
+	 *
 	 * @param validationException the occurred exception to build a message from
 	 * @return a String with the exception message of all nested
 	 *         {@link ValidationException ValidationExceptions}
