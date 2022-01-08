@@ -22,7 +22,7 @@ import ch.qos.logback.classic.LoggerContext;
 class TestHelperFunctions {
 
 	private TestHelperFunctions() {
-		throw new IllegalStateException("Utility class");
+		throw new IllegalStateException("Static class");
 	}
 
 	/**

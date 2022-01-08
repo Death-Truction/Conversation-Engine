@@ -50,8 +50,14 @@ import javafx.stage.Stage;
  *
  */
 public class Util {
+
+	/**
+	 * Static class, constructor is not allowed
+	 *
+	 * @throws IllegalStateException static class, constructor is not allowed
+	 */
 	private Util() throws IllegalStateException {
-		throw new IllegalStateException("Utility class");
+		throw new IllegalStateException("Static class");
 	}
 
 	/**
@@ -430,7 +436,7 @@ public class Util {
 	/**
 	 * Gets all classes implementing the {@link IStorableGuiData} interface
 	 *
-	 * @return
+	 * @return all classes implementing the {@link IStorableGuiData} interface
 	 */
 	private static Set<Class<? extends IStorableGuiData>> getIStorableGuiDataClasses() {
 		Reflections reflections = new Reflections("de.dai_labor.dialog_modeling_tool");

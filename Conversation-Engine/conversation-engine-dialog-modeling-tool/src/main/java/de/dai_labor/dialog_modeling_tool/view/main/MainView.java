@@ -78,8 +78,8 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
 	}
 
 	/**
-	 * Updates the {@link contentArea}'s children to the current view. The current
-	 * view is determined by the selected navigation button
+	 * Updates the {@link MainView#contentArea}'s children to the current view. The
+	 * current view is determined by the selected navigation button
 	 */
 	private void updateView() {
 		Node view = this.viewModel.getCurrentViewProperty().get();

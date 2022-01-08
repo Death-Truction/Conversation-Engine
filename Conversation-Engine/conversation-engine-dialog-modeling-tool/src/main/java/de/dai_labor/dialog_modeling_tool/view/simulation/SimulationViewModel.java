@@ -328,6 +328,7 @@ public class SimulationViewModel implements ViewModel {
 	 *
 	 * @param conversationEngine The instance of the {@link ConversationEngine}
 	 * @param inputs             The user inputs to process
+	 * @param loggingLevelValue  The selected logging value
 	 */
 	private void simulateConversationEngineProcess(ConversationEngine conversationEngine, String[] inputs,
 			String loggingLevelValue) {
@@ -374,6 +375,11 @@ public class SimulationViewModel implements ViewModel {
 		}
 	}
 
+	/**
+	 * Display errors from the logs
+	 *
+	 * @param logs the logs containing the errors
+	 */
 	private void displayErrors(MemoryLogger logs) {
 		StringBuilder sbl = new StringBuilder();
 		for (ILoggingEvent event : logs.list) {
@@ -389,11 +395,17 @@ public class SimulationViewModel implements ViewModel {
 		});
 	}
 
+	/**
+	 * Starts the simulation and automatically advances each step after a given time
+	 */
 	private void startAutoSimulation() {
 		this.stepForward();
 		this.timerTaskStepForward();
 	}
 
+	/**
+	 * Timed task for the next step
+	 */
 	private void timerTaskStepForward() {
 		if (!this.simulationIsRunningProperty.get()) {
 			this.timer.cancel();
@@ -420,6 +432,12 @@ public class SimulationViewModel implements ViewModel {
 		this.timer.schedule(timerTask, (long) stepTime);
 	}
 
+	/**
+	 * Adds the conversation messages to the designated view
+	 *
+	 * @param alignment Where to align the message inside the view
+	 * @param message   the message to display
+	 */
 	private void addConversationMessageToView(Pos alignment, String message) {
 		Label messageLabel = new Label(message);
 		messageLabel.setWrapText(true);
@@ -433,6 +451,11 @@ public class SimulationViewModel implements ViewModel {
 		this.conversationMessages.add(messageContainer);
 	}
 
+	/**
+	 * Add the conversation messages from a given step
+	 *
+	 * @param step the step with the messages
+	 */
 	private void addConversationMessages(SimulationStep step) {
 		this.addConversationMessageToView(Pos.CENTER_RIGHT, step.getInput());
 		for (String message : step.getOutput()) {
@@ -440,12 +463,22 @@ public class SimulationViewModel implements ViewModel {
 		}
 	}
 
+	/**
+	 * Remove the conversation messages from a given step
+	 *
+	 * @param step the step with the messages
+	 */
 	private void removeConversationMessages(SimulationStep step) {
 		int numOfRemovingMessages = step.getOutput().size() + 1; // +1 for input message
 		int newEndIndex = this.conversationMessages.size() - numOfRemovingMessages;
 		this.conversationMessages.remove(newEndIndex, this.conversationMessages.size());
 	}
 
+	/**
+	 * Add the logging messages from a given step to the designated view
+	 *
+	 * @param step the step with the messages
+	 */
 	private void addLoggingMessages(SimulationStep step) {
 		for (ILoggingEvent event : step.getLoggingOutput()) {
 			Label errorLevel = new Label(event.getLevel().levelStr);
@@ -457,6 +490,11 @@ public class SimulationViewModel implements ViewModel {
 		}
 	}
 
+	/**
+	 * Remove the logging messages from a given step of the designated view
+	 *
+	 * @param step the step with the messages
+	 */
 	private void removeLoggingMessages(SimulationStep step) {
 		int numOfRemovingMessages = step.getLoggingOutput().size();
 		int newEndIndex = this.loggingMessages.size() - numOfRemovingMessages;

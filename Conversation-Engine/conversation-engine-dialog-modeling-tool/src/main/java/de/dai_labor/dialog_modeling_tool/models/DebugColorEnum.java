@@ -34,6 +34,11 @@ public enum DebugColorEnum {
 
 	private final Color color;
 
+	/**
+	 * Constructor to create a new {@link DebugColorEnum}
+	 *
+	 * @param color the color for the new enum
+	 */
 	DebugColorEnum(Color color) {
 		this.color = Objects.requireNonNull(color);
 	}

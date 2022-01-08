@@ -164,7 +164,7 @@ public class TransitionArrow extends Pane {
 	}
 
 	/**
-	 * Adds all the Event Listeners for the {@link Arrow} instance
+	 * Adds all the Event Listeners for the {@link TransitionArrow} instance
 	 */
 	private void addEventListeners() {
 		this.line.addEventFilter(MouseEvent.MOUSE_PRESSED, this.mousePressedEventHandler);
@@ -174,8 +174,8 @@ public class TransitionArrow extends Pane {
 	}
 
 	/**
-	 * Binds the {@link Arrow}'s elements to the defined settings. Therefore if the
-	 * settings change, the arrow's elements will do so as well
+	 * Binds the {@link TransitionArrow}'s elements to the defined settings.
+	 * Therefore if the settings change, the arrow's elements will do so as well
 	 */
 	private void addSettingsChangeListeners() {
 		this.line.strokeProperty().bind(this.settings.getTransitionNormalColorProperty());
@@ -265,9 +265,8 @@ public class TransitionArrow extends Pane {
 	 * This method has been (partly) taken from this <a href=
 	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
 	 *
-	 * @param startDot Pane for considering start point
-	 * @param endDot   Pane for considering end point
-	 * @param scale    the current scale of the {@link Parent}
+	 * @param element The element that requires an arc
+	 * @param scale   the current scale of the {@link Parent}
 	 * @return the new created {@link Line}
 	 */
 	private Arc getArc(StackPane element, double scale) {
@@ -310,12 +309,10 @@ public class TransitionArrow extends Pane {
 	 * This method has been (partly) taken from this <a href=
 	 * "https://stackoverflow.com/questions/53366602/creating-directed-edges-javafx/53386201#53386201">source</a>
 	 *
-	 * @param toLineEnd Specifies whether the arrow to point towards end pane or
-	 *                  start pane.
-	 * @param line      The {@link Line} joining the layout center points of the
-	 *                  provided panes.
-	 * @param startDot  The {@link Pane} which is considered as start point of line
-	 * @param endDot    The {@link Pane} which is considered as end point of line
+	 * @param line   The {@link Line} joining the layout center points of the
+	 *               provided panes.
+	 * @param endDot The {@link Pane} which is considered as end point of line
+	 * @return A {@link StackPane} owning the created arrow
 	 */
 	private StackPane getArrow(Line line, StackPane endDot) {
 		final StackPane arrow = new StackPane();

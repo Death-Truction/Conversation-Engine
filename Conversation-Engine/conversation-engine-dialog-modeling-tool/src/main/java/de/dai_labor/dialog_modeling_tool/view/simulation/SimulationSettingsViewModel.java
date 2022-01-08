@@ -346,7 +346,7 @@ public class SimulationSettingsViewModel implements ViewModel, IStorableGuiData 
 	 * Adds a {@link ChangeListener} to the {@link Property Properties} that updates
 	 * the {@link #dataHasChanged} attribute accordingly
 	 *
-	 * @param properties
+	 * @param properties the properties to add a change listener to
 	 */
 	private void addChangedListener(Property<?>... properties) {
 		for (Property<?> property : properties) {

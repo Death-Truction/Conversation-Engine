@@ -108,9 +108,9 @@ public class DialogPane extends Pane {
 
 	/**
 	 * EventHandler that handles the mouse dragged event. It will move the
-	 * {@link #dialogModelDataLayer} if the secondary mouse button is pressed
-	 * while dragging. If the addTransition toggle button is active, it will create
-	 * a temporally {@link TransitionArrow} from the {@link #transitionDragSourceState
+	 * {@link #dialogModelDataLayer} if the secondary mouse button is pressed while
+	 * dragging. If the addTransition toggle button is active, it will create a
+	 * temporally {@link TransitionArrow} from the {@link #transitionDragSourceState
 	 * source state} to the mouse pointer
 	 */
 	private EventHandler<MouseEvent> mouseDraggedEventFilter = event -> {
@@ -218,23 +218,23 @@ public class DialogPane extends Pane {
 	 * Creates a new DialogPane
 	 *
 	 * @param dialogModelDataLayer The {@link Pane} that handles all displayed
-	 *                               elements like {@link State States} and
-	 *                               {@link Transition Transitions}
-	 * @param insertMode             The Property that stores the current insert
-	 *                               mode. The mode is determined by the current
-	 *                               active toggle button
-	 * @param selectedState          The Property that holds the currently selected
-	 *                               {@link State}
-	 * @param selectedTransition     The Property that holds the currently selected
-	 *                               {@link Transition}
-	 * @param addState               The Method that is called to create a new
-	 *                               {@link State}
-	 * @param addTransition          The Method that is called to create a new
-	 *                               {@link Transition}
-	 * @param removeState            The Method that is called to remove a
-	 *                               {@link State}
-	 * @param removeTransition       The Method that is called to remove a
-	 *                               {@link Transition}
+	 *                             elements like {@link State States} and
+	 *                             {@link Transition Transitions}
+	 * @param insertMode           The Property that stores the current insert mode.
+	 *                             The mode is determined by the current active
+	 *                             toggle button
+	 * @param selectedState        The Property that holds the currently selected
+	 *                             {@link State}
+	 * @param selectedTransition   The Property that holds the currently selected
+	 *                             {@link Transition}
+	 * @param addState             The Method that is called to create a new
+	 *                             {@link State}
+	 * @param addTransition        The Method that is called to create a new
+	 *                             {@link Transition}
+	 * @param removeState          The Method that is called to remove a
+	 *                             {@link State}
+	 * @param removeTransition     The Method that is called to remove a
+	 *                             {@link Transition}
 	 */
 	public DialogPane(Pane dialogModelDataLayer, SimpleStringProperty insertMode,
 			SimpleObjectProperty<State> selectedState, SimpleObjectProperty<Transition> selectedTransition,
@@ -291,13 +291,18 @@ public class DialogPane extends Pane {
 		this.dialogModelDataLayer.relocate(targetX, targetY);
 	}
 
+	/**
+	 * Set whether the dialog pane is used inside the simulation or the dialog model
+	 * tab
+	 *
+	 * @param value the value whether the dialog pane is used inside the simulation
+	 */
 	public void setSimulationMode(boolean value) {
 		this.simulationMode = value;
 	}
 
 	/**
-	 * Gets a list of all {@link State States} of the
-	 * {@link #dialogModelDataLayer}
+	 * Gets a list of all {@link State States} of the {@link #dialogModelDataLayer}
 	 *
 	 * @return a list of all {@link State States} of the
 	 *         {@link #dialogModelDataLayer}

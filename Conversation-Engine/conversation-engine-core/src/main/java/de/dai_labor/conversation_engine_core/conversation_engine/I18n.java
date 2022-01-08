@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 /**
  * Utility class for handling the localization
- * 
+ *
  * @author Marcel Engelmann
  *
  */
@@ -15,14 +15,20 @@ class I18n {
 	private static ResourceBundle bundle;
 	private static Locale defaultLocale;
 
+	/**
+	 * Static class, constructor is not allowed
+	 *
+	 * @throws IllegalStateException static class, constructor is not allowed
+	 */
+
 	private I18n() throws IllegalStateException {
-		throw new IllegalStateException("Utility class");
+		throw new IllegalStateException("Static class");
 	}
 
 	/**
 	 * Sets the localization language to the given locale if possible. Otherwise
 	 * uses the default language
-	 * 
+	 *
 	 * @param language the new language
 	 */
 	static void setLanguage(Locale language) {
@@ -35,7 +41,7 @@ class I18n {
 
 	/**
 	 * Returns the currently used language locale
-	 * 
+	 *
 	 * @return the currently used language locale
 	 */
 	static Locale getLanguage() {
@@ -44,7 +50,7 @@ class I18n {
 
 	/**
 	 * Sets the default language for the {@link ConversationEngine}.
-	 * 
+	 *
 	 * @param language the language locale to use as default
 	 */
 	static void setDefaultLanguage(Locale language) {
@@ -63,7 +69,7 @@ class I18n {
 
 	/**
 	 * Get a message by a given key
-	 * 
+	 *
 	 * @param key the key to the message
 	 * @return the message corresponding to the key
 	 */
@@ -73,7 +79,7 @@ class I18n {
 
 	/**
 	 * Get a message by a given key and arguments
-	 * 
+	 *
 	 * @param key       the key to the message
 	 * @param arguments the arguments for the message
 	 * @return the message corresponding to the key and arguments

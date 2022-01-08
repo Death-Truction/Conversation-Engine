@@ -22,8 +22,13 @@ import de.dai_labor.conversation_engine_core.interfaces.ISkill;
  */
 class GenerateSkillStateMachine {
 
+	/**
+	 * Static class, constructor is not allowed
+	 *
+	 * @throws IllegalStateException static class, constructor is not allowed
+	 */
 	private GenerateSkillStateMachine() throws IllegalStateException {
-		throw new IllegalStateException("Utility class");
+		throw new IllegalStateException("Static class");
 	}
 
 	/**

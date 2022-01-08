@@ -418,7 +418,8 @@ public class DialogViewModel implements ViewModel, IStorableGuiData {
 	 * Sets the insert mode for a {@link State} or {@link Transition}. The insert
 	 * mode is determined by the currently selected {@link ToggleButton}
 	 *
-	 * @param toggleButton
+	 * @param toggleButton the {@link ToggleButton} holding the information for the
+	 *                     mode
 	 */
 	private void setMode(Toggle toggleButton) {
 		this.toggleButton = toggleButton;
@@ -430,9 +431,9 @@ public class DialogViewModel implements ViewModel, IStorableGuiData {
 	}
 
 	/**
-	 * Gets the first unused key/id of the {@link #states} {@link Map}
+	 * Gets the first unused key/id of the {@link #states} {@link ObservableMap}
 	 *
-	 * @return the first unused key/id of the {@link #states} {@link Map}
+	 * @return the first unused key/id of the {@link #states} {@link ObservableMap}
 	 */
 	private int getFirstEmptyStateId() {
 		for (int i = 0; i < this.states.size(); i++) {

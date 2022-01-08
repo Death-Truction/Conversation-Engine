@@ -21,6 +21,11 @@ public enum LanguageEnum {
 
 	private final Locale locale;
 
+	/**
+	 * Constructor for a new {@link LanguageEnum}
+	 *
+	 * @param locale the locale/language for the new enum
+	 */
 	LanguageEnum(Locale locale) {
 		this.locale = Objects.requireNonNull(locale);
 	}

@@ -11,6 +11,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebView;
 
+/**
+ * The View for the Help Window
+ *
+ * @author Marcel Engelmann
+ *
+ */
 public class HelpView implements FxmlView<HelpViewModel>, Initializable {
 
 	@InjectViewModel

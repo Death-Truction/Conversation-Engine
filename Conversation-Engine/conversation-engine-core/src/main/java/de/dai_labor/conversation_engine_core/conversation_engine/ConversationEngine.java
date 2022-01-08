@@ -324,6 +324,10 @@ public class ConversationEngine {
 		this.evaluateNextAction();
 	}
 
+	/**
+	 * Process special questions that were asked by the {@link ConversationEngine}
+	 * itself
+	 */
 	private void processSpecialQuestion() {
 		if (this.wasLastQuestionAbortQuestion) {
 			this.wasLastQuestionAbortQuestion = false;
@@ -348,7 +352,6 @@ public class ConversationEngine {
 	 * If the abort question was not answered, the input will be processed
 	 * {@link #processNormalRequest(String)}
 	 *
-	 * @param intent the intent to process
 	 */
 	private void processAbortQuestion() {
 		String intent = this.pendingIntents.peekLast();
@@ -381,8 +384,6 @@ public class ConversationEngine {
 	 *
 	 * If the abort question was not answered, the input will be processed
 	 * {@link #processNormalRequest normally}
-	 *
-	 * @param intent the intent to process
 	 *
 	 */
 	private void processReturnToPreviousSkillQuestion() {
@@ -751,6 +752,9 @@ public class ConversationEngine {
 		Logging.error("The Conversation Engine was invoked after it has been shut down");
 	}
 
+	/**
+	 * Handles default errors and give the user a few example requests.
+	 */
 	private void defaultErrorUserOuput() {
 		UserOutput.addDefaultErrorMessage();
 		if (this.currentSkillStateMachine != null) {

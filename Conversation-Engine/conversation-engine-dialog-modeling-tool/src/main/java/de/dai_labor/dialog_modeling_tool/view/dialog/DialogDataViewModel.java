@@ -182,10 +182,10 @@ public class DialogDataViewModel implements ViewModel, IStorableGuiData {
 	}
 
 	/**
-	 * Adds a {@link ChangeListener} to all given properties. On a trigger changed
-	 * event the {@link #dataHasChanged} property will be updated.
+	 * Adds a change listener to all given properties. On a trigger changed event
+	 * the {@link #dataHasChanged} property will be updated.
 	 *
-	 * @param properties
+	 * @param properties the properties to add a change listener to
 	 */
 	private void addChangedListener(Property<?>... properties) {
 		for (Property<?> property : properties) {

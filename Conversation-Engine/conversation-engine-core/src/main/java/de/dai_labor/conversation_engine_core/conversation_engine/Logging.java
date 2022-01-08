@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple logging utility class
- * 
+ *
  * @author Marcel Engelmann
  *
  */
@@ -15,13 +15,18 @@ class Logging {
 	private static final Logger conversationLogger = LoggerFactory.getLogger("ConversationLogger");
 	private static final Logger debugLogger = LoggerFactory.getLogger("DeveloperLogger");
 
+	/**
+	 * Static class, constructor is not allowed
+	 *
+	 * @throws IllegalStateException static class, constructor is not allowed
+	 */
 	private Logging() throws IllegalStateException {
-		throw new IllegalStateException("Utility class");
+		throw new IllegalStateException("Static class");
 	}
 
 	/**
 	 * Log the user input with the ConversationLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 */
 	static void userInput(String message) {
@@ -31,7 +36,7 @@ class Logging {
 	/**
 	 * Log the bot's output messages with the ConversationLogger. Each message will
 	 * be logged separately
-	 * 
+	 *
 	 * @param messages the messages to be logged
 	 */
 	static void conversationMessages(List<String> messages) {
@@ -42,7 +47,7 @@ class Logging {
 
 	/**
 	 * Log a message on DEBUG level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 */
 	static void debug(String message) {
@@ -51,7 +56,7 @@ class Logging {
 
 	/**
 	 * Log a message with arguments on DEBUG level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 * @param args    the arguments for the message
 	 */
@@ -61,7 +66,7 @@ class Logging {
 
 	/**
 	 * Log a message on WARN level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 * @param args    the arguments for the message
 	 */
@@ -71,7 +76,7 @@ class Logging {
 
 	/**
 	 * Log a message on WARN level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 */
 	static void warn(String message) {
@@ -80,7 +85,7 @@ class Logging {
 
 	/**
 	 * Log a message on ERROR level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 */
 	static void error(String message) {
@@ -89,7 +94,7 @@ class Logging {
 
 	/**
 	 * Log a message with arguments on ERROR level with the DeveloperLogger
-	 * 
+	 *
 	 * @param message the message to be logged
 	 * @param args    the arguments for the message
 	 */
