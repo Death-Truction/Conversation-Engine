@@ -135,7 +135,11 @@ The project includes a <i>playground</i> to try the Conversation-Engine with som
       * [Skill](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/skills/WeatherSkill.java)
       * [SkillAnswer](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/test/java/interfaces_implementation/SkillAnswer.java)
 3. Create a valid state machine JSON-File 
-    * by using my GUI (<b><i>Coming soon</i></b>)
+    * by using the Dialog Modeling Tool inside the project
+      * You can run the tool by navigating inside the folder and running the following command AFTER installing the conversation engine:
+      ```sh
+      mvn javafx:run
+      ```
     * Create your own JSON-File by following [this JSON-Schema](https://github.com/Death-Truction/Conversation-Engine/blob/main/Conversation-Engine/src/main/resources/SkillStateMachine_Schema.json)
 4. Create a new Conversation-Engine object and add your NLPComponent and your skills
     ```java

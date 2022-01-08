@@ -46,7 +46,7 @@
 
 	<modules>
 		<module>conversation-engine-core</module>
-		<module>conversation-engine-dialogue-modeling-tool</module>
+		<module>conversation-engine-dialog-modeling-tool</module>
 	</modules>
 
 	

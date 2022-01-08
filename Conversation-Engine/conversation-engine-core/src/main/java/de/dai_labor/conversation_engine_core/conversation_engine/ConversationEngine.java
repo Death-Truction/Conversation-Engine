@@ -63,7 +63,8 @@ public class ConversationEngine {
 	 * @param timeoutInSeconds  the number of seconds after which the
 	 *                          {@link ConversationEngine} will transition into the
 	 *                          sleepState. The timer refreshes after each
-	 *                          interaction.
+	 *                          interaction. Setting this on 0 means there is no
+	 *                          timeout.
 	 * @param jsonContextObject the contextObject as JSON-String to start the
 	 *                          {@link ConversationEngine} with
 	 * @param defaultLanguage   the default language to use as backup
@@ -77,9 +78,9 @@ public class ConversationEngine {
 			throw new IllegalArgumentException("INLPComponent is null");
 		}
 
-		if (timeoutInSeconds <= 0) {
-			Logging.error("Timeout value must be greater than 0");
-			throw new IllegalArgumentException("Timeout value must be greater than 0");
+		if (timeoutInSeconds < 0) {
+			Logging.error("Timeout value must be greater than or equal to 0");
+			throw new IllegalArgumentException("Timeout value must be greater or equalto 0");
 		}
 
 		if (defaultLanguage == null) {
@@ -113,8 +114,10 @@ public class ConversationEngine {
 		triggerIntents.add("yes");
 		triggerIntents.add("no");
 		this.nlpComponent.addUsedIntents(triggerIntents);
-		this.timer = new Timer();
-		this.scheduleNewTimeoutTask();
+		if (this.timeoutInSeconds > 0) {
+			this.timer = new Timer();
+			this.scheduleNewTimeoutTask();
+		}
 	}
 
 	/**
@@ -135,7 +138,8 @@ public class ConversationEngine {
 	 * @param timeoutInSeconds the number of seconds after which the
 	 *                         {@link ConversationEngine} will transition into the
 	 *                         sleepState. The timer refreshes after each
-	 *                         interaction.
+	 *                         interaction. Setting this on 0 means there is no
+	 *                         timeout.
 	 * @param defaultLanguage  the default language to use as backup
 	 */
 	public ConversationEngine(INLPComponent nlpComponent, int timeoutInSeconds, Locale defaultLanguage) {

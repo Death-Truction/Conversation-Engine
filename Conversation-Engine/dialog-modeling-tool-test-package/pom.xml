@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.dai-labor</groupId>
+    <artifactId>conversation-engine</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  
+  <groupId>de.dai-labor</groupId>
+  <artifactId>dialog-modeling-tool-test-package</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>test-package</name>
+  
+  <developers>
+		<developer>
+			<id>engelmann</id>
+			<name>Marcel Engelmann</name>
+			<url>https://github.com/Death-Truction</url>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Berlin</timezone>
+			<properties>
+				<picUrl>https://avatars.githubusercontent.com/u/45203759?s=80</picUrl>
+			</properties>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://raw.githubusercontent.com/Death-Truction/ConversationEngine/main/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/Death-Truction/ConversationEngine/issues</url>
+	</issueManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+		<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>conversation-engine-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+  
+  	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<release>14</release>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

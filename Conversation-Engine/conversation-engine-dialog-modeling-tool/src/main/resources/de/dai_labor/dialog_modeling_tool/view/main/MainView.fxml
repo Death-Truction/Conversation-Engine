@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dai_labor.dialog_modeling_tool.view.main.MainView">
+    <left>
+    <!-- Navigation Menu -->
+        <VBox alignment="top_center" spacing="5" style="-fx-background-color: DARKGRAY">
+            <Button fx:id="navButtonDialog" text="Dialog Model" userData="dialog" />
+         	<Button fx:id="navButtonDialogData" text="Dialog Data" userData="dialogData" />
+         <Button fx:id="navButtonSimulation" text="Simulation" userData="simulationSettings" />
+            <Button fx:id="navButtonSettings" text="Settings" userData="settings" />
+        </VBox>
+    </left>
+    <center>
+    <VBox fx:id="contentArea" />
+    </center>
+    <!-- Menu Bar -->
+<top>
+	<BorderPane BorderPane.alignment="CENTER">
+		<center>
+			<MenuBar BorderPane.alignment="CENTER">
+				<menus>
+					<Menu mnemonicParsing="false" text="File">
+						<items>
+						    <MenuItem fx:id="newMenuItem" mnemonicParsing="false" text="New" />
+						    <MenuItem fx:id="openMenuItem" mnemonicParsing="false" text="Open" />
+						    <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" text="Export" />
+						    <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+						    <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" text="Save as" />
+						    <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
+						  </items>
+					</Menu>
+                  <Menu mnemonicParsing="false" text="Help">
+                     <items>
+                        <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="Open Help" />
+                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About" />
+                     </items>
+                  </Menu>
+				</menus>
+			</MenuBar>
+		</center>
+	</BorderPane>
+</top>
+</BorderPane>
