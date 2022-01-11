@@ -142,6 +142,7 @@ public class SimulationStage {
 			this.windowStage.close();
 		});
 		this.windowStage.getIcons().add(Util.getIcon());
+		this.windowStage.setTitle("Conversation Engine - Dialog Modeling Tool");
 		this.viewTuple.getView().getStylesheets().add(Util.getStyleSheetPath());
 		this.windowStage.minHeightProperty().set(480.0);
 		this.windowStage.minWidthProperty().set(640.0);

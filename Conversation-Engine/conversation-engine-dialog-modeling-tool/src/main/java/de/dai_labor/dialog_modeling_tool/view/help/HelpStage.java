@@ -53,6 +53,7 @@ public class HelpStage {
 		viewTuple = FluentViewLoader.fxmlView(HelpView.class).load();
 		windowStage = new Stage();
 		windowStage.getIcons().add(Util.getIcon());
+		windowStage.setTitle("Conversation Engine - Dialog Modeling Tool");
 		viewTuple.getView().getStylesheets().add(Util.getStyleSheetPath());
 		windowStage.minHeightProperty().set(640);
 		windowStage.minWidthProperty().set(480);
